@@ -178,7 +178,6 @@ export class JobsService {
 
 			if (existingJob) {
 				if (existingJob.isNormalized) {
-					this.logger.debug(`Вакансия "${jobData.title}" уже нормализована, пропускаем`)
 					return false
 				} else {
 					// Вакансия есть, но не нормализована - удаляем старую и создаем новую
@@ -190,7 +189,6 @@ export class JobsService {
 			const normalizedJob = await this.jobNormalizationService.normalizeJob(jobData)
 
 			if (!normalizedJob) {
-				this.logger.warn(`Пропускаем вакансию "${jobData.title}" - не прошла нормализацию`)
 				return false
 			}
 
@@ -276,8 +274,6 @@ export class JobsService {
 
 		const existingHashes = new Set(existingJobs.map(job => job.contentHash))
 		const newJobs = jobs.filter(job => !existingHashes.has(job.contentHash))
-
-		this.logger.log(`Найдено ${jobs.length} вакансий, ${existingHashes.size} дубликатов, ${newJobs.length} новых`)
 
 		if (newJobs.length === 0) {
 			return { saved: 0, skipped: jobs.length }

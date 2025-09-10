@@ -23,8 +23,6 @@ export class JobNormalizationService {
 	 */
 	async normalizeJob(job: CreateJobDto): Promise<NormalizedJobDto | null> {
 		try {
-			this.logger.debug(`Начинаем нормализацию вакансии: "${job.title}"`)
-
 			// Проверяем, была ли зарплата указана в исходном тексте
 			const hasSalaryInText = this.hasSalaryInOriginalText(job.title, job.description)
 
@@ -32,7 +30,6 @@ export class JobNormalizationService {
 			const aiResponse = await this.aiService.normalizeJobWithAI(job.title, job.description)
 
 			if (!aiResponse) {
-				this.logger.warn(`ИИ не смог нормализовать вакансию "${job.title}"`)
 				return null
 			}
 
@@ -101,7 +98,6 @@ export class JobNormalizationService {
 
 			// Если качество слишком низкое, пропускаем вакансию
 			if (qualityScore < 30) {
-				this.logger.warn(`Пропускаем вакансию "${job.title}" - низкое качество данных: ${qualityScore}`)
 				return null
 			}
 
@@ -126,7 +122,6 @@ export class JobNormalizationService {
 				keywords: job.keywords
 			}
 
-			this.logger.debug(`Успешно нормализована вакансия "${job.title}" с качеством ${qualityScore}%`)
 			return normalizedJob
 		} catch (error) {
 			this.logger.error(`Ошибка нормализации вакансии "${job.title}":`, error)

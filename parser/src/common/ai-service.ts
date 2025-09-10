@@ -57,123 +57,104 @@ export class AIService {
 	private readonly REQUEST_WINDOW = 60 * 1000 // 1 минута
 
 	constructor() {
-		this.logConfiguration()
-	}
-
-	private logConfiguration() {
-		this.logger.log('=== AIService Configuration ===')
-		this.logger.log(`YANDEX_IAM_TOKEN: ${this.iamToken ? '✅ Настроен' : '❌ Не настроен'}`)
-		this.logger.log(`YANDEX_FOLDER_ID: ${this.folderId ? '✅ Настроен' : '❌ Не настроен'}`)
-		this.logger.log(`Yandex API URL: ${this.yandexApiUrl}`)
-		if (this.iamToken) {
-			this.logger.log(`IAM Token preview: ${this.iamToken.substring(0, 8)}...`)
-		}
-		if (this.folderId) {
-			this.logger.log(`Folder ID: ${this.folderId}`)
-		}
-		this.logger.log('===============================')
+		// Проверяем конфигурацию только при ошибках
 	}
 
 	async normalizeJobWithAI(title: string, description: string): Promise<AIResponse | null> {
-		if (!this.iamToken) {
-			this.logger.error('YANDEX_IAM_TOKEN не настроен!')
-			return null
-		}
+		try {
+			if (!this.iamToken || !this.folderId) {
+				this.logger.error('YANDEX_IAM_TOKEN или YANDEX_FOLDER_ID не настроены!')
+				return null
+			}
 
-		if (!this.folderId) {
-			this.logger.error('YANDEX_FOLDER_ID не настроен!')
-			return null
-		}
+			// Проверяем лимиты запросов
+			if (!this.checkRequestLimits()) {
+				return null
+			}
 
-		// Проверяем лимиты запросов
-		if (!this.checkRequestLimits()) {
-			this.logger.warn(`Превышен лимит запросов к ИИ для "${title}"`)
-			return null
-		}
+			const maxRetries = 3
 
-		const maxRetries = 3
-
-		for (let attempt = 1; attempt <= maxRetries; attempt++) {
-			try {
-				return await this.makeAIRequest(title, description, attempt)
-			} catch (error) {
-				if (attempt < maxRetries) {
-					const delay = Math.pow(2, attempt) * 1000 // Экспоненциальная задержка: 2s, 4s, 8s
-					this.logger.warn(`Попытка ${attempt} неудачна, повтор через ${delay}ms: ${error.message}`)
-					await this.sleep(delay)
+			for (let attempt = 1; attempt <= maxRetries; attempt++) {
+				try {
+					return await this.makeAIRequest(title, description)
+				} catch (error) {
+					if (attempt < maxRetries) {
+						const delay = Math.pow(2, attempt) * 1000
+						await this.sleep(delay)
+					}
 				}
 			}
-		}
 
-		// Если все попытки неудачны
-		this.logger.error(`Все ${maxRetries} попытки неудачны для "${title}"`)
-		return null
+			// Если все попытки неудачны
+			this.logger.error(`ИИ не смог обработать вакансию "${title}" после ${maxRetries} попыток`)
+			return null
+		} catch (error) {
+			this.logger.error(`Критическая ошибка в normalizeJobWithAI для "${title}":`, error)
+			return null
+		}
 	}
 
-	private async makeAIRequest(title: string, description: string, attempt: number): Promise<AIResponse | null> {
-		this.logger.debug(`Запрос к YandexGPT для: "${title}" (попытка ${attempt})`)
-
-		const prompt = JOB_NORMALIZATION_PROMPT.replace('{title}', title).replace('{description}', description)
-		const modelUri = `gpt://${this.folderId}/yandexgpt`
-
-		this.logger.debug(`Model URI: ${modelUri}`)
-		this.logger.debug(`IAM Token: ${this.iamToken.substring(0, 8)}...`)
-
-		const response = await axios.post(
-			this.yandexApiUrl,
-			{
-				modelUri,
-				completionOptions: {
-					stream: false,
-					temperature: 0.1,
-					maxTokens: 2000
-				},
-				messages: [
-					{
-						role: 'system',
-						text: 'Ты эксперт по анализу IT-вакансий. Отвечай только в формате JSON без дополнительных комментариев.'
-					},
-					{
-						role: 'user',
-						text: prompt
-					}
-				]
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${this.iamToken}`,
-					'Content-Type': 'application/json'
-				},
-				timeout: 120000 // 2 минуты
-			}
-		)
-
-		this.logger.debug(`YandexGPT ответ получен, статус: ${response.status}`)
-
-		if (
-			!response.data.result ||
-			!response.data.result.alternatives ||
-			response.data.result.alternatives.length === 0
-		) {
-			throw new Error('Неверный формат ответа от YandexGPT')
-		}
-
-		const aiResponse = response.data.result.alternatives[0].message.text
-		this.logger.debug(`AI Response length: ${aiResponse.length} chars`)
-		this.logger.debug(`AI Response preview: ${aiResponse.substring(0, 200)}...`)
-
-		// Очищаем ответ от markdown разметки
-		const cleanedResponse = this.cleanMarkdownFromResponse(aiResponse)
-		this.logger.debug(`Cleaned response: ${cleanedResponse.substring(0, 500)}...`)
-
+	private async makeAIRequest(title: string, description: string): Promise<AIResponse | null> {
 		try {
-			const normalizedData = JSON.parse(cleanedResponse) as AIResponse
-			this.logger.debug('YandexGPT успешно обработал вакансию')
-			return this.validateAndCleanResponse(normalizedData)
-		} catch (parseError) {
-			this.logger.error(`Ошибка парсинга JSON: ${parseError.message}`)
-			this.logger.error(`Ответ AI: ${cleanedResponse}`)
-			throw parseError
+			const prompt = JOB_NORMALIZATION_PROMPT.replace('{title}', title).replace('{description}', description)
+			const modelUri = `gpt://${this.folderId}/yandexgpt`
+
+			const response = await axios.post(
+				this.yandexApiUrl,
+				{
+					modelUri,
+					completionOptions: {
+						stream: false,
+						temperature: 0.1,
+						maxTokens: 2000
+					},
+					messages: [
+						{
+							role: 'system',
+							text: 'Ты эксперт по анализу IT-вакансий. Отвечай только в формате JSON без дополнительных комментариев.'
+						},
+						{
+							role: 'user',
+							text: prompt
+						}
+					]
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${this.iamToken}`,
+						'Content-Type': 'application/json'
+					},
+					timeout: 120000
+				}
+			)
+
+			if (
+				!response.data.result ||
+				!response.data.result.alternatives ||
+				response.data.result.alternatives.length === 0
+			) {
+				throw new Error('Неверный формат ответа от YandexGPT')
+			}
+
+			const aiResponse = response.data.result.alternatives[0].message.text
+			const cleanedResponse = this.cleanMarkdownFromResponse(aiResponse)
+
+			try {
+				const normalizedData = JSON.parse(cleanedResponse) as AIResponse
+				return this.validateAndCleanResponse(normalizedData)
+			} catch (parseError) {
+				throw new Error(`Ошибка парсинга JSON: ${parseError.message}`)
+			}
+		} catch (error) {
+			if (error.response?.status === 429) {
+				throw new Error('Превышен лимит запросов к YandexGPT')
+			} else if (error.response?.status === 401) {
+				throw new Error('Неверный IAM токен для YandexGPT')
+			} else if (error.code === 'ECONNABORTED') {
+				throw new Error('Таймаут запроса к YandexGPT')
+			} else {
+				throw new Error(`Ошибка YandexGPT: ${error.message}`)
+			}
 		}
 	}
 
