@@ -7,6 +7,12 @@ export interface ExtractedJobData {
 	title: string
 	description: string
 	originalUrl?: string
+	company?: {
+		name: string
+		size?: string | null
+		description?: string | null
+		website?: string | null
+	}
 }
 
 @Injectable()

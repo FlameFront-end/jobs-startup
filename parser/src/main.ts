@@ -39,7 +39,9 @@ async function bootstrap() {
 		.setDescription('API для автоматического сбора вакансий с сайтов и Telegram-каналов')
 		.setVersion('1.0')
 		.addTag('jobs', 'Управление вакансиями')
-		.addTag('parsing', 'Парсинг вакансий')
+		.addTag('website-parser', 'Парсинг веб-сайтов')
+		.addTag('telegram-parser', 'Парсинг Telegram каналов')
+		.addTag('stats', 'Статистика')
 		.addTag('health', 'Состояние сервиса')
 		.build()
 

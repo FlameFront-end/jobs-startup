@@ -12,6 +12,7 @@ import { HealthService } from './health/health.service'
 import { JobsModule } from './jobs/jobs.module'
 import { ParsersModule } from './parsers/parsers.module'
 import { SchedulerModule } from './scheduler/scheduler.module'
+import { StatsModule } from './stats/stats.module'
 
 @Module({
 	imports: [
@@ -53,7 +54,8 @@ import { SchedulerModule } from './scheduler/scheduler.module'
 		SharedModule,
 		JobsModule,
 		ParsersModule,
-		SchedulerModule
+		SchedulerModule,
+		StatsModule
 	],
 	controllers: [AppController],
 	providers: [HealthService]

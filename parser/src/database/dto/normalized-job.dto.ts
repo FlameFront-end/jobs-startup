@@ -178,6 +178,92 @@ export class Benefits {
 	development?: string[]
 }
 
+export class MinimalJobDto {
+	@ApiProperty({ description: 'ID вакансии' })
+	@IsString()
+	id: string
+
+	@ApiProperty({ description: 'Заголовок вакансии' })
+	@IsString()
+	@MinLength(1)
+	@MaxLength(500)
+	title: string
+
+	@ApiProperty({ description: 'Краткое описание вакансии' })
+	@IsString()
+	@MinLength(1)
+	@MaxLength(1000)
+	shortDescription: string
+
+	@ApiPropertyOptional({ description: 'Название компании' })
+	@IsOptional()
+	@IsString()
+	@MaxLength(255)
+	companyName?: string
+
+	@ApiPropertyOptional({ description: 'Минимальная зарплата' })
+	@IsOptional()
+	@IsNumber()
+	salaryMin?: number
+
+	@ApiPropertyOptional({ description: 'Максимальная зарплата' })
+	@IsOptional()
+	@IsNumber()
+	salaryMax?: number
+
+	@ApiPropertyOptional({ description: 'Валюта зарплаты' })
+	@IsOptional()
+	@IsString()
+	@MaxLength(10)
+	salaryCurrency?: string
+
+	@ApiPropertyOptional({ description: 'Город' })
+	@IsOptional()
+	@IsString()
+	@MaxLength(100)
+	city?: string
+
+	@ApiPropertyOptional({ description: 'Удаленная работа' })
+	@IsOptional()
+	@IsBoolean()
+	remote?: boolean
+
+	@ApiProperty({ description: 'Тип работы', enum: WorkType })
+	@IsEnum(WorkType)
+	workType: WorkType
+
+	@ApiPropertyOptional({ description: 'Уровень опыта', enum: ExperienceLevel })
+	@IsOptional()
+	@IsEnum(ExperienceLevel)
+	experienceLevel?: ExperienceLevel
+
+	@ApiProperty({ description: 'Источник вакансии' })
+	@IsString()
+	source: string
+
+	@ApiProperty({ description: 'Название источника' })
+	@IsString()
+	sourceName: string
+
+	@ApiPropertyOptional({ description: 'Оригинальная ссылка' })
+	@IsOptional()
+	@IsUrl()
+	originalUrl?: string
+
+	@ApiProperty({ description: 'Дата публикации' })
+	publishedAt: Date
+
+	@ApiProperty({ description: 'Качество данных (0-100)' })
+	@IsNumber()
+	qualityScore: number
+
+	@ApiPropertyOptional({ description: 'Ключевые технологии', type: [String] })
+	@IsOptional()
+	@IsArray()
+	@IsString({ each: true })
+	technologies?: string[]
+}
+
 export class NormalizedJobDto {
 	@ApiProperty({ description: 'ID вакансии' })
 	@IsString()
@@ -189,10 +275,16 @@ export class NormalizedJobDto {
 	@MaxLength(500)
 	title: string
 
-	@ApiProperty({ description: 'Описание вакансии' })
+	@ApiProperty({ description: 'Краткое описание вакансии' })
 	@IsString()
 	@MinLength(1)
-	description: string
+	@MaxLength(1000)
+	shortDescription: string
+
+	@ApiProperty({ description: 'Полное описание вакансии' })
+	@IsString()
+	@MinLength(1)
+	fullDescription: string
 
 	@ApiProperty({ description: 'Информация о компании', type: CompanyInfo })
 	@ValidateNested()

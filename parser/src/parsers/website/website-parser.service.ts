@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { CreateJobDto, JobSource } from '../../database/dto/job.dto'
 import { JobsService } from '../../jobs/jobs.service'
-import { PARSER_CONFIGS, ParserConfig } from './config/parser-config'
+import { PARSER_CONFIGS, ParserConfig, ParserSite } from './config/parser-config'
 import { ParserFactory } from './factories/parser-factory'
 import { BrowserService } from './services/browser.service'
 import { HtmlExtractorService } from './services/html-extractor.service'
@@ -24,12 +24,29 @@ export class WebsiteParserService {
 	) {}
 
 	async parseAll(): Promise<ParsingResult> {
-		this.logger.log('🚀 Starting website parsing process...')
+		return this.parseBySite(ParserSite.ALL)
+	}
+
+	async parseBySite(site: ParserSite): Promise<ParsingResult> {
+		this.logger.log(`🚀 Starting website parsing process for: ${site}`)
 		const allJobs: CreateJobDto[] = []
 		let totalErrors = 0
 		const startTime = Date.now()
 
-		for (const config of PARSER_CONFIGS) {
+		// Получаем конфигурации для парсинга
+		const configsToParse =
+			site === ParserSite.ALL ? PARSER_CONFIGS : PARSER_CONFIGS.filter(config => config.site === site)
+
+		if (configsToParse.length === 0) {
+			this.logger.warn(`❌ No configurations found for site: ${site}`)
+			return {
+				success: false,
+				jobsCount: 0,
+				errorMessage: `No configurations found for site: ${site}`
+			}
+		}
+
+		for (const config of configsToParse) {
 			try {
 				const jobs = await this.parseWebsite(config)
 				allJobs.push(...jobs)
@@ -57,7 +74,7 @@ export class WebsiteParserService {
 		}
 
 		// Подробный лог результатов парсинга
-		this.logger.log(`📊 WEBSITE PARSING COMPLETED:`)
+		this.logger.log(`📊 WEBSITE PARSING COMPLETED for ${site}:`)
 		this.logger.log(`   ⏱️  Duration: ${duration}ms`)
 		this.logger.log(`   📋 Total jobs found: ${allJobs.length}`)
 		this.logger.log(`   💾 Saved to database: ${savedJobs}`)
@@ -66,6 +83,13 @@ export class WebsiteParserService {
 		this.logger.log(`   ✅ Success: ${result.success ? 'YES' : 'NO'}`)
 
 		return result
+	}
+
+	getAvailableSites(): { site: ParserSite; name: string }[] {
+		return PARSER_CONFIGS.map(config => ({
+			site: config.site,
+			name: config.name
+		}))
 	}
 
 	private async parseWebsite(config: ParserConfig): Promise<CreateJobDto[]> {

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Between, In, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm'
 import { JobNormalizationService } from '../common/job-normalization.service'
 import { CreateJobDto, JobQueryDto, JobResponseDto } from '../database/dto/job.dto'
-import { NormalizedJobDto } from '../database/dto/normalized-job.dto'
+import { MinimalJobDto, NormalizedJobDto } from '../database/dto/normalized-job.dto'
 import { Job, ParsingLog } from '../database/entities'
 
 @Injectable()
@@ -98,6 +98,24 @@ export class JobsService {
 	async findOne(id: string): Promise<JobResponseDto | null> {
 		const job = await this.jobRepository.findOne({ where: { id } })
 		return job as JobResponseDto | null
+	}
+
+	/**
+	 * Получает полную нормализованную вакансию по ID
+	 */
+	async getNormalizedJobById(id: string): Promise<NormalizedJobDto | null> {
+		const job = await this.jobRepository.findOne({
+			where: {
+				id,
+				isNormalized: true
+			}
+		})
+
+		if (!job || !job.normalizedData) {
+			return null
+		}
+
+		return job.normalizedData as NormalizedJobDto
 	}
 
 	async getStats(days: number = 7): Promise<{
@@ -231,7 +249,102 @@ export class JobsService {
 	}
 
 	/**
-	 * Получает нормализованные вакансии
+	 * Получает минимальные данные нормализованных вакансий для списка
+	 */
+	async getMinimalNormalizedJobs(query: JobQueryDto & { minQuality?: number }): Promise<{
+		jobs: MinimalJobDto[]
+		total: number
+		hasMore: boolean
+	}> {
+		const { source, sourceName, keywords, dateFrom, dateTo, limit = 20, offset = 0, minQuality = 30 } = query
+
+		try {
+			const where: any = {
+				isNormalized: true,
+				qualityScore: MoreThanOrEqual(minQuality)
+			}
+
+			// Фильтр по источнику
+			if (source) {
+				where.source = source
+			}
+
+			// Фильтр по названию источника
+			if (sourceName) {
+				where.sourceName = Like(`%${sourceName}%`)
+			}
+
+			// Фильтр по ключевым словам
+			if (keywords && keywords.length > 0) {
+				where.keywords = In(keywords)
+			}
+
+			// Фильтр по датам
+			if (dateFrom || dateTo) {
+				const dateFromObj = dateFrom ? this.parseDate(dateFrom) : null
+				const dateToObj = dateTo ? this.parseDate(dateTo) : null
+
+				if (dateFromObj && dateToObj) {
+					if (dateFromObj > dateToObj) {
+						throw new BadRequestException('dateFrom не может быть больше dateTo')
+					}
+					where.publishedAt = Between(dateFromObj, dateToObj)
+				} else if (dateFromObj) {
+					where.publishedAt = MoreThanOrEqual(dateFromObj)
+				} else if (dateToObj) {
+					where.publishedAt = LessThanOrEqual(dateToObj)
+				}
+			}
+
+			const [jobs, total] = await Promise.all([
+				this.jobRepository.find({
+					where,
+					order: { qualityScore: 'DESC', publishedAt: 'DESC' },
+					take: limit,
+					skip: offset
+				}),
+				this.jobRepository.count({ where })
+			])
+
+			// Преобразуем в минимальный формат
+			const minimalJobs = jobs
+				.filter(job => job.normalizedData)
+				.map(job => {
+					const normalized = job.normalizedData as any
+					return {
+						id: job.id,
+						title: normalized.title,
+						shortDescription: normalized.shortDescription,
+						companyName: normalized.company?.name || null,
+						salaryMin: normalized.salary?.min || null,
+						salaryMax: normalized.salary?.max || null,
+						salaryCurrency: normalized.salary?.currency || null,
+						city: normalized.location?.city || null,
+						remote: normalized.location?.remote || false,
+						workType: normalized.workType,
+						experienceLevel: normalized.experienceLevel || null,
+						source: job.source,
+						sourceName: job.sourceName,
+						originalUrl: job.originalUrl,
+						publishedAt: job.publishedAt,
+						qualityScore: job.qualityScore,
+						technologies: normalized.requirements?.technical?.slice(0, 5) || []
+					} as MinimalJobDto
+				})
+
+			return {
+				jobs: minimalJobs,
+				total,
+				hasMore: offset + limit < total
+			}
+		} catch (error) {
+			this.logger.error('Error in getMinimalNormalizedJobs:', error)
+			throw error
+		}
+	}
+
+	/**
+	 * Получает полные нормализованные вакансии
 	 */
 	async getNormalizedJobs(query: JobQueryDto & { minQuality?: number }): Promise<{
 		jobs: NormalizedJobDto[]

@@ -18,7 +18,7 @@ export class HabrParser extends BaseParser {
 	async parse(page: Page, config: ParserConfig): Promise<CreateJobDto[]> {
 		await this.waitForContent(page, '.vacancy-card')
 
-		// Получаем базовую информацию о вакансиях
+		// Получаем базовую информацию о вакансиях с данными о компании
 		const jobElements = await page.evaluate(() => {
 			const jobs: any[] = []
 			const vacancyCards = document.querySelectorAll('.vacancy-card')
@@ -51,10 +51,87 @@ export class HabrParser extends BaseParser {
 						}
 					}
 
+					// Извлекаем информацию о компании из карточки
+					let companyName = ''
+					let companySize = ''
+					let companyDescription = ''
+					let companyWebsite = ''
+
+					// Название компании
+					const companySelectors = [
+						'.vacancy-card__company-title',
+						'.vacancy-card__company-name',
+						'.company-name',
+						'.vacancy-card__company a',
+						'.vacancy-card__company-title a',
+						'[data-qa="company-name"]',
+						'.vacancy-card__meta .vacancy-card__company'
+					]
+
+					for (const selector of companySelectors) {
+						const companyEl = card.querySelector(selector)
+						if (companyEl && companyEl.textContent?.trim()) {
+							companyName = companyEl.textContent.trim()
+							break
+						}
+					}
+
+					// Размер компании
+					const sizeSelectors = [
+						'.vacancy-card__company-size',
+						'.company-size',
+						'.vacancy-card__meta .company-size',
+						'[data-qa="company-size"]'
+					]
+
+					for (const selector of sizeSelectors) {
+						const sizeEl = card.querySelector(selector)
+						if (sizeEl && sizeEl.textContent?.trim()) {
+							companySize = sizeEl.textContent.trim()
+							break
+						}
+					}
+
+					// Описание компании (краткое)
+					const descSelectors = [
+						'.vacancy-card__company-description',
+						'.company-description',
+						'.vacancy-card__meta .company-description'
+					]
+
+					for (const selector of descSelectors) {
+						const descEl = card.querySelector(selector)
+						if (descEl && descEl.textContent?.trim()) {
+							companyDescription = descEl.textContent.trim()
+							break
+						}
+					}
+
+					// Сайт компании
+					const websiteSelectors = [
+						'.vacancy-card__company a[href^="http"]',
+						'.company-website a[href^="http"]',
+						'.vacancy-card__company a[href*="."]'
+					]
+
+					for (const selector of websiteSelectors) {
+						const websiteEl = card.querySelector(selector)
+						if (websiteEl && websiteEl.getAttribute('href')) {
+							companyWebsite = websiteEl.getAttribute('href')
+							break
+						}
+					}
+
 					if (link) {
 						jobs.push({
 							title,
-							originalUrl: link.startsWith('http') ? link : `https://career.habr.com${link}`
+							originalUrl: link.startsWith('http') ? link : `https://career.habr.com${link}`,
+							company: {
+								name: companyName || null,
+								size: companySize || null,
+								description: companyDescription || null,
+								website: companyWebsite || null
+							}
 						})
 					}
 				}

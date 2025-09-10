@@ -103,7 +103,8 @@ export class JobNormalizationService {
 			const normalizedJob: NormalizedJobDto = {
 				id: job.contentHash,
 				title: job.title,
-				description: job.description,
+				shortDescription: aiResponse.shortDescription || this.createShortDescription(job.description),
+				fullDescription: aiResponse.fullDescription || this.createFullDescription(job.description),
 				company,
 				salary,
 				location,
@@ -268,7 +269,7 @@ export class JobNormalizationService {
 		return Object.keys(location).length > 1 ? location : undefined
 	}
 
-	private extractRequirements(text: string, description: string): Requirements {
+	private extractRequirements(text: string): Requirements {
 		const requirements: Requirements = {
 			required: [],
 			preferred: [],
@@ -411,7 +412,7 @@ export class JobNormalizationService {
 		return requirements
 	}
 
-	private extractBenefits(text: string, description: string): Benefits {
+	private extractBenefits(text: string): Benefits {
 		const benefits: Benefits = {
 			social: [],
 			bonuses: [],
@@ -555,5 +556,108 @@ export class JobNormalizationService {
 		if (data.requirements.technical && data.requirements.technical.length > 0) score += 5
 
 		return Math.min(score, 100)
+	}
+
+	private createShortDescription(description: string): string {
+		// Извлекаем предложения с ключевыми обязанностями и технологиями
+		const sentences = description.split(/[.!?]+/).filter(s => s.trim().length > 10)
+
+		// Ищем предложения с ключевыми словами обязанностей и технологий
+		const dutyKeywords = [
+			'разработка',
+			'создание',
+			'программирование',
+			'написание',
+			'реализация',
+			'проектирование',
+			'архитектура',
+			'интеграция',
+			'оптимизация',
+			'тестирование',
+			'react',
+			'vue',
+			'angular',
+			'typescript',
+			'javascript',
+			'next.js',
+			'node.js'
+		]
+
+		const relevantSentences = sentences.filter(sentence =>
+			dutyKeywords.some(keyword => sentence.toLowerCase().includes(keyword))
+		)
+
+		// Берем первые 3-4 релевантных предложения или первые 3-4 предложения
+		const selectedSentences = relevantSentences.length > 0 ? relevantSentences.slice(0, 3) : sentences.slice(0, 3)
+
+		// Если предложения слишком короткие, добавляем еще
+		if (selectedSentences.length < 3) {
+			const additionalSentences = sentences
+				.filter(s => !selectedSentences.includes(s))
+				.slice(0, 3 - selectedSentences.length)
+			selectedSentences.push(...additionalSentences)
+		}
+
+		return (
+			selectedSentences
+				.map(s => s.trim())
+				.filter(s => s.length > 0)
+				.join('. ') + '.'
+		)
+	}
+
+	private createFullDescription(description: string): string {
+		// Очищаем и структурируем описание
+		const cleaned = description
+			.replace(/\s+/g, ' ') // Убираем лишние пробелы
+			.replace(/([.!?])\s*([А-ЯЁ])/g, '$1 $2') // Добавляем пробелы после точек
+			.replace(/([а-яё])([А-ЯЁ])/g, '$1. $2') // Добавляем точки между предложениями
+			.replace(/([а-яё])([А-ЯЁ])/g, '$1. $2') // Дополнительная очистка
+			.replace(/([.!?])([А-ЯЁ])/g, '$1 $2') // Пробелы после знаков препинания
+			.trim()
+
+		// Разбиваем на абзацы по ключевым словам разделов
+		const sectionKeywords = [
+			'О компании',
+			'О команде',
+			'Мы',
+			'Наша команда',
+			'Обязанности',
+			'Что нужно делать',
+			'Задачи',
+			'Функции',
+			'Требования',
+			'Необходимо',
+			'Должен',
+			'Опыт',
+			'Мы предлагаем',
+			'Условия работы',
+			'Бонусы',
+			'Преимущества',
+			'Процесс найма',
+			'Интервью',
+			'Этапы'
+		]
+
+		// Ищем разделы
+		let structured = cleaned
+		sectionKeywords.forEach(keyword => {
+			const regex = new RegExp(`(${keyword}[^.!?]*[.!?])`, 'gi')
+			structured = structured.replace(regex, '\n\n$1')
+		})
+
+		// Очищаем лишние пробелы и переносы
+		structured = structured
+			.replace(/\n\s*\n\s*\n/g, '\n\n') // Убираем множественные переносы
+			.replace(/^\s+|\s+$/gm, '') // Убираем пробелы в начале и конце строк
+			.trim()
+
+		// Если получилось структурированное описание, возвращаем его
+		if (structured.split('\n\n').length > 2) {
+			return structured
+		}
+
+		// Иначе просто очищаем и возвращаем оригинальный текст
+		return cleaned
 	}
 }

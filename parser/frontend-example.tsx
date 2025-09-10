@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { useEffect, useState } from 'react'
 
 // Типы данных (можно вынести в отдельный файл)

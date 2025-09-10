@@ -18,11 +18,23 @@ export abstract class BaseParser {
 		const contentHash = this.textProcessor.createContentHash(title, description)
 		const keywords = this.textProcessor.extractKeywords(`${title} ${description}`, config.keywords)
 
+		// Добавляем информацию о компании в описание, если она есть
+		let enhancedDescription = description
+		if (jobData.company && jobData.company.name) {
+			const companyInfo = []
+			if (jobData.company.name) companyInfo.push(`Компания: ${jobData.company.name}`)
+			if (jobData.company.size) companyInfo.push(`Размер: ${jobData.company.size}`)
+			if (jobData.company.description) companyInfo.push(`Описание: ${jobData.company.description}`)
+			if (jobData.company.website) companyInfo.push(`Сайт: ${jobData.company.website}`)
+
+			enhancedDescription = `${companyInfo.join('. ')}. ${description}`
+		}
+
 		return {
 			source: JobSource.WEBSITE,
 			sourceName: config.name,
 			title,
-			description,
+			description: enhancedDescription,
 			originalUrl: jobData.originalUrl,
 			publishedAt: new Date().toISOString(),
 			contentHash,

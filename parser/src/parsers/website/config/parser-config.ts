@@ -1,5 +1,13 @@
+export enum ParserSite {
+	HH_RU = 'hh.ru',
+	SUPERJOB = 'superjob.ru',
+	HABR_CAREER = 'career.habr.com',
+	ALL = 'all'
+}
+
 export interface ParserConfig {
 	name: string
+	site: ParserSite
 	url: string
 	keywords?: string[]
 	type: 'static' | 'dynamic'
@@ -15,6 +23,7 @@ export interface ParserConfig {
 export const PARSER_CONFIGS: ParserConfig[] = [
 	{
 		name: 'HH.ru',
+		site: ParserSite.HH_RU,
 		url: 'https://hh.ru/search/vacancy?text=frontend+developer&area=1',
 		keywords: ['frontend', 'react', 'vue', 'angular', 'javascript', 'typescript'],
 		type: 'dynamic',
@@ -39,6 +48,7 @@ export const PARSER_CONFIGS: ParserConfig[] = [
 	},
 	{
 		name: 'SuperJob',
+		site: ParserSite.SUPERJOB,
 		url: 'https://www.superjob.ru/vacancy/search/?keywords=frontend+developer&town=1',
 		keywords: ['frontend', 'react', 'vue', 'angular', 'javascript', 'typescript'],
 		type: 'dynamic',
@@ -64,6 +74,7 @@ export const PARSER_CONFIGS: ParserConfig[] = [
 	},
 	{
 		name: 'Habr Career',
+		site: ParserSite.HABR_CAREER,
 		url: 'https://career.habr.com/vacancies?q=frontend+developer&type=all',
 		keywords: ['frontend', 'react', 'vue', 'angular', 'javascript', 'typescript'],
 		type: 'dynamic',
