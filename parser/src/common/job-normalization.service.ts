@@ -26,7 +26,7 @@ export class JobNormalizationService {
 			// Проверяем, была ли зарплата указана в исходном тексте
 			const hasSalaryInText = this.hasSalaryInOriginalText(job.title, job.description)
 
-			// Используем ИИ для нормализации (зарплата уже добавлена в описание в base-parser)
+			// Используем ИИ для нормализации
 			const aiResponse = await this.aiService.normalizeJobWithAI(job.title, job.description)
 
 			if (!aiResponse) {
@@ -152,384 +152,6 @@ export class JobNormalizationService {
 		return mapping[experienceLevel] || ExperienceLevel.MIDDLE
 	}
 
-	private extractCompanyInfo(text: string, description: string): CompanyInfo {
-		const company: CompanyInfo = {
-			name: this.extractCompanyName(text, description)
-		}
-
-		// Извлекаем описание компании
-		const companyDescPatterns = [/компания\s+([^.!?]+)/i, /мы\s+([^.!?]+)/i, /наша\s+компания\s+([^.!?]+)/i]
-
-		for (const pattern of companyDescPatterns) {
-			const match = description.match(pattern)
-			if (match && match[1]) {
-				company.description = match[1].trim()
-				break
-			}
-		}
-
-		// Извлекаем размер компании
-		const sizePatterns = [/(\d+)\s*-\s*(\d+)\s*сотрудников/i, /(\d+)\s*сотрудников/i, /команда\s+из\s+(\d+)/i]
-
-		for (const pattern of sizePatterns) {
-			const match = text.match(pattern)
-			if (match) {
-				company.size = match[0]
-				break
-			}
-		}
-
-		return company
-	}
-
-	private extractCompanyName(text: string, description: string): string {
-		// Паттерны для поиска названия компании
-		const patterns = [
-			/компания\s+([а-яё\w\s&.-]+)/i,
-			/в\s+компании\s+([а-яё\w\s&.-]+)/i,
-			/работа\s+в\s+([а-яё\w\s&.-]+)/i,
-			/ищем\s+в\s+([а-яё\w\s&.-]+)/i
-		]
-
-		for (const pattern of patterns) {
-			const match = description.match(pattern)
-			if (match && match[1]) {
-				return match[1].trim()
-			}
-		}
-
-		// Если не нашли, возвращаем "Не указано"
-		return 'Не указано'
-	}
-
-	private extractSalaryInfo(text: string): SalaryInfo | undefined {
-		const salaryPatterns = [
-			/(\d+)\s*-\s*(\d+)\s*(\d{3})\s*руб/i,
-			/(\d+)\s*-\s*(\d+)\s*тыс/i,
-			/от\s*(\d+)\s*(\d{3})?\s*руб/i,
-			/до\s*(\d+)\s*(\d{3})?\s*руб/i,
-			/(\d+)\s*(\d{3})\s*руб/i
-		]
-
-		for (const pattern of salaryPatterns) {
-			const match = text.match(pattern)
-			if (match) {
-				const salary: SalaryInfo = {
-					currency: 'RUB',
-					period: 'month'
-				}
-
-				if (match[1] && match[2]) {
-					// Диапазон зарплат
-					salary.min = parseInt(match[1]) * (match[2].length === 3 ? 1000 : 1)
-					salary.max = parseInt(match[2]) * (match[2].length === 3 ? 1000 : 1)
-				} else if (match[1]) {
-					// Одна сумма
-					salary.min = parseInt(match[1]) * (match[2]?.length === 3 ? 1000 : 1)
-				}
-
-				return salary
-			}
-		}
-
-		return undefined
-	}
-
-	private extractLocationInfo(text: string): LocationInfo | undefined {
-		const cityPatterns = [
-			/москва/i,
-			/санкт-петербург|спб/i,
-			/екатеринбург/i,
-			/новосибирск/i,
-			/нижний\s+новгород/i,
-			/казань/i,
-			/челябинск/i,
-			/омск/i,
-			/самара/i,
-			/ростов-на-дону/i
-		]
-
-		const location: LocationInfo = {
-			country: 'Россия'
-		}
-
-		// Проверяем на удаленную работу
-		if (text.includes('удаленн') || text.includes('remote') || text.includes('из дома')) {
-			location.remote = true
-		}
-
-		// Ищем город
-		for (const pattern of cityPatterns) {
-			if (pattern.test(text)) {
-				location.city = pattern.source.replace(/[()]/g, '').replace(/\|/g, ' или ')
-				break
-			}
-		}
-
-		return Object.keys(location).length > 1 ? location : undefined
-	}
-
-	private extractRequirements(text: string): Requirements {
-		const requirements: Requirements = {
-			required: [],
-			preferred: [],
-			technical: [],
-			languages: [],
-			frameworks: [],
-			tools: []
-		}
-
-		// Технические навыки
-		const techSkills = [
-			'javascript',
-			'typescript',
-			'python',
-			'java',
-			'c#',
-			'php',
-			'ruby',
-			'go',
-			'rust',
-			'react',
-			'vue',
-			'angular',
-			'node.js',
-			'express',
-			'nestjs',
-			'django',
-			'flask',
-			'mysql',
-			'postgresql',
-			'mongodb',
-			'redis',
-			'elasticsearch',
-			'aws',
-			'docker',
-			'kubernetes',
-			'git',
-			'ci/cd'
-		]
-
-		techSkills.forEach(skill => {
-			if (text.includes(skill)) {
-				requirements.technical?.push(skill)
-			}
-		})
-
-		// Языки программирования
-		const programmingLanguages = [
-			'javascript',
-			'typescript',
-			'python',
-			'java',
-			'c#',
-			'php',
-			'ruby',
-			'go',
-			'rust',
-			'c++',
-			'c',
-			'swift',
-			'kotlin',
-			'scala',
-			'r',
-			'matlab'
-		]
-
-		programmingLanguages.forEach(lang => {
-			if (text.includes(lang)) {
-				requirements.languages?.push(lang)
-			}
-		})
-
-		// Фреймворки
-		const frameworks = [
-			'react',
-			'vue',
-			'angular',
-			'svelte',
-			'ember',
-			'express',
-			'nestjs',
-			'fastapi',
-			'django',
-			'flask',
-			'rails',
-			'spring',
-			'laravel',
-			'symfony',
-			'asp.net'
-		]
-
-		frameworks.forEach(framework => {
-			if (text.includes(framework)) {
-				requirements.frameworks?.push(framework)
-			}
-		})
-
-		// Инструменты
-		const tools = [
-			'git',
-			'docker',
-			'kubernetes',
-			'jenkins',
-			'github actions',
-			'aws',
-			'azure',
-			'gcp',
-			'terraform',
-			'ansible',
-			'figma',
-			'sketch',
-			'photoshop',
-			'illustrator'
-		]
-
-		tools.forEach(tool => {
-			if (text.includes(tool)) {
-				requirements.tools?.push(tool)
-			}
-		})
-
-		// Общие требования
-		const commonRequirements = [
-			'опыт работы',
-			'знание',
-			'умение',
-			'навыки',
-			'понимание',
-			'ответственность',
-			'коммуникабельность',
-			'командная работа'
-		]
-
-		commonRequirements.forEach(req => {
-			if (text.includes(req)) {
-				requirements.required.push(req)
-			}
-		})
-
-		return requirements
-	}
-
-	private extractBenefits(text: string): Benefits {
-		const benefits: Benefits = {
-			social: [],
-			bonuses: [],
-			conditions: [],
-			development: []
-		}
-
-		// Социальный пакет
-		const socialBenefits = [
-			'медицинская страховка',
-			'дмс',
-			'отпуск',
-			'больничный',
-			'пенсионные взносы',
-			'материнский капитал',
-			'детский сад'
-		]
-
-		socialBenefits.forEach(benefit => {
-			if (text.includes(benefit)) {
-				benefits.social?.push(benefit)
-			}
-		})
-
-		// Бонусы
-		const bonuses = [
-			'премия',
-			'бонус',
-			'комиссия',
-			'процент',
-			'акции',
-			'опционы',
-			'13-я зарплата',
-			'годовая премия'
-		]
-
-		bonuses.forEach(bonus => {
-			if (text.includes(bonus)) {
-				benefits.bonuses?.push(bonus)
-			}
-		})
-
-		// Условия работы
-		const conditions = [
-			'гибкий график',
-			'удаленная работа',
-			'офис',
-			'коворкинг',
-			'командировки',
-			'переработки',
-			'сверхурочные'
-		]
-
-		conditions.forEach(condition => {
-			if (text.includes(condition)) {
-				benefits.conditions?.push(condition)
-			}
-		})
-
-		// Развитие
-		const development = [
-			'обучение',
-			'курсы',
-			'конференции',
-			'сертификация',
-			'менторство',
-			'карьерный рост',
-			'повышение квалификации'
-		]
-
-		development.forEach(dev => {
-			if (text.includes(dev)) {
-				benefits.development?.push(dev)
-			}
-		})
-
-		return benefits
-	}
-
-	private determineWorkType(text: string): WorkType {
-		if (text.includes('удаленн') || text.includes('remote')) {
-			return WorkType.REMOTE
-		}
-		if (text.includes('гибридн') || text.includes('hybrid')) {
-			return WorkType.HYBRID
-		}
-		if (text.includes('стажировк') || text.includes('intern')) {
-			return WorkType.INTERNSHIP
-		}
-		if (text.includes('частичн') || text.includes('part-time')) {
-			return WorkType.PART_TIME
-		}
-		if (text.includes('контракт') || text.includes('contract')) {
-			return WorkType.CONTRACT
-		}
-		return WorkType.FULL_TIME
-	}
-
-	private determineExperienceLevel(text: string): ExperienceLevel | undefined {
-		if (text.includes('без опыта') || text.includes('junior') || text.includes('стажер')) {
-			return ExperienceLevel.NO_EXPERIENCE
-		}
-		if (text.includes('1-3 года') || text.includes('1-2 года') || text.includes('до 3 лет')) {
-			return ExperienceLevel.JUNIOR
-		}
-		if (text.includes('3-5 лет') || text.includes('от 3 лет') || text.includes('middle')) {
-			return ExperienceLevel.MIDDLE
-		}
-		if (text.includes('5+ лет') || text.includes('от 5 лет') || text.includes('senior')) {
-			return ExperienceLevel.SENIOR
-		}
-		if (text.includes('lead') || text.includes('руководитель') || text.includes('team lead')) {
-			return ExperienceLevel.LEAD
-		}
-		return undefined
-	}
-
 	private calculateQualityScore(data: {
 		company: CompanyInfo
 		salary?: SalaryInfo
@@ -559,10 +181,7 @@ export class JobNormalizationService {
 	}
 
 	private createShortDescription(description: string): string {
-		// Извлекаем предложения с ключевыми обязанностями и технологиями
 		const sentences = description.split(/[.!?]+/).filter(s => s.trim().length > 10)
-
-		// Ищем предложения с ключевыми словами обязанностей и технологий
 		const dutyKeywords = [
 			'разработка',
 			'создание',
@@ -590,16 +209,7 @@ export class JobNormalizationService {
 				dutyKeywords.some(keyword => sentence.toLowerCase().includes(keyword))
 		)
 
-		// Берем первые 3-4 релевантных предложения или первые 3-4 предложения
 		const selectedSentences = relevantSentences.length > 0 ? relevantSentences.slice(0, 3) : sentences.slice(0, 3)
-
-		// Если предложения слишком короткие, добавляем еще
-		if (selectedSentences.length < 3) {
-			const additionalSentences = sentences
-				.filter(s => !selectedSentences.includes(s))
-				.slice(0, 3 - selectedSentences.length)
-			selectedSentences.push(...additionalSentences)
-		}
 
 		return (
 			selectedSentences
@@ -610,16 +220,13 @@ export class JobNormalizationService {
 	}
 
 	private createFullDescription(description: string): string {
-		// Очищаем и структурируем описание
 		const cleaned = description
-			.replace(/\s+/g, ' ') // Убираем лишние пробелы
-			.replace(/([.!?])\s*([А-ЯЁ])/g, '$1 $2') // Добавляем пробелы после точек
-			.replace(/([а-яё])([А-ЯЁ])/g, '$1. $2') // Добавляем точки между предложениями
-			.replace(/([а-яё])([А-ЯЁ])/g, '$1. $2') // Дополнительная очистка
-			.replace(/([.!?])([А-ЯЁ])/g, '$1 $2') // Пробелы после знаков препинания
+			.replace(/\s+/g, ' ')
+			.replace(/([.!?])\s*([А-ЯЁ])/g, '$1 $2')
+			.replace(/([а-яё])([А-ЯЁ])/g, '$1. $2')
+			.replace(/([.!?])([А-ЯЁ])/g, '$1 $2')
 			.trim()
 
-		// Разбиваем на абзацы по ключевым словам разделов
 		const sectionKeywords = [
 			'О компании',
 			'О команде',
@@ -642,42 +249,32 @@ export class JobNormalizationService {
 			'Этапы'
 		]
 
-		// Ищем разделы
 		let structured = cleaned
 		sectionKeywords.forEach(keyword => {
 			const regex = new RegExp(`(${keyword}[^.!?]*[.!?])`, 'gi')
 			structured = structured.replace(regex, '\n\n$1')
 		})
 
-		// Очищаем лишние пробелы и переносы
 		structured = structured
-			.replace(/\n\s*\n\s*\n/g, '\n\n') // Убираем множественные переносы
-			.replace(/^\s+|\s+$/gm, '') // Убираем пробелы в начале и конце строк
+			.replace(/\n\s*\n\s*\n/g, '\n\n')
+			.replace(/^\s+|\s+$/gm, '')
 			.trim()
 
-		// Если получилось структурированное описание, возвращаем его
-		if (structured.split('\n\n').length > 2) {
-			return structured
-		}
-
-		// Иначе просто очищаем и возвращаем оригинальный текст
-		return cleaned
+		return structured.split('\n\n').length > 2 ? structured : cleaned
 	}
 
 	/**
 	 * Проверяет, есть ли упоминание зарплаты в исходном тексте
-	 * Ищет в тексте описания или в HTML-блоках
 	 */
 	private hasSalaryInOriginalText(title: string, description: string): boolean {
 		const text = `${title} ${description}`.toLowerCase()
 
-		// 1. Ищем блок с заголовком "Зарплата" в HTML (если описание содержит HTML)
+		// Ищем блок с заголовком "Зарплата" в HTML
 		const salaryBlockMatch = text.match(
 			/<div[^>]*class="[^"]*content-section[^"]*"[^>]*>.*?<h2[^>]*class="[^"]*content-section__title[^"]*"[^>]*>.*?зарплата.*?<\/h2>.*?<\/div>/is
 		)
 
 		if (salaryBlockMatch) {
-			// Если нашли блок с зарплатой, проверяем есть ли в нем цифры с валютой
 			const salaryBlock = salaryBlockMatch[0]
 			const salaryPatterns = [
 				// Рубли
@@ -687,14 +284,12 @@ export class JobNormalizationService {
 				/до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 				/\d+\s*-\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 				/от\s*\d+\s*до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
-
 				// Доллары
 				/\d+\s*(\$|долларов|usd)/,
 				/от\s*\d+\s*(\$|долларов|usd)/,
 				/до\s*\d+\s*(\$|долларов|usd)/,
 				/\d+\s*-\s*\d+\s*(\$|долларов|usd)/,
 				/от\s*\d+\s*до\s*\d+\s*(\$|долларов|usd)/,
-
 				// Евро
 				/\d+\s*(€|евро|eur)/,
 				/от\s*\d+\s*(€|евро|eur)/,
@@ -702,11 +297,10 @@ export class JobNormalizationService {
 				/\d+\s*-\s*\d+\s*(€|евро|eur)/,
 				/от\s*\d+\s*до\s*\d+\s*(€|евро|eur)/
 			]
-
 			return salaryPatterns.some(pattern => pattern.test(salaryBlock))
 		}
 
-		// 2. Ищем в JSON-LD структуре (если описание содержит HTML)
+		// Ищем в JSON-LD структуре
 		const jsonLdMatch = text.match(/<script[^>]*type="application\/ld\+json"[^>]*>.*?<\/script>/is)
 		if (jsonLdMatch) {
 			try {
@@ -721,7 +315,7 @@ export class JobNormalizationService {
 			}
 		}
 
-		// 3. Ищем зарплату в тексте описания (для случаев, когда описание уже извлечено как текст)
+		// Ищем зарплату в тексте описания
 		const salaryPatterns = [
 			// Рубли
 			/\d+\s*(тыс|тысяч|k)\s*(руб|рублей|₽)/,
@@ -730,14 +324,12 @@ export class JobNormalizationService {
 			/до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 			/\d+\s*-\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 			/от\s*\d+\s*до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
-
 			// Доллары
 			/\d+\s*(\$|долларов|usd)/,
 			/от\s*\d+\s*(\$|долларов|usd)/,
 			/до\s*\d+\s*(\$|долларов|usd)/,
 			/\d+\s*-\s*\d+\s*(\$|долларов|usd)/,
 			/от\s*\d+\s*до\s*\d+\s*(\$|долларов|usd)/,
-
 			// Евро
 			/\d+\s*(€|евро|eur)/,
 			/от\s*\d+\s*(€|евро|eur)/,
@@ -754,20 +346,11 @@ export class JobNormalizationService {
 	 */
 	private isValidSalary(salary: any): boolean {
 		if (!salary) return false
-
-		// Проверяем, что есть хотя бы min или max
 		if (!salary.min && !salary.max) return false
-
-		// Проверяем, что значения числовые и разумные
 		if (salary.min && (typeof salary.min !== 'number' || salary.min < 0 || salary.min > 10000000)) return false
 		if (salary.max && (typeof salary.max !== 'number' || salary.max < 0 || salary.max > 10000000)) return false
-
-		// Проверяем, что max больше min
 		if (salary.min && salary.max && salary.max < salary.min) return false
-
-		// Проверяем валюту
 		if (salary.currency && !['RUB', 'USD', 'EUR'].includes(salary.currency)) return false
-
 		return true
 	}
 }
