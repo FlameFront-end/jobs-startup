@@ -18,22 +18,14 @@ export class JobNormalizationService {
 
 	constructor(private readonly aiService: AIService) {}
 
-	/**
-	 * Нормализует вакансию в структурированный формат с помощью ИИ
-	 */
 	async normalizeJob(job: CreateJobDto, jobId?: string): Promise<NormalizedJobDto | null> {
 		try {
-			// Проверяем, была ли зарплата указана в исходном тексте
 			const hasSalaryInText = this.hasSalaryInOriginalText(job.title, job.description)
-
-			// Используем ИИ для нормализации
 			const aiResponse = await this.aiService.normalizeJobWithAI(job.title, job.description)
 
 			if (!aiResponse) {
 				return null
 			}
-
-			// Преобразуем ответ ИИ в наш формат
 			const company: CompanyInfo = {
 				name: aiResponse.company.name,
 				description: aiResponse.company.description,
@@ -41,7 +33,6 @@ export class JobNormalizationService {
 				size: aiResponse.company.size
 			}
 
-			// Дополнительная проверка: AI не должен придумывать зарплату
 			const salary: SalaryInfo | undefined =
 				aiResponse.salary && hasSalaryInText && this.isValidSalary(aiResponse.salary)
 					? {
@@ -85,7 +76,6 @@ export class JobNormalizationService {
 				? this.mapExperienceLevel(aiResponse.experienceLevel)
 				: undefined
 
-			// Вычисляем качество данных
 			const qualityScore = this.calculateQualityScore({
 				company,
 				salary,
@@ -96,7 +86,6 @@ export class JobNormalizationService {
 				experienceLevel
 			})
 
-			// Если качество слишком низкое, пропускаем вакансию
 			if (qualityScore < 30) {
 				return null
 			}
@@ -163,18 +152,15 @@ export class JobNormalizationService {
 	}): number {
 		let score = 0
 
-		// Базовые поля (обязательные)
 		if (data.company.name && data.company.name !== null) score += 20
 		if (data.requirements.required.length > 0) score += 20
 		if (data.workType) score += 10
 
-		// Дополнительные поля
 		if (data.salary) score += 15
 		if (data.location) score += 10
 		if (data.experienceLevel) score += 10
 		if (data.benefits && Object.values(data.benefits).some(arr => arr && arr.length > 0)) score += 10
 
-		// Технические навыки
 		if (data.requirements.technical && data.requirements.technical.length > 0) score += 5
 
 		return Math.min(score, 100)
@@ -263,13 +249,9 @@ export class JobNormalizationService {
 		return structured.split('\n\n').length > 2 ? structured : cleaned
 	}
 
-	/**
-	 * Проверяет, есть ли упоминание зарплаты в исходном тексте
-	 */
 	private hasSalaryInOriginalText(title: string, description: string): boolean {
 		const text = `${title} ${description}`.toLowerCase()
 
-		// Ищем блок с заголовком "Зарплата" в HTML
 		const salaryBlockMatch = text.match(
 			/<div[^>]*class="[^"]*content-section[^"]*"[^>]*>.*?<h2[^>]*class="[^"]*content-section__title[^"]*"[^>]*>.*?зарплата.*?<\/h2>.*?<\/div>/is
 		)
@@ -277,20 +259,17 @@ export class JobNormalizationService {
 		if (salaryBlockMatch) {
 			const salaryBlock = salaryBlockMatch[0]
 			const salaryPatterns = [
-				// Рубли
 				/\d+\s*(тыс|тысяч|k)\s*(руб|рублей|₽)/,
 				/\d+\s*(руб|рублей|₽)/,
 				/от\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 				/до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 				/\d+\s*-\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 				/от\s*\d+\s*до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
-				// Доллары
 				/\d+\s*(\$|долларов|usd)/,
 				/от\s*\d+\s*(\$|долларов|usd)/,
 				/до\s*\d+\s*(\$|долларов|usd)/,
 				/\d+\s*-\s*\d+\s*(\$|долларов|usd)/,
 				/от\s*\d+\s*до\s*\d+\s*(\$|долларов|usd)/,
-				// Евро
 				/\d+\s*(€|евро|eur)/,
 				/от\s*\d+\s*(€|евро|eur)/,
 				/до\s*\d+\s*(€|евро|eur)/,
@@ -299,8 +278,6 @@ export class JobNormalizationService {
 			]
 			return salaryPatterns.some(pattern => pattern.test(salaryBlock))
 		}
-
-		// Ищем в JSON-LD структуре
 		const jsonLdMatch = text.match(/<script[^>]*type="application\/ld\+json"[^>]*>.*?<\/script>/is)
 		if (jsonLdMatch) {
 			try {
@@ -315,22 +292,18 @@ export class JobNormalizationService {
 			}
 		}
 
-		// Ищем зарплату в тексте описания
 		const salaryPatterns = [
-			// Рубли
 			/\d+\s*(тыс|тысяч|k)\s*(руб|рублей|₽)/,
 			/\d+\s*(руб|рублей|₽)/,
 			/от\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 			/до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 			/\d+\s*-\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
 			/от\s*\d+\s*до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
-			// Доллары
 			/\d+\s*(\$|долларов|usd)/,
 			/от\s*\d+\s*(\$|долларов|usd)/,
 			/до\s*\d+\s*(\$|долларов|usd)/,
 			/\d+\s*-\s*\d+\s*(\$|долларов|usd)/,
 			/от\s*\d+\s*до\s*\d+\s*(\$|долларов|usd)/,
-			// Евро
 			/\d+\s*(€|евро|eur)/,
 			/от\s*\d+\s*(€|евро|eur)/,
 			/до\s*\d+\s*(€|евро|eur)/,
@@ -341,9 +314,6 @@ export class JobNormalizationService {
 		return salaryPatterns.some(pattern => pattern.test(text))
 	}
 
-	/**
-	 * Проверяет, что зарплата валидна и не придумана AI
-	 */
 	private isValidSalary(salary: any): boolean {
 		if (!salary) return false
 		if (!salary.min && !salary.max) return false

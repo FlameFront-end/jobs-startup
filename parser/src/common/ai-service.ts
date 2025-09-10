@@ -50,15 +50,12 @@ export class AIService {
 	private readonly folderId = process.env.YANDEX_FOLDER_ID
 	private gptUnavailableLogged = false
 
-	// Ограничения на запросы к ИИ
 	private requestCount = 0
 	private lastResetTime = Date.now()
-	private readonly MAX_REQUESTS_PER_MINUTE = 20 // Максимум 20 запросов в минуту
-	private readonly REQUEST_WINDOW = 60 * 1000 // 1 минута
+	private readonly MAX_REQUESTS_PER_MINUTE = 20
+	private readonly REQUEST_WINDOW = 60 * 1000
 
-	constructor() {
-		// Проверяем конфигурацию только при ошибках
-	}
+	constructor() {}
 
 	async normalizeJobWithAI(title: string, description: string): Promise<AIResponse | null> {
 		try {
@@ -67,7 +64,6 @@ export class AIService {
 				return null
 			}
 
-			// Проверяем лимиты запросов
 			if (!this.checkRequestLimits()) {
 				return null
 			}
@@ -85,7 +81,6 @@ export class AIService {
 				}
 			}
 
-			// Если все попытки неудачны
 			this.logger.error(`ИИ не смог обработать вакансию "${title}" после ${maxRetries} попыток`)
 			return null
 		} catch (error) {
@@ -161,18 +156,15 @@ export class AIService {
 	private checkRequestLimits(): boolean {
 		const now = Date.now()
 
-		// Сбрасываем счетчик если прошла минута
 		if (now - this.lastResetTime >= this.REQUEST_WINDOW) {
 			this.requestCount = 0
 			this.lastResetTime = now
 		}
 
-		// Проверяем лимит
 		if (this.requestCount >= this.MAX_REQUESTS_PER_MINUTE) {
 			return false
 		}
 
-		// Увеличиваем счетчик
 		this.requestCount++
 		return true
 	}
@@ -182,16 +174,10 @@ export class AIService {
 	}
 
 	private cleanMarkdownFromResponse(response: string): string {
-		// Удаляем markdown блоки кода (```json ... ```)
 		let cleaned = response.replace(/```json\s*/g, '').replace(/```\s*/g, '')
-
-		// Удаляем возможные markdown блоки без указания языка
 		cleaned = cleaned.replace(/```\s*([\s\S]*?)\s*```/g, '$1')
-
-		// Удаляем лишние пробелы и переносы строк в начале и конце
 		cleaned = cleaned.trim()
 
-		// Ищем JSON объект в тексте (между первыми { и последними })
 		const jsonStart = cleaned.indexOf('{')
 		const jsonEnd = cleaned.lastIndexOf('}')
 
@@ -199,9 +185,7 @@ export class AIService {
 			cleaned = cleaned.substring(jsonStart, jsonEnd + 1)
 		}
 
-		// Дополнительная очистка - удаляем возможные остатки markdown
 		cleaned = cleaned.replace(/^```.*?\n/g, '').replace(/\n```.*?$/g, '')
-
 		return cleaned
 	}
 

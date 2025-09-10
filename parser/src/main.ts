@@ -11,16 +11,9 @@ async function bootstrap() {
 		logger: ['error', 'warn', 'log', 'debug', 'verbose']
 	})
 
-	// Winston logger
 	app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))
-
-	// Security
 	app.use(helmet())
-
-	// CORS
 	app.enableCors()
-
-	// Global validation pipe
 	app.useGlobalPipes(
 		new ValidationPipe({
 			whitelist: true,
@@ -29,11 +22,8 @@ async function bootstrap() {
 		})
 	)
 
-	// API prefix
 	const apiPrefix = process.env.API_PREFIX || 'api'
 	app.setGlobalPrefix(apiPrefix)
-
-	// Swagger documentation
 	const config = new DocumentBuilder()
 		.setTitle('Job Parser Service API')
 		.setDescription('API для автоматического сбора вакансий с сайтов и Telegram-каналов')

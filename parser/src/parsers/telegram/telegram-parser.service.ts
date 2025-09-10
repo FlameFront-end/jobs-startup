@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { TextProcessorService } from '../../common/text-processor.service'
-import { CreateJobDto, JobSource } from '../../database/dto/job.dto'
+import { CreateJobDto } from '../../database/dto/job.dto'
 import { JobsService } from '../../jobs/jobs.service'
 
 export interface TelegramChannel {
@@ -32,7 +32,6 @@ export class TelegramParserService {
 	}
 
 	private initializeChannels() {
-		// Пример конфигурации каналов
 		this.channels = [
 			{
 				id: 'example_channel_id',
@@ -61,15 +60,12 @@ export class TelegramParserService {
 			}
 		}
 
-		// Фильтруем дубликаты перед сохранением
 		let savedJobs = 0
 		let skippedJobs = 0
 		if (allJobs.length > 0) {
-			// Проверяем дубликаты батчево
 			const contentHashes = allJobs.map(job => job.contentHash)
 			const existingHashes = await this.jobsService.checkJobsExist(contentHashes)
 
-			// Фильтруем только новые вакансии
 			const newJobs = allJobs.filter(job => !existingHashes.has(job.contentHash))
 			skippedJobs = allJobs.length - newJobs.length
 
@@ -89,7 +85,6 @@ export class TelegramParserService {
 			errorMessage: totalErrors > 0 ? `Failed to parse ${totalErrors} channels` : undefined
 		}
 
-		// Подробный лог результатов парсинга
 		this.logger.log(`📊 TELEGRAM PARSING COMPLETED:`)
 		this.logger.log(`   ⏱️  Duration: ${duration}ms`)
 		this.logger.log(`   📋 Total jobs found: ${allJobs.length}`)
@@ -102,24 +97,7 @@ export class TelegramParserService {
 	}
 
 	private async parseChannel(channel: TelegramChannel): Promise<CreateJobDto[]> {
-		// Временная заглушка - в реальном проекте здесь будет интеграция с Telegram API
-		this.logger.warn('Telegram parser is not fully implemented - using mock data')
-
-		// Возвращаем пример данных для демонстрации
-		return [
-			{
-				source: JobSource.TELEGRAM,
-				sourceName: channel.name,
-				title: 'Frontend Developer (React)',
-				description: 'Ищем опытного Frontend разработчика на React для работы в команде',
-				originalUrl: `https://t.me/${channel.username}/123`,
-				publishedAt: new Date().toISOString(),
-				contentHash: this.textProcessor.createContentHash(
-					'Frontend Developer (React)',
-					'Ищем опытного Frontend разработчика на React для работы в команде'
-				),
-				keywords: this.textProcessor.extractKeywords('Frontend Developer React разработчик', channel.keywords)
-			}
-		]
+		this.logger.warn(`Telegram parser is not fully implemented - using mock data ${channel.name}`)
+		return []
 	}
 }

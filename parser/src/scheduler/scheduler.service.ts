@@ -20,10 +20,7 @@ export class SchedulerService {
 	@Cron(CronExpression.EVERY_30_MINUTES)
 	async handleWebsiteParsing() {
 		try {
-			// Получаем настройку сайта из переменных окружения
 			const targetSite = this.configService.get<string>('PARSER_TARGET_SITE', ParserSite.ALL) as ParserSite
-
-			// Валидируем сайт
 			const validSite = Object.values(ParserSite).includes(targetSite) ? targetSite : ParserSite.ALL
 
 			if (validSite !== targetSite) {

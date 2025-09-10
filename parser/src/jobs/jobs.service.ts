@@ -45,22 +45,17 @@ export class JobsService {
 		try {
 			const where: any = {}
 
-			// Фильтр по источнику
 			if (source) {
 				where.source = source
 			}
 
-			// Фильтр по названию источника
 			if (sourceName) {
 				where.sourceName = Like(`%${sourceName}%`)
 			}
 
-			// Фильтр по ключевым словам - ищем пересечение массивов
 			if (keywords && keywords.length > 0) {
 				where.keywords = In(keywords)
 			}
-
-			// Фильтр по датам с валидацией
 			if (dateFrom || dateTo) {
 				const dateFromObj = dateFrom ? this.parseDate(dateFrom) : null
 				const dateToObj = dateTo ? this.parseDate(dateTo) : null
@@ -103,9 +98,6 @@ export class JobsService {
 		return job as JobResponseDto | null
 	}
 
-	/**
-	 * Получает полную нормализованную вакансию по ID
-	 */
 	async getNormalizedJobById(id: string): Promise<NormalizedJobDto | null> {
 		const job = await this.jobRepository.findOne({
 			where: {
@@ -170,7 +162,6 @@ export class JobsService {
 
 	async saveJob(jobData: CreateJobDto): Promise<boolean> {
 		try {
-			// Проверяем, не существует ли уже нормализованная версия
 			const existingJob = await this.jobRepository.findOne({
 				where: { contentHash: jobData.contentHash },
 				select: ['id', 'isNormalized']
@@ -180,37 +171,29 @@ export class JobsService {
 				if (existingJob.isNormalized) {
 					return false
 				} else {
-					// Вакансия есть, но не нормализована - удаляем старую и создаем новую
 					await this.jobRepository.delete(existingJob.id)
 				}
 			}
 
-			// Создаем объект для сохранения (без нормализованных данных)
 			const jobToSave = this.jobRepository.create({
 				...jobData,
 				isNormalized: false
 			})
 
-			// Сохраняем и получаем ID
 			const savedJob = await this.jobRepository.save(jobToSave)
-
-			// Нормализуем вакансию с полученным ID
 			const normalizedJob = await this.jobNormalizationService.normalizeJob(jobData, savedJob.id)
 
 			if (!normalizedJob) {
-				// Если нормализация не удалась, удаляем запись
 				await this.jobRepository.delete(savedJob.id)
 				return false
 			}
 
-			// Обновляем запись с нормализованными данными
 			await this.jobRepository.update(savedJob.id, {
 				normalizedData: normalizedJob as any,
 				qualityScore: normalizedJob.qualityScore,
 				isNormalized: true
 			})
 
-			// Добавляем в кэш дубликатов
 			this.duplicateCache.add(jobData.contentHash)
 
 			return true
@@ -220,9 +203,6 @@ export class JobsService {
 		}
 	}
 
-	/**
-	 * Проверяет, существует ли вакансия с таким contentHash
-	 */
 	async jobExists(contentHash: string): Promise<boolean> {
 		const existingJob = await this.jobRepository.findOne({
 			where: { contentHash },
@@ -231,22 +211,17 @@ export class JobsService {
 		return !!existingJob
 	}
 
-	/**
-	 * Проверяет существование множественных вакансий с кэшированием
-	 */
 	async checkJobsExist(contentHashes: string[]): Promise<Set<string>> {
 		if (contentHashes.length === 0) {
 			return new Set()
 		}
 
-		// Проверяем кэш
 		const now = Date.now()
 		if (now > this.cacheExpiry) {
 			this.duplicateCache.clear()
 			this.cacheExpiry = now + this.CACHE_TTL
 		}
 
-		// Фильтруем уже известные дубликаты
 		const knownDuplicates = contentHashes.filter(hash => this.duplicateCache.has(hash))
 		const unknownHashes = contentHashes.filter(hash => !this.duplicateCache.has(hash))
 
@@ -254,16 +229,13 @@ export class JobsService {
 			return new Set(knownDuplicates)
 		}
 
-		// Проверяем неизвестные хеши в БД
 		const existingJobs = await this.jobRepository.find({
 			where: { contentHash: In(unknownHashes) },
 			select: ['contentHash']
 		})
 
-		// Обновляем кэш
 		existingJobs.forEach(job => this.duplicateCache.add(job.contentHash))
 
-		// Возвращаем все дубликаты
 		const allDuplicates = [...knownDuplicates, ...existingJobs.map(job => job.contentHash)]
 		return new Set(allDuplicates)
 	}
@@ -273,7 +245,6 @@ export class JobsService {
 			return { saved: 0, skipped: 0 }
 		}
 
-		// Батчевая проверка дубликатов
 		const contentHashes = jobs.map(job => job.contentHash)
 		const existingJobs = await this.jobRepository.find({
 			where: { contentHash: In(contentHashes) },
@@ -287,7 +258,6 @@ export class JobsService {
 			return { saved: 0, skipped: jobs.length }
 		}
 
-		// Обрабатываем только новые вакансии
 		let saved = 0
 		let skipped = 0
 
@@ -335,9 +305,6 @@ export class JobsService {
 		}
 	}
 
-	/**
-	 * Получает минимальные данные нормализованных вакансий для списка
-	 */
 	async getMinimalNormalizedJobs(query: JobQueryDto & { minQuality?: number }): Promise<{
 		jobs: MinimalJobDto[]
 		total: number
@@ -393,7 +360,6 @@ export class JobsService {
 				this.jobRepository.count({ where })
 			])
 
-			// Преобразуем в минимальный формат
 			const minimalJobs = jobs
 				.filter(job => job.normalizedData)
 				.map(job => {
@@ -430,9 +396,6 @@ export class JobsService {
 		}
 	}
 
-	/**
-	 * Получает полные нормализованные вакансии
-	 */
 	async getNormalizedJobs(query: JobQueryDto & { minQuality?: number }): Promise<{
 		jobs: NormalizedJobDto[]
 		total: number
@@ -446,22 +409,19 @@ export class JobsService {
 				qualityScore: MoreThanOrEqual(minQuality)
 			}
 
-			// Фильтр по источнику
 			if (source) {
 				where.source = source
 			}
 
-			// Фильтр по названию источника
+			// Фильтр по  источника
 			if (sourceName) {
 				where.sourceName = Like(`%${sourceName}%`)
 			}
 
-			// Фильтр по ключевым словам
 			if (keywords && keywords.length > 0) {
 				where.keywords = In(keywords)
 			}
 
-			// Фильтр по датам
 			if (dateFrom || dateTo) {
 				const dateFromObj = dateFrom ? this.parseDate(dateFrom) : null
 				const dateToObj = dateTo ? this.parseDate(dateTo) : null
@@ -488,7 +448,6 @@ export class JobsService {
 				this.jobRepository.count({ where })
 			])
 
-			// Преобразуем в нормализованный формат
 			const normalizedJobs = jobs
 				.filter(job => job.normalizedData)
 				.map(job => job.normalizedData as NormalizedJobDto)
@@ -504,9 +463,6 @@ export class JobsService {
 		}
 	}
 
-	/**
-	 * Получает статистику по качеству данных
-	 */
 	async getQualityStats(): Promise<{
 		totalJobs: number
 		normalizedJobs: number

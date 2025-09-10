@@ -33,7 +33,6 @@ export class WebsiteParserService {
 		let totalErrors = 0
 		const startTime = Date.now()
 
-		// Получаем конфигурации для парсинга
 		const configsToParse =
 			site === ParserSite.ALL ? PARSER_CONFIGS : PARSER_CONFIGS.filter(config => config.site === site)
 
@@ -57,15 +56,12 @@ export class WebsiteParserService {
 			}
 		}
 
-		// Фильтруем дубликаты перед сохранением
 		let savedJobs = 0
 		let skippedJobs = 0
 		if (allJobs.length > 0) {
-			// Проверяем дубликаты батчево
 			const contentHashes = allJobs.map(job => job.contentHash)
 			const existingHashes = await this.jobsService.checkJobsExist(contentHashes)
 
-			// Фильтруем только новые вакансии
 			const newJobs = allJobs.filter(job => !existingHashes.has(job.contentHash))
 			skippedJobs = allJobs.length - newJobs.length
 
@@ -85,7 +81,6 @@ export class WebsiteParserService {
 			errorMessage: totalErrors > 0 ? `Failed to parse ${totalErrors} websites` : undefined
 		}
 
-		// Подробный лог результатов парсинга
 		this.logger.log(`📊 WEBSITE PARSING COMPLETED for ${site}:`)
 		this.logger.log(`   ⏱️  Duration: ${duration}ms`)
 		this.logger.log(`   📋 Total jobs found: ${allJobs.length}`)
