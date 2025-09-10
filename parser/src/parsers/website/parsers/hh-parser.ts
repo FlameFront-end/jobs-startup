@@ -15,7 +15,9 @@ export class HHParser extends BaseParser {
 		await this.waitForContent(page, '[data-qa*="vacancy-serp__vacancy"]')
 
 		const jobs = await this.extractJobsFromPage(page, config)
-		const processedJobs = jobs.map(job => this.processJobData(job, config))
+		const processedJobs = jobs
+			.map(job => this.processJobData(job, config))
+			.filter(job => job !== null) as CreateJobDto[]
 
 		return processedJobs
 	}

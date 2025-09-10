@@ -57,13 +57,25 @@ export class WebsiteParserService {
 			}
 		}
 
-		// Сохраняем все вакансии
+		// Фильтруем дубликаты перед сохранением
 		let savedJobs = 0
 		let skippedJobs = 0
 		if (allJobs.length > 0) {
-			const result = await this.jobsService.saveJobs(allJobs)
-			savedJobs = result.saved
-			skippedJobs = result.skipped
+			// Проверяем дубликаты батчево
+			const contentHashes = allJobs.map(job => job.contentHash)
+			const existingHashes = await this.jobsService.checkJobsExist(contentHashes)
+
+			// Фильтруем только новые вакансии
+			const newJobs = allJobs.filter(job => !existingHashes.has(job.contentHash))
+			skippedJobs = allJobs.length - newJobs.length
+
+			this.logger.log(`Найдено ${allJobs.length} вакансий, ${skippedJobs} дубликатов, ${newJobs.length} новых`)
+
+			if (newJobs.length > 0) {
+				const result = await this.jobsService.saveJobs(newJobs)
+				savedJobs = result.saved
+				skippedJobs += result.skipped
+			}
 		}
 
 		const duration = Date.now() - startTime

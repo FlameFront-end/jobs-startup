@@ -46,9 +46,15 @@ interface AIResponse {
 export class AIService {
 	private readonly logger = new Logger(AIService.name)
 	private readonly yandexApiUrl = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion'
-	private readonly iamToken = process.env.YANDEX_IAM_TOKEN // ИСПРАВЛЕНО: правильное название переменной
+	private readonly iamToken = process.env.YANDEX_IAM_TOKEN
 	private readonly folderId = process.env.YANDEX_FOLDER_ID
 	private gptUnavailableLogged = false
+
+	// Ограничения на запросы к ИИ
+	private requestCount = 0
+	private lastResetTime = Date.now()
+	private readonly MAX_REQUESTS_PER_MINUTE = 20 // Максимум 20 запросов в минуту
+	private readonly REQUEST_WINDOW = 60 * 1000 // 1 минута
 
 	constructor() {
 		this.logConfiguration()
@@ -76,6 +82,12 @@ export class AIService {
 
 		if (!this.folderId) {
 			this.logger.error('YANDEX_FOLDER_ID не настроен!')
+			return null
+		}
+
+		// Проверяем лимиты запросов
+		if (!this.checkRequestLimits()) {
+			this.logger.warn(`Превышен лимит запросов к ИИ для "${title}"`)
 			return null
 		}
 
@@ -152,9 +164,36 @@ export class AIService {
 
 		// Очищаем ответ от markdown разметки
 		const cleanedResponse = this.cleanMarkdownFromResponse(aiResponse)
-		const normalizedData = JSON.parse(cleanedResponse) as AIResponse
-		this.logger.debug('YandexGPT успешно обработал вакансию')
-		return this.validateAndCleanResponse(normalizedData)
+		this.logger.debug(`Cleaned response: ${cleanedResponse.substring(0, 500)}...`)
+
+		try {
+			const normalizedData = JSON.parse(cleanedResponse) as AIResponse
+			this.logger.debug('YandexGPT успешно обработал вакансию')
+			return this.validateAndCleanResponse(normalizedData)
+		} catch (parseError) {
+			this.logger.error(`Ошибка парсинга JSON: ${parseError.message}`)
+			this.logger.error(`Ответ AI: ${cleanedResponse}`)
+			throw parseError
+		}
+	}
+
+	private checkRequestLimits(): boolean {
+		const now = Date.now()
+
+		// Сбрасываем счетчик если прошла минута
+		if (now - this.lastResetTime >= this.REQUEST_WINDOW) {
+			this.requestCount = 0
+			this.lastResetTime = now
+		}
+
+		// Проверяем лимит
+		if (this.requestCount >= this.MAX_REQUESTS_PER_MINUTE) {
+			return false
+		}
+
+		// Увеличиваем счетчик
+		this.requestCount++
+		return true
 	}
 
 	private sleep(ms: number): Promise<void> {
@@ -178,6 +217,9 @@ export class AIService {
 		if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
 			cleaned = cleaned.substring(jsonStart, jsonEnd + 1)
 		}
+
+		// Дополнительная очистка - удаляем возможные остатки markdown
+		cleaned = cleaned.replace(/^```.*?\n/g, '').replace(/\n```.*?$/g, '')
 
 		return cleaned
 	}

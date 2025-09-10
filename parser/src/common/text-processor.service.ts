@@ -35,7 +35,9 @@ export class TextProcessorService {
 	 * Создает хеш контента для дедупликации
 	 */
 	createContentHash(title: string, description: string): string {
-		const content = `${title} ${description}`.toLowerCase().trim()
+		const safeTitle = title || ''
+		const safeDescription = description || ''
+		const content = `${safeTitle} ${safeDescription}`.toLowerCase().trim()
 
 		// Простой хеш для демонстрации
 		let hash = 0
@@ -52,6 +54,10 @@ export class TextProcessorService {
 	 * Извлекает ключевые слова из текста
 	 */
 	extractKeywords(text: string, customKeywords?: string[]): string[] {
+		if (!text || typeof text !== 'string') {
+			return []
+		}
+
 		const keywords = new Set<string>()
 
 		// Добавляем пользовательские ключевые слова

@@ -122,10 +122,48 @@ export class HabrParser extends BaseParser {
 						}
 					}
 
+					// Извлекаем зарплату
+					let salary = ''
+					const salarySelectors = [
+						'.vacancy-card__salary',
+						'.salary',
+						'.vacancy-card__meta .salary',
+						'[class*="salary"]',
+						'.vacancy-card__compensation'
+					]
+
+					for (const selector of salarySelectors) {
+						const salaryEl = card.querySelector(selector)
+						if (salaryEl && salaryEl.textContent?.trim()) {
+							salary = salaryEl.textContent.trim()
+							break
+						}
+					}
+
+					// Извлекаем дату публикации
+					let publishedAt = ''
+					const dateSelectors = [
+						'.vacancy-card__date',
+						'.vacancy-card__meta .vacancy-card__date',
+						'.date',
+						'[class*="date"]',
+						'.vacancy-card__published'
+					]
+
+					for (const selector of dateSelectors) {
+						const dateEl = card.querySelector(selector)
+						if (dateEl && dateEl.textContent?.trim()) {
+							publishedAt = dateEl.textContent.trim()
+							break
+						}
+					}
+
 					if (link) {
 						jobs.push({
 							title,
 							originalUrl: link.startsWith('http') ? link : `https://career.habr.com${link}`,
+							publishedAt: publishedAt || undefined,
+							salary: salary || undefined,
 							company: {
 								name: companyName || null,
 								size: companySize || null,
@@ -146,17 +184,18 @@ export class HabrParser extends BaseParser {
 		for (let i = 0; i < jobElements.length; i++) {
 			const job = jobElements[i]
 			try {
-				const fullDescription = await this.htmlExtractor.getFullJobDescription(job.originalUrl)
+				const fullJobData = await this.htmlExtractor.getFullJobDescription(job.originalUrl)
 
-				jobsWithDescriptions.push(
-					this.processJobData(
-						{
-							...job,
-							description: fullDescription
-						},
-						config
-					)
-				)
+				// Объединяем данные из карточки и полного описания
+				const combinedJobData = {
+					...job,
+					description: fullJobData.description,
+					// Используем данные из полного описания, если они есть, иначе из карточки
+					salary: fullJobData.salary || job.salary,
+					publishedAt: fullJobData.publishedAt || job.publishedAt
+				}
+
+				jobsWithDescriptions.push(this.processJobData(combinedJobData, config))
 			} catch (error) {
 				// Добавляем вакансию с кратким описанием
 				jobsWithDescriptions.push(
@@ -171,6 +210,7 @@ export class HabrParser extends BaseParser {
 			}
 		}
 
-		return jobsWithDescriptions
+		// Фильтруем null значения (отфильтрованные по дате)
+		return jobsWithDescriptions.filter(job => job !== null) as CreateJobDto[]
 	}
 }

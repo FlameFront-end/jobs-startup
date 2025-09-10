@@ -9,6 +9,9 @@ import { Job, ParsingLog } from '../database/entities'
 @Injectable()
 export class JobsService {
 	private readonly logger = new Logger(JobsService.name)
+	private readonly duplicateCache = new Set<string>()
+	private cacheExpiry = 0
+	private readonly CACHE_TTL = 5 * 60 * 1000 // 5 минут
 
 	constructor(
 		@InjectRepository(Job)
@@ -167,13 +170,20 @@ export class JobsService {
 
 	async saveJob(jobData: CreateJobDto): Promise<boolean> {
 		try {
-			// Проверяем, существует ли уже такая вакансия
+			// Проверяем, не существует ли уже нормализованная версия
 			const existingJob = await this.jobRepository.findOne({
-				where: { contentHash: jobData.contentHash }
+				where: { contentHash: jobData.contentHash },
+				select: ['id', 'isNormalized']
 			})
 
 			if (existingJob) {
-				return false
+				if (existingJob.isNormalized) {
+					this.logger.debug(`Вакансия "${jobData.title}" уже нормализована, пропускаем`)
+					return false
+				} else {
+					// Вакансия есть, но не нормализована - удаляем старую и создаем новую
+					await this.jobRepository.delete(existingJob.id)
+				}
 			}
 
 			// Нормализуем вакансию
@@ -193,6 +203,10 @@ export class JobsService {
 			})
 
 			await this.jobRepository.save(jobToSave)
+
+			// Добавляем в кэш дубликатов
+			this.duplicateCache.add(jobData.contentHash)
+
 			return true
 		} catch (error) {
 			this.logger.error('Error saving job:', error)
@@ -200,11 +214,80 @@ export class JobsService {
 		}
 	}
 
+	/**
+	 * Проверяет, существует ли вакансия с таким contentHash
+	 */
+	async jobExists(contentHash: string): Promise<boolean> {
+		const existingJob = await this.jobRepository.findOne({
+			where: { contentHash },
+			select: ['id']
+		})
+		return !!existingJob
+	}
+
+	/**
+	 * Проверяет существование множественных вакансий с кэшированием
+	 */
+	async checkJobsExist(contentHashes: string[]): Promise<Set<string>> {
+		if (contentHashes.length === 0) {
+			return new Set()
+		}
+
+		// Проверяем кэш
+		const now = Date.now()
+		if (now > this.cacheExpiry) {
+			this.duplicateCache.clear()
+			this.cacheExpiry = now + this.CACHE_TTL
+		}
+
+		// Фильтруем уже известные дубликаты
+		const knownDuplicates = contentHashes.filter(hash => this.duplicateCache.has(hash))
+		const unknownHashes = contentHashes.filter(hash => !this.duplicateCache.has(hash))
+
+		if (unknownHashes.length === 0) {
+			return new Set(knownDuplicates)
+		}
+
+		// Проверяем неизвестные хеши в БД
+		const existingJobs = await this.jobRepository.find({
+			where: { contentHash: In(unknownHashes) },
+			select: ['contentHash']
+		})
+
+		// Обновляем кэш
+		existingJobs.forEach(job => this.duplicateCache.add(job.contentHash))
+
+		// Возвращаем все дубликаты
+		const allDuplicates = [...knownDuplicates, ...existingJobs.map(job => job.contentHash)]
+		return new Set(allDuplicates)
+	}
+
 	async saveJobs(jobs: CreateJobDto[]): Promise<{ saved: number; skipped: number }> {
+		if (jobs.length === 0) {
+			return { saved: 0, skipped: 0 }
+		}
+
+		// Батчевая проверка дубликатов
+		const contentHashes = jobs.map(job => job.contentHash)
+		const existingJobs = await this.jobRepository.find({
+			where: { contentHash: In(contentHashes) },
+			select: ['contentHash']
+		})
+
+		const existingHashes = new Set(existingJobs.map(job => job.contentHash))
+		const newJobs = jobs.filter(job => !existingHashes.has(job.contentHash))
+
+		this.logger.log(`Найдено ${jobs.length} вакансий, ${existingHashes.size} дубликатов, ${newJobs.length} новых`)
+
+		if (newJobs.length === 0) {
+			return { saved: 0, skipped: jobs.length }
+		}
+
+		// Обрабатываем только новые вакансии
 		let saved = 0
 		let skipped = 0
 
-		for (const job of jobs) {
+		for (const job of newJobs) {
 			const wasSaved = await this.saveJob(job)
 			if (wasSaved) {
 				saved++
@@ -213,7 +296,7 @@ export class JobsService {
 			}
 		}
 
-		return { saved, skipped }
+		return { saved, skipped: skipped + existingHashes.size }
 	}
 
 	async deleteAllJobs(): Promise<{ deleted: number }> {

@@ -25,7 +25,10 @@ export class JobNormalizationService {
 		try {
 			this.logger.debug(`Начинаем нормализацию вакансии: "${job.title}"`)
 
-			// Используем ИИ для нормализации
+			// Проверяем, была ли зарплата указана в исходном тексте
+			const hasSalaryInText = this.hasSalaryInOriginalText(job.title, job.description)
+
+			// Используем ИИ для нормализации (зарплата уже добавлена в описание в base-parser)
 			const aiResponse = await this.aiService.normalizeJobWithAI(job.title, job.description)
 
 			if (!aiResponse) {
@@ -41,15 +44,17 @@ export class JobNormalizationService {
 				size: aiResponse.company.size
 			}
 
-			const salary: SalaryInfo | undefined = aiResponse.salary
-				? {
-						min: aiResponse.salary.min,
-						max: aiResponse.salary.max,
-						currency: aiResponse.salary.currency as any,
-						period: aiResponse.salary.period as any,
-						type: aiResponse.salary.type
-					}
-				: undefined
+			// Дополнительная проверка: AI не должен придумывать зарплату
+			const salary: SalaryInfo | undefined =
+				aiResponse.salary && hasSalaryInText && this.isValidSalary(aiResponse.salary)
+					? {
+							min: aiResponse.salary.min,
+							max: aiResponse.salary.max,
+							currency: aiResponse.salary.currency as any,
+							period: aiResponse.salary.period as any,
+							type: aiResponse.salary.type
+						}
+					: undefined
 
 			const location: LocationInfo | undefined = aiResponse.location
 				? {
@@ -583,8 +588,11 @@ export class JobNormalizationService {
 			'node.js'
 		]
 
-		const relevantSentences = sentences.filter(sentence =>
-			dutyKeywords.some(keyword => sentence.toLowerCase().includes(keyword))
+		const relevantSentences = sentences.filter(
+			sentence =>
+				sentence &&
+				typeof sentence === 'string' &&
+				dutyKeywords.some(keyword => sentence.toLowerCase().includes(keyword))
 		)
 
 		// Берем первые 3-4 релевантных предложения или первые 3-4 предложения
@@ -659,5 +667,112 @@ export class JobNormalizationService {
 
 		// Иначе просто очищаем и возвращаем оригинальный текст
 		return cleaned
+	}
+
+	/**
+	 * Проверяет, есть ли упоминание зарплаты в исходном тексте
+	 * Ищет в тексте описания или в HTML-блоках
+	 */
+	private hasSalaryInOriginalText(title: string, description: string): boolean {
+		const text = `${title} ${description}`.toLowerCase()
+
+		// 1. Ищем блок с заголовком "Зарплата" в HTML (если описание содержит HTML)
+		const salaryBlockMatch = text.match(
+			/<div[^>]*class="[^"]*content-section[^"]*"[^>]*>.*?<h2[^>]*class="[^"]*content-section__title[^"]*"[^>]*>.*?зарплата.*?<\/h2>.*?<\/div>/is
+		)
+
+		if (salaryBlockMatch) {
+			// Если нашли блок с зарплатой, проверяем есть ли в нем цифры с валютой
+			const salaryBlock = salaryBlockMatch[0]
+			const salaryPatterns = [
+				// Рубли
+				/\d+\s*(тыс|тысяч|k)\s*(руб|рублей|₽)/,
+				/\d+\s*(руб|рублей|₽)/,
+				/от\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+				/до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+				/\d+\s*-\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+				/от\s*\d+\s*до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+
+				// Доллары
+				/\d+\s*(\$|долларов|usd)/,
+				/от\s*\d+\s*(\$|долларов|usd)/,
+				/до\s*\d+\s*(\$|долларов|usd)/,
+				/\d+\s*-\s*\d+\s*(\$|долларов|usd)/,
+				/от\s*\d+\s*до\s*\d+\s*(\$|долларов|usd)/,
+
+				// Евро
+				/\d+\s*(€|евро|eur)/,
+				/от\s*\d+\s*(€|евро|eur)/,
+				/до\s*\d+\s*(€|евро|eur)/,
+				/\d+\s*-\s*\d+\s*(€|евро|eur)/,
+				/от\s*\d+\s*до\s*\d+\s*(€|евро|eur)/
+			]
+
+			return salaryPatterns.some(pattern => pattern.test(salaryBlock))
+		}
+
+		// 2. Ищем в JSON-LD структуре (если описание содержит HTML)
+		const jsonLdMatch = text.match(/<script[^>]*type="application\/ld\+json"[^>]*>.*?<\/script>/is)
+		if (jsonLdMatch) {
+			try {
+				const jsonContent = jsonLdMatch[0].replace(/<script[^>]*>/, '').replace(/<\/script>/, '')
+				const jsonData = JSON.parse(jsonContent)
+				if (jsonData['@type'] === 'JobPosting' && jsonData.baseSalary) {
+					const baseSalary = jsonData.baseSalary
+					return !!(baseSalary.value && baseSalary.value.minValue && baseSalary.value.maxValue)
+				}
+			} catch (e) {
+				// Игнорируем ошибки парсинга JSON
+			}
+		}
+
+		// 3. Ищем зарплату в тексте описания (для случаев, когда описание уже извлечено как текст)
+		const salaryPatterns = [
+			// Рубли
+			/\d+\s*(тыс|тысяч|k)\s*(руб|рублей|₽)/,
+			/\d+\s*(руб|рублей|₽)/,
+			/от\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+			/до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+			/\d+\s*-\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+			/от\s*\d+\s*до\s*\d+\s*(тыс|тысяч|k)?\s*(руб|рублей|₽)/,
+
+			// Доллары
+			/\d+\s*(\$|долларов|usd)/,
+			/от\s*\d+\s*(\$|долларов|usd)/,
+			/до\s*\d+\s*(\$|долларов|usd)/,
+			/\d+\s*-\s*\d+\s*(\$|долларов|usd)/,
+			/от\s*\d+\s*до\s*\d+\s*(\$|долларов|usd)/,
+
+			// Евро
+			/\d+\s*(€|евро|eur)/,
+			/от\s*\d+\s*(€|евро|eur)/,
+			/до\s*\d+\s*(€|евро|eur)/,
+			/\d+\s*-\s*\d+\s*(€|евро|eur)/,
+			/от\s*\d+\s*до\s*\d+\s*(€|евро|eur)/
+		]
+
+		return salaryPatterns.some(pattern => pattern.test(text))
+	}
+
+	/**
+	 * Проверяет, что зарплата валидна и не придумана AI
+	 */
+	private isValidSalary(salary: any): boolean {
+		if (!salary) return false
+
+		// Проверяем, что есть хотя бы min или max
+		if (!salary.min && !salary.max) return false
+
+		// Проверяем, что значения числовые и разумные
+		if (salary.min && (typeof salary.min !== 'number' || salary.min < 0 || salary.min > 10000000)) return false
+		if (salary.max && (typeof salary.max !== 'number' || salary.max < 0 || salary.max > 10000000)) return false
+
+		// Проверяем, что max больше min
+		if (salary.min && salary.max && salary.max < salary.min) return false
+
+		// Проверяем валюту
+		if (salary.currency && !['RUB', 'USD', 'EUR'].includes(salary.currency)) return false
+
+		return true
 	}
 }

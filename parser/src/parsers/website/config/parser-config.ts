@@ -16,6 +16,7 @@ export interface ParserConfig {
 		title: string[]
 		description: string[]
 		link: string[]
+		date?: string[]
 	}
 	baseUrl?: string
 }
@@ -43,7 +44,13 @@ export const PARSER_CONFIGS: ParserConfig[] = [
 				'.vacancy-item__snippet',
 				"[data-qa*='snippet']"
 			],
-			link: ["a[href*='/vacancy/']", "a[data-qa*='title']"]
+			link: ["a[href*='/vacancy/']", "a[data-qa*='title']"],
+			date: [
+				"[data-qa='vacancy-serp__vacancy-date']",
+				'.vacancy-serp-item__date',
+				'.serp-item__date',
+				'.vacancy-item__date'
+			]
 		}
 	},
 	{
@@ -69,7 +76,8 @@ export const PARSER_CONFIGS: ParserConfig[] = [
 				'[class*="description"]',
 				'[class*="snippet"]'
 			],
-			link: ['a[href*="/vacancy/"]', '.f-test-link']
+			link: ['a[href*="/vacancy/"]', '.f-test-link'],
+			date: ['.f-test-date', '.vacancy-item__date', '.search-result-item__date', '[class*="date"]']
 		}
 	},
 	{
@@ -83,7 +91,8 @@ export const PARSER_CONFIGS: ParserConfig[] = [
 			container: '.vacancy-card',
 			title: ['.vacancy-card__title a', '.vacancy-card__title-link', 'a[href*="/vacancies/"]'],
 			description: [], // Для Habr получаем полное описание отдельно
-			link: ['a[href*="/vacancies/"]', '.vacancy-card__title a']
+			link: ['a[href*="/vacancies/"]', '.vacancy-card__title a'],
+			date: ['.vacancy-card__date', '.vacancy-card__meta .vacancy-card__date', '[class*="date"]']
 		}
 	}
 ]
