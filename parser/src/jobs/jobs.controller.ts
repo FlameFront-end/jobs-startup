@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@n
 import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ThrottlerGuard } from '@nestjs/throttler'
 import { CreateJobDto, JobQueryDto, JobResponseDto } from '../database/dto/job.dto'
+import { NormalizedJobDto } from '../database/dto/normalized-job.dto'
 import { JobsService } from './jobs.service'
 
 @ApiTags('jobs')
@@ -137,6 +138,62 @@ export class JobsController {
 				error: `Ошибка при удалении вакансий из источника ${sourceName}`,
 				details: error.message
 			}
+		}
+	}
+
+	@Get('normalized')
+	@ApiOperation({ summary: 'Получить нормализованные вакансии' })
+	@ApiQuery({ name: 'source', required: false, description: 'Фильтр по источнику' })
+	@ApiQuery({ name: 'sourceName', required: false, description: 'Фильтр по названию источника' })
+	@ApiQuery({
+		name: 'keywords',
+		required: false,
+		description: 'Фильтр по ключевым словам',
+		type: [String]
+	})
+	@ApiQuery({ name: 'dateFrom', required: false, description: 'Дата начала периода' })
+	@ApiQuery({ name: 'dateTo', required: false, description: 'Дата окончания периода' })
+	@ApiQuery({
+		name: 'limit',
+		required: false,
+		description: 'Количество записей на страницу',
+		type: Number
+	})
+	@ApiQuery({
+		name: 'offset',
+		required: false,
+		description: 'Смещение для пагинации',
+		type: Number
+	})
+	@ApiQuery({
+		name: 'minQuality',
+		required: false,
+		description: 'Минимальное качество данных (0-100)',
+		type: Number
+	})
+	@ApiResponse({ status: 200, description: 'Нормализованные вакансии успешно получены', type: [NormalizedJobDto] })
+	async getNormalizedJobs(@Query() query: JobQueryDto & { minQuality?: number }) {
+		const result = await this.jobsService.getNormalizedJobs(query)
+		return {
+			success: true,
+			data: result.jobs,
+			pagination: {
+				total: result.total,
+				limit: query.limit || 20,
+				offset: query.offset || 0,
+				hasMore: result.hasMore
+			}
+		}
+	}
+
+	@Get('quality/stats')
+	@ApiOperation({ summary: 'Получить статистику качества данных' })
+	@ApiResponse({ status: 200, description: 'Статистика качества успешно получена' })
+	async getQualityStats() {
+		const stats = await this.jobsService.getQualityStats()
+		return {
+			success: true,
+			data: stats
 		}
 	}
 }

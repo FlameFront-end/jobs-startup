@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Between, In, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm'
+import { JobNormalizationService } from '../common/job-normalization.service'
 import { CreateJobDto, JobQueryDto, JobResponseDto } from '../database/dto/job.dto'
+import { NormalizedJobDto } from '../database/dto/normalized-job.dto'
 import { Job, ParsingLog } from '../database/entities'
 
 @Injectable()
@@ -12,7 +14,8 @@ export class JobsService {
 		@InjectRepository(Job)
 		private jobRepository: Repository<Job>,
 		@InjectRepository(ParsingLog)
-		private parsingLogRepository: Repository<ParsingLog>
+		private parsingLogRepository: Repository<ParsingLog>,
+		private jobNormalizationService: JobNormalizationService
 	) {}
 
 	private parseDate(dateString: string): Date {
@@ -155,7 +158,23 @@ export class JobsService {
 				return false
 			}
 
-			await this.jobRepository.save(jobData)
+			// Нормализуем вакансию
+			const normalizedJob = await this.jobNormalizationService.normalizeJob(jobData)
+
+			if (!normalizedJob) {
+				this.logger.warn(`Пропускаем вакансию "${jobData.title}" - не прошла нормализацию`)
+				return false
+			}
+
+			// Создаем объект для сохранения
+			const jobToSave = this.jobRepository.create({
+				...jobData,
+				normalizedData: normalizedJob,
+				qualityScore: normalizedJob.qualityScore,
+				isNormalized: true
+			})
+
+			await this.jobRepository.save(jobToSave)
 			return true
 		} catch (error) {
 			this.logger.error('Error saving job:', error)
@@ -207,6 +226,133 @@ export class JobsService {
 			return { deleted: result.affected || 0 }
 		} catch (error) {
 			this.logger.error(`Error deleting jobs from source ${sourceName}:`, error)
+			throw error
+		}
+	}
+
+	/**
+	 * Получает нормализованные вакансии
+	 */
+	async getNormalizedJobs(query: JobQueryDto & { minQuality?: number }): Promise<{
+		jobs: NormalizedJobDto[]
+		total: number
+		hasMore: boolean
+	}> {
+		const { source, sourceName, keywords, dateFrom, dateTo, limit = 20, offset = 0, minQuality = 30 } = query
+
+		try {
+			const where: any = {
+				isNormalized: true,
+				qualityScore: MoreThanOrEqual(minQuality)
+			}
+
+			// Фильтр по источнику
+			if (source) {
+				where.source = source
+			}
+
+			// Фильтр по названию источника
+			if (sourceName) {
+				where.sourceName = Like(`%${sourceName}%`)
+			}
+
+			// Фильтр по ключевым словам
+			if (keywords && keywords.length > 0) {
+				where.keywords = In(keywords)
+			}
+
+			// Фильтр по датам
+			if (dateFrom || dateTo) {
+				const dateFromObj = dateFrom ? this.parseDate(dateFrom) : null
+				const dateToObj = dateTo ? this.parseDate(dateTo) : null
+
+				if (dateFromObj && dateToObj) {
+					if (dateFromObj > dateToObj) {
+						throw new BadRequestException('dateFrom не может быть больше dateTo')
+					}
+					where.publishedAt = Between(dateFromObj, dateToObj)
+				} else if (dateFromObj) {
+					where.publishedAt = MoreThanOrEqual(dateFromObj)
+				} else if (dateToObj) {
+					where.publishedAt = LessThanOrEqual(dateToObj)
+				}
+			}
+
+			const [jobs, total] = await Promise.all([
+				this.jobRepository.find({
+					where,
+					order: { qualityScore: 'DESC', publishedAt: 'DESC' },
+					take: limit,
+					skip: offset
+				}),
+				this.jobRepository.count({ where })
+			])
+
+			// Преобразуем в нормализованный формат
+			const normalizedJobs = jobs
+				.filter(job => job.normalizedData)
+				.map(job => job.normalizedData as NormalizedJobDto)
+
+			return {
+				jobs: normalizedJobs,
+				total,
+				hasMore: offset + limit < total
+			}
+		} catch (error) {
+			this.logger.error('Error in getNormalizedJobs:', error)
+			throw error
+		}
+	}
+
+	/**
+	 * Получает статистику по качеству данных
+	 */
+	async getQualityStats(): Promise<{
+		totalJobs: number
+		normalizedJobs: number
+		averageQuality: number
+		qualityDistribution: { range: string; count: number }[]
+	}> {
+		try {
+			const [totalJobs, normalizedJobs, qualityStats] = await Promise.all([
+				this.jobRepository.count(),
+				this.jobRepository.count({ where: { isNormalized: true } }),
+				this.jobRepository
+					.createQueryBuilder('job')
+					.select('AVG(job.qualityScore)', 'average')
+					.addSelect('COUNT(*)', 'count')
+					.where('job.isNormalized = true')
+					.getRawOne(),
+				this.jobRepository
+					.createQueryBuilder('job')
+					.select(
+						'CASE ' +
+							"WHEN job.qualityScore >= 90 THEN '90-100' " +
+							"WHEN job.qualityScore >= 70 THEN '70-89' " +
+							"WHEN job.qualityScore >= 50 THEN '50-69' " +
+							"WHEN job.qualityScore >= 30 THEN '30-49' " +
+							"ELSE '0-29' " +
+							'END',
+						'range'
+					)
+					.addSelect('COUNT(*)', 'count')
+					.where('job.isNormalized = true')
+					.groupBy('range')
+					.getRawMany()
+			])
+
+			return {
+				totalJobs,
+				normalizedJobs,
+				averageQuality: parseFloat(qualityStats?.average || '0'),
+				qualityDistribution:
+					qualityStats?.map(item => ({
+						range: item.range,
+						count: parseInt(item.count)
+					})) || []
+			}
+		} catch (error) {
+			this.logger.error('Error in getQualityStats:', error)
 			throw error
 		}
 	}

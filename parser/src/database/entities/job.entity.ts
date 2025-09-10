@@ -33,6 +33,16 @@ export class Job {
 	@Column({ type: 'jsonb', nullable: true })
 	keywords?: string[] // ключевые слова для фильтрации
 
+	// Нормализованные данные
+	@Column({ type: 'jsonb', nullable: true })
+	normalizedData?: any // структурированные данные вакансии
+
+	@Column({ type: 'int', default: 0 })
+	qualityScore: number // качество данных (0-100)
+
+	@Column({ type: 'boolean', default: false })
+	isNormalized: boolean // флаг нормализации
+
 	@UpdateDateColumn()
 	updatedAt: Date
 }
