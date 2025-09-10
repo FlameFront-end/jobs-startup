@@ -208,7 +208,7 @@ export class AIService {
 	private validateAndCleanResponse(data: AIResponse): AIResponse {
 		return {
 			company: {
-				name: data.company?.name || 'Не указано',
+				name: data.company?.name || null,
 				description: data.company?.description,
 				website: data.company?.website,
 				size: data.company?.size

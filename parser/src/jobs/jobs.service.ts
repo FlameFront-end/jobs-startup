@@ -185,22 +185,30 @@ export class JobsService {
 				}
 			}
 
-			// Нормализуем вакансию
-			const normalizedJob = await this.jobNormalizationService.normalizeJob(jobData)
+			// Создаем объект для сохранения (без нормализованных данных)
+			const jobToSave = this.jobRepository.create({
+				...jobData,
+				isNormalized: false
+			})
+
+			// Сохраняем и получаем ID
+			const savedJob = await this.jobRepository.save(jobToSave)
+
+			// Нормализуем вакансию с полученным ID
+			const normalizedJob = await this.jobNormalizationService.normalizeJob(jobData, savedJob.id)
 
 			if (!normalizedJob) {
+				// Если нормализация не удалась, удаляем запись
+				await this.jobRepository.delete(savedJob.id)
 				return false
 			}
 
-			// Создаем объект для сохранения
-			const jobToSave = this.jobRepository.create({
-				...jobData,
-				normalizedData: normalizedJob,
+			// Обновляем запись с нормализованными данными
+			await this.jobRepository.update(savedJob.id, {
+				normalizedData: normalizedJob as any,
 				qualityScore: normalizedJob.qualityScore,
 				isNormalized: true
 			})
-
-			await this.jobRepository.save(jobToSave)
 
 			// Добавляем в кэш дубликатов
 			this.duplicateCache.add(jobData.contentHash)

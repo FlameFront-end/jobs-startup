@@ -21,7 +21,7 @@ export class JobNormalizationService {
 	/**
 	 * Нормализует вакансию в структурированный формат с помощью ИИ
 	 */
-	async normalizeJob(job: CreateJobDto): Promise<NormalizedJobDto | null> {
+	async normalizeJob(job: CreateJobDto, jobId?: string): Promise<NormalizedJobDto | null> {
 		try {
 			// Проверяем, была ли зарплата указана в исходном тексте
 			const hasSalaryInText = this.hasSalaryInOriginalText(job.title, job.description)
@@ -102,7 +102,7 @@ export class JobNormalizationService {
 			}
 
 			const normalizedJob: NormalizedJobDto = {
-				id: job.contentHash,
+				id: jobId || job.contentHash,
 				title: job.title,
 				shortDescription: aiResponse.shortDescription || this.createShortDescription(job.description),
 				fullDescription: aiResponse.fullDescription || this.createFullDescription(job.description),
@@ -164,7 +164,7 @@ export class JobNormalizationService {
 		let score = 0
 
 		// Базовые поля (обязательные)
-		if (data.company.name && data.company.name !== 'Не указано') score += 20
+		if (data.company.name && data.company.name !== null) score += 20
 		if (data.requirements.required.length > 0) score += 20
 		if (data.workType) score += 10
 
