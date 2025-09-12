@@ -110,53 +110,132 @@
 		font-weight: 500;
 	}
 
-	.highlight-text {
+	h1 {
+		background: linear-gradient(135deg, $primary_color, $accent_color);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		transition: all 0.3s ease;
+
+		&::selection {
+			background: linear-gradient(135deg, $primary_color, $accent_color);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
+	}
+
+	h2 {
+		background: linear-gradient(135deg, $primary_color, #3b82f6);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		transition: all 0.3s ease;
+
+		&::selection {
+			background: linear-gradient(135deg, $primary_color, #3b82f6);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
+	}
+
+	h3 {
+		background: linear-gradient(135deg, $accent_color, #f59e0b);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		transition: all 0.3s ease;
+
+		&::selection {
+			background: linear-gradient(135deg, $accent_color, #f59e0b);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
+	}
+
+	h4 {
+		&::selection {
+			background: $selection_bg;
+			color: $selection_color;
+		}
+	}
+
+	.highlightText {
+		background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		transition: all 0.3s ease;
+		cursor: pointer;
+
+		&:hover {
+			transform: scale(1.05);
+			filter: brightness(1.2);
+		}
+
+		&::selection {
+			background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
+	}
+
+	.selectionGlow {
 		position: relative;
-		display: inline-block;
-		transition: all 0.2s ease;
+		transition: all 0.3s ease;
 		cursor: pointer;
 
 		&:hover {
 			transform: translateY(-1px);
 		}
-	}
 
-	.selection-glow {
-		position: relative;
-		display: inline-block;
-		transition: all 0.2s ease;
-		cursor: pointer;
-
-		&:hover {
-			transform: translateY(-1px);
+		&::selection {
+			background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+			color: white;
+			text-shadow: 0 0 10px rgb(255 107 107 / 50%);
 		}
 	}
 }
 
 [data-theme="dark"] .section {
 	box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
-}
 
-.highlightText {
-	background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-	background-clip: text;
-	transition: all 0.3s ease;
-	-webkit-text-fill-color: transparent;
+	h1 {
+		background: linear-gradient(135deg, #3b82f6, #fbbf24);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
 
-	&:hover {
-		transform: scale(1.05);
-		filter: brightness(1.2);
+		&::selection {
+			background: linear-gradient(135deg, #3b82f6, #fbbf24);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
 	}
-}
 
-.selectionGlow {
-	position: relative;
-	transition: all 0.3s ease;
+	h2 {
+		background: linear-gradient(135deg, #3b82f6, #60a5fa);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
 
-	&::selection {
-		background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-		color: white;
-		text-shadow: 0 0 10px rgb(255 107 107 / 50%);
+		&::selection {
+			background: linear-gradient(135deg, #3b82f6, #60a5fa);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
+	}
+
+	h3 {
+		background: linear-gradient(135deg, #fbbf24, #f59e0b);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+
+		&::selection {
+			background: linear-gradient(135deg, #fbbf24, #f59e0b);
+			color: white;
+			-webkit-text-fill-color: white;
+		}
 	}
 }
 

@@ -1,6 +1,7 @@
 @use "sass:map";
 @use "@/shared/styles/main.scss" as *;
 @use "@/shared/styles/mixins.scss" as *;
+@use "@/shared/styles/scrollbar.scss" as scrollbar;
 
 .pageWrapper {
 	position: relative;
@@ -9,6 +10,7 @@
 	background-color: $background_color;
 	color: $text_color;
 	@include scroll-styles;
+	@include scrollbar.scrollbar-reserved;
 }
 
 .container {

@@ -1,10 +1,11 @@
 import styles from './selection-demo.module.scss'
 
+import { PageWrapper } from '@/shared/ui/page-wrapper'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
 
 const SelectionDemoPage = () => {
 	return (
-		<div className={styles.container}>
+		<PageWrapper>
 			<div className={styles.header}>
 				<h1>Демонстрация стилей выделения текста</h1>
 				<ThemeToggle />
@@ -74,7 +75,7 @@ const SelectionDemoPage = () => {
 					читаемости.
 				</p>
 			</div>
-		</div>
+		</PageWrapper>
 	)
 }
 

@@ -1,10 +1,18 @@
 @use "variables" as *;
 
+:root {
+	--scrollbar-width: 6px;
+}
+
 @mixin scroll-styles {
 	overflow: hidden auto;
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 	scrollbar-width: thin;
+}
+
+@mixin scrollbar-reserved {
+	padding-right: var(--scrollbar-width);
 }
 
 *::-webkit-scrollbar {
@@ -51,6 +59,10 @@
 }
 
 @media (width <= 768px) {
+	:root {
+		--scrollbar-width: 4px;
+	}
+
 	*::-webkit-scrollbar {
 		width: 4px;
 		height: 4px;
