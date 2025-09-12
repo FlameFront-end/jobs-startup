@@ -4,18 +4,10 @@ import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } 
 
 import clsx from 'clsx'
 
+import { ButtonVariant, type ButtonVariant as ButtonVariantType } from './types'
+
 interface BaseButtonProps {
-	variant?:
-		| 'default'
-		| 'success'
-		| 'error'
-		| 'warning'
-		| 'info'
-		| 'loading'
-		| 'enabled'
-		| 'disabled'
-		| 'text'
-		| 'link'
+	variant?: ButtonVariantType
 	size?: 'sm' | 'md' | 'lg'
 	width?: 'auto' | 'fit' | 'full' | 'half'
 	className?: string
@@ -35,7 +27,7 @@ type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps
 
 export const Button = ({
 	children,
-	variant = 'default',
+	variant = ButtonVariant.DEFAULT,
 	size = 'md',
 	width = 'auto',
 	className,
