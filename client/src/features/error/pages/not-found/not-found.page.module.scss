@@ -8,7 +8,7 @@
 	justify-content: center;
 	align-items: center;
 	min-height: 100vh;
-	background: linear-gradient(135deg, $background-light 0%, $background-color 50%, $background-light 100%);
+	background: linear-gradient(135deg, $background_light 0%, $background_color 50%, $background_light 100%);
 	overflow: hidden;
 
 	@include p(md, all);
@@ -55,7 +55,7 @@
 	@include font-display;
 
 	margin-top: 0;
-	color: $primary-color;
+	color: $primary_color;
 
 	@include text-responsive(5rem, 8rem, 10rem);
 
@@ -71,7 +71,7 @@
 	@include font-heading-1;
 
 	margin-top: 0;
-	color: $text-color;
+	color: $text_color;
 	text-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 
 	@include m(md, all);
@@ -84,7 +84,7 @@
 	margin-top: 0;
 	margin-right: auto;
 	margin-left: auto;
-	color: $text-light;
+	color: $text_light;
 
 	@include m(2xl, all);
 }
@@ -111,7 +111,7 @@
 	display: inline-block;
 	min-width: 180px;
 	border: 2px solid transparent;
-	border-radius: map.get($border-radius, lg);
+	border-radius: map.get($border_radius, lg);
 	box-sizing: border-box;
 	box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 	text-decoration: none;
@@ -127,27 +127,27 @@
 
 .btnPrimary {
 	box-shadow: 0 4px 12px rgb(49 130 206 / 30%);
-	background: $primary-color;
+	background: $primary_color;
 	color: white;
 
 	&:hover {
 		transform: translateY(-3px);
 		box-shadow: 0 8px 25px rgb(49 130 206 / 40%);
-		background: color-mix(in srgb, $primary-color 90%, black);
+		background: color-mix(in srgb, $primary_color 90%, black);
 	}
 }
 
 .btnSecondary {
-	border-color: $border-color;
+	border-color: $border_color;
 	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 	background: transparent;
-	color: $text-color;
+	color: $text_color;
 
 	&:hover {
 		transform: translateY(-3px);
-		border-color: $primary-color;
+		border-color: $primary_color;
 		box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
-		background: $background-light;
+		background: $background_light;
 	}
 }
 

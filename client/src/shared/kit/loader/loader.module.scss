@@ -1,3 +1,4 @@
+@use "../../styles/variables" as *;
 @use "../../styles/mixins" as *;
 
 .loader {
@@ -10,10 +11,10 @@
 		border-radius: 50%;
 		background: conic-gradient(
 			from 0deg,
-			var(--primary-color) 0deg,
+			$primary_color 0deg,
 			transparent 60deg,
 			transparent 300deg,
-			var(--primary-color) 360deg
+			$primary_color 360deg
 		);
 		animation: spin 1.5s linear infinite;
 
@@ -23,7 +24,7 @@
 			left: 50%;
 			transform: translate(-50%, -50%);
 			border-radius: 50%;
-			background: var(--background-color);
+			background: $background_color;
 			content: "";
 		}
 	}

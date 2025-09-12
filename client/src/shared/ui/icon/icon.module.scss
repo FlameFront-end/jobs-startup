@@ -1,3 +1,4 @@
+@use "@/shared/styles/variables" as *;
 @use "@/shared/styles/mixins" as *;
 
 .icon {
@@ -8,23 +9,23 @@
 }
 
 .success {
-	color: var(--success-color);
+	color: $success_color;
 }
 
 .error {
-	color: var(--error-color);
+	color: $error_color;
 }
 
 .warning {
-	color: var(--warning-color);
+	color: $warning_color;
 }
 
 .info {
-	color: var(--primary-color);
+	color: $primary_color;
 }
 
 .loading {
-	color: var(--primary-color);
+	color: $primary_color;
 }
 
 .close {

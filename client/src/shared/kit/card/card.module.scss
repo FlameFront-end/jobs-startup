@@ -1,10 +1,11 @@
+@use "@/shared/styles/variables" as *;
 @use "@/shared/styles/mixins" as *;
 
 .title {
 	@include font-body-large;
 
 	margin: 0;
-	color: var(--text-color);
+	color: $text_color;
 	font-weight: 600;
 
 	@include m(md, bottom);
@@ -19,18 +20,18 @@
 	}
 
 	&.default {
-		border: 1px solid var(--border-color);
-		background: var(--background-card);
+		border: 1px solid $border_color;
+		background: $background_card;
 	}
 
 	&.outlined {
-		border: 2px solid var(--border-color);
-		background: var(--background-card);
+		border: 2px solid $border_color;
+		background: $background_card;
 	}
 
 	&.filled {
-		border: 1px solid var(--border-color);
-		background: var(--background-light);
+		border: 1px solid $border_color;
+		background: $background_light;
 	}
 
 	&.elevated {
@@ -39,7 +40,7 @@
 			0 10px 15px -3px rgb(0 0 0 / 30%),
 			0 4px 6px -2px rgb(0 0 0 / 20%),
 			0 0 0 1px rgb(255 255 255 / 5%);
-		background: var(--background-card);
+		background: $background_card;
 	}
 
 	&.plain {
@@ -61,19 +62,19 @@
 	}
 
 	&.bgDefault {
-		background: var(--background-card);
+		background: $background_card;
 	}
 
 	&.bgLight {
-		background: var(--background-light);
+		background: $background_light;
 	}
 
 	&.bgDark {
-		background: var(--background-dark);
+		background: $background_color;
 	}
 
 	&.bgPrimary {
-		background: var(--primary-color);
+		background: $primary_color;
 		color: #000;
 
 		.title {
@@ -86,7 +87,7 @@
 	}
 
 	&.bgSuccess {
-		background: var(--success-color);
+		background: $success_color;
 		color: #000;
 
 		.title {
@@ -99,7 +100,7 @@
 	}
 
 	&.bgWarning {
-		background: var(--warning-color);
+		background: $warning_color;
 		color: #000;
 
 		.title {
@@ -112,7 +113,7 @@
 	}
 
 	&.bgError {
-		background: var(--error-color);
+		background: $error_color;
 		color: #000;
 
 		.title {

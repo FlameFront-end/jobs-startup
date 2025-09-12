@@ -32,20 +32,20 @@
 	--selection-color: #0f172a;
 }
 
-$primary-color: var(--primary-color);
-$secondary-color: var(--secondary-color);
-$accent-color: var(--accent-color);
-$text-color: var(--text-color);
-$text-light: var(--text-light);
-$background-color: var(--background-color);
-$background-light: var(--background-light);
-$background-card: var(--background-card);
-$border-color: var(--border-color);
-$error-color: var(--error-color);
-$success-color: var(--success-color);
-$warning-color: var(--warning-color);
-$selection-bg: var(--selection-bg);
-$selection-color: var(--selection-color);
+$primary_color: var(--primary-color);
+$secondary_color: var(--secondary-color);
+$accent_color: var(--accent-color);
+$text_color: var(--text-color);
+$text_light: var(--text-light);
+$background_color: var(--background-color);
+$background_light: var(--background-light);
+$background_card: var(--background-card);
+$border_color: var(--border-color);
+$error_color: var(--error-color);
+$success_color: var(--success-color);
+$warning_color: var(--warning-color);
+$selection_bg: var(--selection-bg);
+$selection_color: var(--selection-color);
 $breakpoints: (
 	sm: 480px,
 	md: 768px,
@@ -61,7 +61,7 @@ $spacing: (
 	xl: 2rem,
 	2xl: 3rem
 );
-$border-radius: (
+$border_radius: (
 	sm: 0.25rem,
 	md: 0.375rem,
 	lg: 0.5rem,

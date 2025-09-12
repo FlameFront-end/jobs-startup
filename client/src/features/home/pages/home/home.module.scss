@@ -1,3 +1,4 @@
+@use "@/shared/styles/variables" as *;
 @use "@/shared/styles/mixins" as *;
 
 .wrapper {
@@ -23,13 +24,13 @@
 	@include font-heading-2;
 
 	margin: 0;
-	color: var(--text-color);
+	color: $text_color;
 	font-weight: 700;
 }
 
 .subtitle {
 	margin: 0;
-	color: var(--text-light);
+	color: $text_light;
 
 	@include font-body;
 }
@@ -44,17 +45,17 @@
 
 .settingText {
 	margin: 0;
-	color: var(--text-light);
+	color: $text_light;
 
 	@include font-body;
 }
 
 .enabled {
-	color: var(--success-color);
+	color: $success_color;
 }
 
 .disabled {
-	color: var(--error-color);
+	color: $error_color;
 }
 
 .cardExamples {
@@ -94,10 +95,10 @@
 }
 
 .nav-link {
-	border: 1px solid var(--border-color);
+	border: 1px solid $border_color;
 	border-radius: 0.375rem;
-	background: var(--background-card);
-	color: var(--primary-color);
+	background: $background_card;
+	color: $primary_color;
 	text-decoration: none;
 	transition: all 0.2s ease;
 
@@ -106,16 +107,16 @@
 	@include font-button;
 
 	&:hover {
-		border-color: var(--primary-color);
-		background: var(--background-light);
+		border-color: $primary_color;
+		background: $background_light;
 	}
 }
 
 .navLink {
-	border: 1px solid var(--border-color);
+	border: 1px solid $border_color;
 	border-radius: 0.375rem;
-	background: var(--background-card);
-	color: var(--text-color);
+	background: $background_card;
+	color: $text_color;
 	text-decoration: none;
 	transition: all 0.2s ease;
 
@@ -124,7 +125,7 @@
 	@include font-button;
 
 	&:hover {
-		border-color: var(--primary-color);
-		background: var(--background-light);
+		border-color: $primary_color;
+		background: $background_light;
 	}
 }

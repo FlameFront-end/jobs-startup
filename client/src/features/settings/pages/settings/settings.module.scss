@@ -11,7 +11,7 @@
 	h1 {
 		@include font-heading-1;
 
-		color: $text-color;
+		color: $text_color;
 
 		@include m(xl, all);
 	}
@@ -19,7 +19,7 @@
 	h2 {
 		@include font-heading-2;
 
-		color: $text-color;
+		color: $text_color;
 
 		@include m(lg, all);
 	}
@@ -43,7 +43,7 @@
 	span {
 		@include font-body;
 
-		color: $text-color;
+		color: $text_color;
 	}
 }
 
@@ -53,29 +53,29 @@
 	@include p(xl, x);
 
 	border: none;
-	border-radius: map.get($border-radius, md);
+	border-radius: map.get($border_radius, md);
 	color: white;
 	transition: all 0.3s ease;
 	cursor: pointer;
 }
 
 .buttonDanger {
-	background: $error-color;
+	background: $error_color;
 
 	&:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgb(220 53 69 / 30%);
-		background: color-mix(in srgb, $error-color 90%, black);
+		background: color-mix(in srgb, $error_color 90%, black);
 	}
 }
 
 .buttonPrimary {
-	background: $primary-color;
+	background: $primary_color;
 
 	&:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgb(0 123 255 / 30%);
-		background: color-mix(in srgb, $primary-color 90%, black);
+		background: color-mix(in srgb, $primary_color 90%, black);
 	}
 }
 
@@ -83,14 +83,14 @@
 	@include font-body;
 
 	display: inline-block;
-	color: $primary-color;
+	color: $primary_color;
 	text-decoration: none;
 	transition: color 0.3s ease;
 
 	@include m(xl, all);
 
 	&:hover {
-		color: $accent-color;
+		color: $accent_color;
 	}
 }
 

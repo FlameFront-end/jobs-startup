@@ -7,7 +7,7 @@
 	justify-content: center;
 	align-items: center;
 	min-height: 100vh;
-	background: $background-light;
+	background: $background_light;
 
 	@include p(lg, all);
 }
@@ -15,10 +15,10 @@
 .testContainer {
 	width: 100%;
 	max-width: 500px;
-	border: 1px solid $border-color;
-	border-radius: map.get($border-radius, xl);
+	border: 1px solid $border_color;
+	border-radius: map.get($border_radius, xl);
 	box-shadow: 0 10px 25px -5px rgb(0 0 0 / 10%);
-	background: $background-card;
+	background: $background_card;
 	text-align: center;
 
 	@include p(2xl, all);
@@ -27,7 +27,7 @@
 h1 {
 	@include font-heading-1;
 
-	color: $text-color;
+	color: $text_color;
 
 	@include m(lg, all);
 }
@@ -35,7 +35,7 @@ h1 {
 p {
 	@include font-body;
 
-	color: $text-light;
+	color: $text_light;
 
 	@include m(xl, all);
 }
@@ -44,8 +44,8 @@ p {
 	@include font-button;
 
 	border: none;
-	border-radius: map.get($border-radius, lg);
-	background: $error-color;
+	border-radius: map.get($border_radius, lg);
+	background: $error_color;
 	color: white;
 	transition: all 0.3s ease;
 	cursor: pointer;
@@ -56,6 +56,6 @@ p {
 	&:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 8px 25px rgb(229 62 62 / 30%);
-		background: color-mix(in srgb, $error-color 90%, black);
+		background: color-mix(in srgb, $error_color 90%, black);
 	}
 }

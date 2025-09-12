@@ -1,3 +1,4 @@
+@use "../../styles/variables" as *;
 @use "../../styles/mixins" as *;
 
 .pageLoader {
@@ -7,7 +8,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background: linear-gradient(135deg, var(--background-color, #fff) 0%, var(--background-light, #f8fafc) 100%);
+	background: linear-gradient(135deg, $background_color 0%, $background_light 100%);
 	inset: 0;
 
 	&__animation {
@@ -25,8 +26,8 @@
 		width: 60px;
 		height: 60px;
 		border: 3px solid transparent;
-		border-top: 3px solid var(--primary-color, #2563eb);
-		border-right: 3px solid var(--primary-color, #2563eb);
+		border-top: 3px solid $primary_color;
+		border-right: 3px solid $primary_color;
 		border-radius: 50%;
 		animation: spin 1s linear infinite;
 	}
@@ -39,14 +40,14 @@
 		width: 20px;
 		height: 20px;
 		border-radius: 50%;
-		background: var(--primary-color, #2563eb);
+		background: $primary_color;
 		animation: pulse 1.5s ease-in-out infinite;
 	}
 
 	&__message {
 		margin-top: 16px;
 		opacity: 0.8;
-		color: var(--text-light, #64748b);
+		color: $text_light;
 		font-size: 14px;
 		font-weight: 500;
 		text-align: center;

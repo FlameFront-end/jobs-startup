@@ -1,3 +1,4 @@
+@use "@/shared/styles/variables" as *;
 @use "@/shared/styles/mixins" as *;
 
 .button {
@@ -5,55 +6,55 @@
 	@include font-button;
 
 	&.default {
-		border: 1px solid var(--border-color);
-		background: var(--background-card);
-		color: var(--text-color);
+		border: 1px solid $border_color;
+		background: $background_card;
+		color: $text_color;
 
 		&:hover {
-			border-color: var(--primary-color);
-			background: var(--background-light);
+			border-color: $primary_color;
+			background: $background_light;
 		}
 	}
 
 	&.success {
-		@include button-variant(var(--success-color));
+		@include button-variant($success_color);
 	}
 
 	&.error {
-		@include button-variant(var(--error-color));
+		@include button-variant($error_color);
 	}
 
 	&.warning {
-		@include button-variant(var(--warning-color));
+		@include button-variant($warning_color);
 	}
 
 	&.info {
-		@include button-variant(var(--primary-color));
+		@include button-variant($primary_color);
 	}
 
 	&.loading {
-		@include button-variant(var(--primary-light));
+		@include button-variant($accent_color);
 	}
 
 	&.enabled {
-		border: 1px solid var(--success-color);
-		background: var(--success-color);
+		border: 1px solid $success_color;
+		background: $success_color;
 		color: white;
 
 		&:hover {
-			border-color: var(--error-color);
-			background: var(--error-color);
+			border-color: $error_color;
+			background: $error_color;
 		}
 	}
 
 	&.disabled {
-		border: 1px solid var(--error-color);
-		background: var(--error-color);
+		border: 1px solid $error_color;
+		background: $error_color;
 		color: white;
 
 		&:hover {
-			border-color: var(--success-color);
-			background: var(--success-color);
+			border-color: $success_color;
+			background: $success_color;
 		}
 	}
 
@@ -61,12 +62,12 @@
 		padding: 0;
 		border: none;
 		background: transparent;
-		color: var(--primary-color);
+		color: $primary_color;
 		text-decoration: underline;
 
 		&:hover {
 			background: transparent;
-			color: var(--primary-light);
+			color: $accent_color;
 			text-decoration: none;
 		}
 
@@ -76,13 +77,13 @@
 	}
 
 	&.link {
-		border: 1px solid var(--primary-color);
+		border: 1px solid $primary_color;
 		background: transparent;
-		color: var(--primary-color);
+		color: $primary_color;
 		text-decoration: none;
 
 		&:hover {
-			background: var(--primary-color);
+			background: $primary_color;
 			color: white;
 			text-decoration: none;
 		}
