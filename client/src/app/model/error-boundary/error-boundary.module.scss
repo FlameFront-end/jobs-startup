@@ -12,7 +12,8 @@
 	@include padding-md;
 
 	position: relative;
-	overflow: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 
 	@include mobile {
 		align-items: flex-start;
@@ -195,9 +196,8 @@
 			background: $background-color;
 
 			@include padding-lg;
-			@include margin-md;
 
-			margin-bottom: 0;
+			
 			border-radius: map.get($border-radius, md);
 			overflow: auto;
 			border: 1px solid $border-color;
@@ -206,9 +206,65 @@
 			white-space: pre-wrap;
 			overflow-wrap: break-word;
 			box-sizing: border-box;
+			scrollbar-width: thin;
+			scrollbar-color: $primary-color transparent;
+
+			&::-webkit-scrollbar {
+				width: 8px;
+				height: 8px;
+			}
+
+			&::-webkit-scrollbar-track {
+				background: transparent;
+				border-radius: 4px;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background: linear-gradient(
+					135deg,
+					$primary-color 0%,
+					color-mix(in srgb, $primary-color 80%, $accent-color) 100%
+				);
+				border-radius: 4px;
+				transition: all 0.3s ease;
+			}
+
+			&::-webkit-scrollbar-thumb:hover {
+				background: linear-gradient(
+					135deg,
+					color-mix(in srgb, $primary-color 90%, black) 0%,
+					color-mix(in srgb, $accent-color 90%, black) 100%
+				);
+			}
+
+			&::-webkit-scrollbar-corner {
+				background: transparent;
+			}
 
 			@include mobile {
 				max-height: 300px;
+			}
+		}
+	}
+
+	[data-theme='dark'] & {
+		pre {
+			scrollbar-color: $primary-color transparent;
+
+			&::-webkit-scrollbar-thumb {
+				background: linear-gradient(
+					135deg,
+					$primary-color 0%,
+					color-mix(in srgb, $primary-color 80%, $accent-color) 100%
+				);
+			}
+
+			&::-webkit-scrollbar-thumb:hover {
+				background: linear-gradient(
+					135deg,
+					color-mix(in srgb, $primary-color 90%, white) 0%,
+					color-mix(in srgb, $accent-color 90%, white) 100%
+				);
 			}
 		}
 	}

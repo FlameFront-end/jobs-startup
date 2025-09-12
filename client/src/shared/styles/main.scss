@@ -7,6 +7,10 @@ body {
 	background-color: $background-color;
 	color: $text-color;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
 }
 
 h1 {
@@ -221,6 +225,131 @@ button:not([data-chakra-component]) {
 	&:focus-visible {
 		outline: 4px auto -webkit-focus-ring-color;
 	}
+}
+
+[style*='overflow'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow-x'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow-y'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: auto'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: scroll'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: hidden'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: visible'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: clip'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: overlay'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: inherit'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: initial'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: unset'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert-layer'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: auto'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: scroll'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: hidden'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: visible'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: clip'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: overlay'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: inherit'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: initial'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: unset'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert-layer'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
 }
 
 .theme-toggle {

@@ -2,6 +2,17 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+html {
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+}
+
+body {
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
 #root {
 	width: 100%;
 	height: 100vh;
@@ -9,30 +20,48 @@
 	padding: 0;
 	text-align: left;
 	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 * {
 	scrollbar-width: thin;
-	scrollbar-color: var(--primary-color) transparent;
+	scrollbar-color: $primary-color transparent;
 }
 
 *::-webkit-scrollbar {
-	width: 8px;
-	height: 8px;
+	width: 10px;
+	height: 10px;
 }
 
 *::-webkit-scrollbar-track {
 	background: transparent;
+	border-radius: 5px;
 }
 
 *::-webkit-scrollbar-thumb {
-	background: var(--primary-color);
-	border-radius: 4px;
-	transition: all 0.2s ease;
+	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
+	border-radius: 6px;
+	transition: all 0.3s ease;
+	border: 2px solid transparent;
+	background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-	background: color-mix(in srgb, var(--primary-color) 80%, black);
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, $primary-color 90%, black) 0%,
+		color-mix(in srgb, $accent-color 90%, black) 100%
+	);
+	transform: scale(1.1);
+}
+
+*::-webkit-scrollbar-thumb:active {
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, $primary-color 70%, black) 0%,
+		color-mix(in srgb, $accent-color 70%, black) 100%
+	);
 }
 
 *::-webkit-scrollbar-corner {
@@ -40,15 +69,203 @@
 }
 
 [data-theme='dark'] * {
-	scrollbar-color: var(--primary-color) transparent;
+	scrollbar-color: $primary-color transparent;
 }
 
 [data-theme='dark'] *::-webkit-scrollbar-thumb {
-	background: var(--primary-color);
+	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
 }
 
 [data-theme='dark'] *::-webkit-scrollbar-thumb:hover {
-	background: color-mix(in srgb, var(--primary-color) 80%, white);
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, $primary-color 90%, white) 0%,
+		color-mix(in srgb, $accent-color 90%, white) 100%
+	);
+}
+
+[data-theme='dark'] *::-webkit-scrollbar-thumb:active {
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, $primary-color 70%, white) 0%,
+		color-mix(in srgb, $accent-color 70%, white) 100%
+	);
+}
+
+@media (max-width: 768px) {
+	*::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		border-radius: 3px;
+		border: 1px solid transparent;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*::-webkit-scrollbar-thumb {
+		transition: none;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		transform: none;
+	}
+}
+
+.scroll-container {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+.scroll-container-x {
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+.scroll-container-y {
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+.scroll-smooth {
+	scroll-behavior: smooth;
+}
+
+.scroll-auto {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+[style*='overflow'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow-x'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow-y'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: auto'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: scroll'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: hidden'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: visible'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: clip'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: overlay'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: inherit'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: initial'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: unset'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert-layer'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: auto'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: scroll'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: hidden'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: visible'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: clip'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: overlay'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: inherit'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: initial'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: unset'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+}
+
+[style*='overflow: revert-layer'] {
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
 }
 
 .page-transition {

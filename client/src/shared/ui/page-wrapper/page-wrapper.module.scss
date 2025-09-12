@@ -9,4 +9,6 @@
 	position: relative;
 	background-color: $background-color;
 	color: $text-color;
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
 }

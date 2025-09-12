@@ -132,6 +132,9 @@ const HomePage = () => {
 							<Link to={ROUTES.JOBS} className='nav-link'>
 								Вакансии
 							</Link>
+							<Link to={ROUTES.TEST_ERROR} className='nav-link'>
+								Тест ошибки
+							</Link>
 						</HStack>
 					</Box>
 				</VStack>

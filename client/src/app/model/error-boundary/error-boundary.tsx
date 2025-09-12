@@ -1,8 +1,9 @@
-import styles from './error-boundary.page.module.scss'
+import styles from './error-boundary.module.scss'
 
 import type { ErrorInfo, ReactNode } from 'react'
 import { Component } from 'react'
 
+import { logger } from '@/shared/lib/logger'
 import { ROUTES } from '@/shared/model/routes'
 
 interface Props {
@@ -46,7 +47,7 @@ function ErrorBoundaryContent({ error, onReload, onGoHome, onOpenEditor }: Error
 						)}
 
 						<button className={styles.btnOpenEditor} onClick={onOpenEditor} disabled={!error.stack}>
-							Открыть в редакторе
+							Открыть в редактореs
 						</button>
 					</div>
 				)}
@@ -75,6 +76,12 @@ export class ErrorBoundary extends Component<Props, State> {
 	}
 
 	componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+		logger.error('React Error Boundary Caught Error', {
+			error: error.message,
+			stack: error.stack,
+			componentStack: errorInfo.componentStack
+		})
+
 		this.setState({
 			error,
 			errorInfo
