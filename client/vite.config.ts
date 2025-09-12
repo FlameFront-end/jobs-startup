@@ -25,7 +25,7 @@ export default defineConfig({
 				manualChunks: {
 					vendor: ['react', 'react-dom'],
 					router: ['react-router-dom'],
-					ui: ['@chakra-ui/react', 'framer-motion'],
+					ui: ['framer-motion'],
 					state: ['@reduxjs/toolkit', 'react-redux']
 				}
 			}
