@@ -10,7 +10,6 @@
 	background-color: $background_color;
 	color: $text_color;
 	@include scroll-styles;
-	@include scrollbar.scrollbar-reserved;
 }
 
 .container {
