@@ -1,13 +1,8 @@
+import { Button } from '@/shared/kit'
 import { useTheme } from '@/shared/lib/hooks/useTheme'
-
-import styles from './theme-toggle.module.scss'
 
 export function ThemeToggle() {
 	const { toggleTheme, isDark } = useTheme()
 
-	return (
-		<button className={styles.button} onClick={toggleTheme}>
-			{isDark ? '☀️' : '🌙'}
-		</button>
-	)
+	return <Button onClick={toggleTheme}>{isDark ? '☀️' : '🌙'}</Button>
 }

@@ -2,14 +2,11 @@
 @use "variables" as *;
 @use "mixins" as *;
 
-html {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-body {
+@mixin scroll-styles {
 	overflow: hidden auto;
 	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
 }
 
 #root {
@@ -17,77 +14,29 @@ body {
 	height: 100vh;
 	margin: 0;
 	padding: 0;
-	overflow: hidden auto;
 	text-align: left;
-	-webkit-overflow-scrolling: touch;
+	overflow: hidden;
 }
 
 * {
-	scrollbar-color: $primary-color transparent;
-	scrollbar-width: thin;
+	@include scroll-styles;
 }
 
 *::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
-}
-
-*::-webkit-scrollbar-track {
-	border-radius: 5px;
-	background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-	border: 2px solid transparent;
-	border-radius: 6px;
-	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
-	background-clip: content-box;
-	transition: all 0.3s ease;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-	transform: scale(1.1);
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, $primary-color 90%, black) 0%,
-		color-mix(in srgb, $accent-color 90%, black) 100%
-	);
-}
-
-*::-webkit-scrollbar-thumb:active {
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, $primary-color 70%, black) 0%,
-		color-mix(in srgb, $accent-color 70%, black) 100%
-	);
-}
-
-*::-webkit-scrollbar-corner {
-	background: transparent;
+	width: 8px;
+	height: 8px;
 }
 
 [data-theme="dark"] * {
-	scrollbar-color: $primary-color transparent;
+	scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 [data-theme="dark"] *::-webkit-scrollbar-thumb {
-	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
+	background: rgba(255, 255, 255, 0.2);
 }
 
 [data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, $primary-color 90%, white) 0%,
-		color-mix(in srgb, $accent-color 90%, white) 100%
-	);
-}
-
-[data-theme="dark"] *::-webkit-scrollbar-thumb:active {
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, $primary-color 70%, white) 0%,
-		color-mix(in srgb, $accent-color 70%, white) 100%
-	);
+	background: rgba(255, 255, 255, 0.3);
 }
 
 @media (width <= 768px) {
@@ -97,7 +46,6 @@ body {
 	}
 
 	*::-webkit-scrollbar-thumb {
-		border: 1px solid transparent;
 		border-radius: 3px;
 	}
 }
@@ -106,149 +54,9 @@ body {
 	*::-webkit-scrollbar-thumb {
 		transition: none;
 	}
-
-	*::-webkit-scrollbar-thumb:hover {
-		transform: none;
-	}
-}
-
-.scroll-container {
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-.scroll-container-x {
-	overflow: auto hidden;
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-.scroll-container-y {
-	overflow: hidden auto;
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-.scroll-smooth {
-	scroll-behavior: smooth;
-}
-
-.scroll-auto {
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
-}
-
-[style*="overflow"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow-x"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow-y"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: auto"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: scroll"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: hidden"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: visible"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: clip"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: overlay"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: inherit"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: initial"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: unset"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: revert"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*="overflow: revert-layer"] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
 }
 
 .page-transition {
 	backface-visibility: hidden;
 	will-change: transform, opacity;
-}
-
-.logo {
-	height: 6em;
-	padding: 1.5em;
-	transition: filter 300ms;
-	will-change: filter;
-}
-
-.logo:hover {
-	filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.react:hover {
-	filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(360deg);
-	}
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	a:nth-of-type(2) .logo {
-		animation: logo-spin infinite 20s linear;
-	}
-}
-
-.card {
-	padding: 2em;
-}
-
-.read-the-docs {
-	color: #888;
 }

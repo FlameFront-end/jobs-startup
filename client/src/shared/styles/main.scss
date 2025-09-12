@@ -2,14 +2,12 @@
 @use "variables" as *;
 @use "mixins" as *;
 @use "reset";
+@use "app";
 
 body {
 	background-color: $background-color;
-	overflow: hidden auto;
 	color: $text-color;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
 }
 
 ::selection {
@@ -71,94 +69,7 @@ a {
 	}
 }
 
-.nav-link {
-	@include font-button;
 
-	display: inline-block;
-	border: 1px solid $border-color;
-	border-radius: 8px;
-	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
-	background: $background-card;
-	color: $text-color;
-	text-decoration: none;
-	transition: all 0.2s ease;
-
-	@include p(md, y);
-	@include p(lg, x);
-
-	@include mobile {
-		@include p(sm, y);
-		@include p(md, x);
-	}
-
-	&:hover {
-		transform: translateY(-1px);
-		border-color: $primary-color;
-		box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%);
-		background: $primary-color;
-		color: white;
-	}
-}
-
-button:not([data-chakra-component]) {
-	@include font-button;
-
-	border: 1px solid $border-color;
-	border-radius: 8px;
-	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
-	background-color: $background-card;
-	color: $text-color;
-	font-family: inherit;
-	transition: all 0.2s ease;
-	cursor: pointer;
-
-	@include p(md, y);
-	@include p(lg, x);
-
-	@include mobile {
-		@include p(sm, y);
-		@include p(md, x);
-	}
-
-	&:hover {
-		transform: translateY(-1px);
-		border-color: $primary-color;
-		box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%);
-		background-color: $primary-color;
-		color: white;
-	}
-
-	&:focus,
-	&:focus-visible {
-		outline: 4px auto -webkit-focus-ring-color;
-	}
-}
-
-.theme-toggle {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 44px;
-	height: 44px;
-	border: 2px solid $border-color;
-	border-radius: 50%;
-	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-	background: $background-card;
-	@include text-responsive(18px, 20px, 20px);
-	transition: all 0.2s ease;
-
-	@include mobile {
-		width: 40px;
-		height: 40px;
-	}
-
-	&:hover {
-		transform: translateY(-2px);
-		border-color: $primary-color;
-		box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
-		background-color: $primary-color;
-	}
-}
 
 code {
 	padding: 0.125rem 0.25rem;

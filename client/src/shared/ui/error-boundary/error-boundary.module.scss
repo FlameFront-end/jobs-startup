@@ -188,54 +188,8 @@
 			font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
 			white-space: pre-wrap;
 			overflow-wrap: break-all;
-			scrollbar-color: $primary-color transparent;
-			scrollbar-width: thin;
 
 			@include p(lg, all);
-
-			&::-webkit-scrollbar {
-				width: 8px;
-				height: 8px;
-			}
-
-			&::-webkit-scrollbar-track {
-				border-radius: 4px;
-				background: transparent;
-			}
-
-			&::-webkit-scrollbar-thumb {
-				border-radius: 4px;
-				background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
-				transition: all 0.3s ease;
-			}
-
-			&::-webkit-scrollbar-corner {
-				background: transparent;
-			}
-
-			&::-webkit-scrollbar-thumb:hover {
-				background: linear-gradient(
-					135deg,
-					color-mix(in srgb, $primary-color 90%, black) 0%,
-					color-mix(in srgb, $accent-color 90%, black) 100%
-				);
-			}
-
-			[data-theme="dark"] & {
-				scrollbar-color: $primary-color transparent;
-
-				&::-webkit-scrollbar-thumb {
-					background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
-				}
-
-				&::-webkit-scrollbar-thumb:hover {
-					background: linear-gradient(
-						135deg,
-						color-mix(in srgb, $primary-color 90%, white) 0%,
-						color-mix(in srgb, $accent-color 90%, white) 100%
-					);
-				}
-			}
 
 			@include mobile {
 				max-height: 300px;
