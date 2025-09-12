@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 
 import { logger } from '@/shared/lib/logger'
+
 import { Providers } from './model/providers'
 import { router } from './model/router'
 

@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import type { Theme } from '@/shared/types/global'
+
 import type { RootState } from '../store'
 import { setTheme, toggleTheme } from '../store/slices/appSlice'
 

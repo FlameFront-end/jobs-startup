@@ -1,7 +1,8 @@
 import { createContext, type ReactNode, useContext } from 'react'
 
-import { useTheme } from '@/shared/lib/hooks/useTheme'
 import { Toaster as ChakraToaster, createToaster, Portal, Spinner, Stack, Toast } from '@chakra-ui/react'
+
+import { useTheme } from '@/shared/lib/hooks/useTheme'
 
 export const toaster = createToaster({
 	placement: 'top',

@@ -8,6 +8,8 @@ import { queryClient } from '@/shared/api/query-client'
 import { store } from '@/shared/lib/store'
 import { ToastProvider } from '@/shared/lib/toast'
 
+import { ErrorBoundaryProvider } from './error-boundary'
+
 const system = createSystem(defaultConfig)
 
 function ThemeInitializer() {
@@ -24,7 +26,9 @@ export function Providers({ children }: ProvidersProps) {
 			<QueryClientProvider client={queryClient}>
 				<ChakraProvider value={system}>
 					<ThemeInitializer />
-					<ToastProvider>{children}</ToastProvider>
+					<ToastProvider>
+						<ErrorBoundaryProvider>{children}</ErrorBoundaryProvider>
+					</ToastProvider>
 				</ChakraProvider>
 			</QueryClientProvider>
 		</Provider>

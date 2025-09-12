@@ -1,6 +1,8 @@
-import { ROUTES } from '@/shared/model/routes'
-import { Link } from 'react-router-dom'
 import styles from './not-found.page.module.scss'
+
+import { Link } from 'react-router-dom'
+
+import { ROUTES } from '@/shared/model/routes'
 
 export const NotFoundPage = () => {
 	return (
