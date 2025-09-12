@@ -1,0 +1,20 @@
+{
+  "name": "jobs-startup",
+  "version": "1.0.0",
+  "description": "Fullstack приложение для поиска вакансий",
+  "private": true,
+  "scripts": {
+    "dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
+    "dev:single": "powershell -ExecutionPolicy Bypass -File ./scripts/dev-single.ps1",
+    "install:all": "npm install --prefix client && npm install --prefix parser",
+    "build:client": "npm run build --prefix client",
+    "build:parser": "npm run build --prefix parser",
+    "build:all": "npm run build:parser && npm run build:client",
+    "start:prod": "docker-compose -f docker-compose.prod.yml up --build -d",
+    "stop:prod": "docker-compose -f docker-compose.prod.yml down",
+    "logs:prod": "docker-compose -f docker-compose.prod.yml logs -f"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

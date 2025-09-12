@@ -1,5 +1,7 @@
-import { env } from '@/shared/config/env'
 import { configureStore } from '@reduxjs/toolkit'
+
+import { env } from '@/shared/config/env'
+
 import { middleware } from './middleware'
 import { rootReducer } from './rootReducer'
 

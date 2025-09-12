@@ -1,0 +1,85 @@
+@use 'sass:map';
+@use '@/shared/styles/variables.scss' as *;
+@use '@/shared/styles/mixins.scss' as *;
+
+.container {
+	@include padding-vars(xl);
+	max-width: 600px;
+	margin: 0 auto;
+
+	h1 {
+		@include font-heading-1;
+		color: $text-color;
+		@include margin-vars(xl);
+	}
+
+	h2 {
+		@include font-heading-2;
+		color: $text-color;
+		@include margin-vars(lg);
+	}
+}
+
+.section {
+	@include margin-vars(2xl);
+}
+
+.checkboxGroup {
+	display: flex;
+	flex-direction: column;
+	gap: map.get($spacing, lg);
+}
+
+.checkboxLabel {
+	display: flex;
+	align-items: center;
+	gap: map.get($spacing, md);
+
+	span {
+		@include font-body;
+		color: $text-color;
+	}
+}
+
+.button {
+	@include font-button;
+	@include padding-vars(md, xl);
+	color: white;
+	border: none;
+	border-radius: map.get($border-radius, md);
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.buttonDanger {
+	background: $error-color;
+
+	&:hover {
+		background: color-mix(in srgb, $error-color 90%, black);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgb(220 53 69 / 30%);
+	}
+}
+
+.buttonPrimary {
+	background: $primary-color;
+
+	&:hover {
+		background: color-mix(in srgb, $primary-color 90%, black);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgb(0 123 255 / 30%);
+	}
+}
+
+.backLink {
+	@include font-body;
+	color: $primary-color;
+	text-decoration: none;
+	@include margin-vars(xl);
+	display: inline-block;
+	transition: color 0.3s ease;
+
+	&:hover {
+		color: $accent-color;
+	}
+}

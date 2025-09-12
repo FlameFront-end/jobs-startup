@@ -1,0 +1,48 @@
+@use 'breakpoints' as *;
+
+@mixin container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 1rem;
+
+	@include mobile {
+		padding: 0 0.5rem;
+	}
+
+	@include tablet {
+		padding: 0 1rem;
+	}
+
+	@include desktop {
+		padding: 0 2rem;
+	}
+}
+
+@mixin flex-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@mixin flex-between {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+@mixin grid-responsive($mobile: 1, $tablet: 2, $desktop: 3) {
+	display: grid;
+	gap: 1rem;
+
+	@include mobile {
+		grid-template-columns: repeat(#{$mobile}, 1fr);
+	}
+
+	@include tablet {
+		grid-template-columns: repeat(#{$tablet}, 1fr);
+	}
+
+	@include desktop {
+		grid-template-columns: repeat(#{$desktop}, 1fr);
+	}
+}

@@ -1,15 +1,12 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
-interface AppState {
-	animationsEnabled: boolean
-	theme: 'light' | 'dark'
-	sidebarCollapsed: boolean
-}
+import type { AppState, Theme } from '@/shared/types/global'
 
 const initialState: AppState = {
 	animationsEnabled: false,
-	theme: 'light',
-	sidebarCollapsed: false
+	theme: 'dark',
+	sidebarCollapsed: false,
+	errorNotificationsEnabled: true
 }
 
 export const appSlice = createSlice({
@@ -22,18 +19,36 @@ export const appSlice = createSlice({
 		setAnimationsEnabled: (state, action: PayloadAction<boolean>) => {
 			state.animationsEnabled = action.payload
 		},
-		setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
+		setTheme: (state, action: PayloadAction<Theme>) => {
 			state.theme = action.payload
+		},
+		toggleTheme: state => {
+			state.theme = state.theme === 'light' ? 'dark' : 'light'
 		},
 		toggleSidebar: state => {
 			state.sidebarCollapsed = !state.sidebarCollapsed
 		},
 		setSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
 			state.sidebarCollapsed = action.payload
+		},
+		toggleErrorNotifications: state => {
+			state.errorNotificationsEnabled = !state.errorNotificationsEnabled
+		},
+		setErrorNotificationsEnabled: (state, action: PayloadAction<boolean>) => {
+			state.errorNotificationsEnabled = action.payload
 		}
 	}
 })
 
-export const { toggleAnimations, setAnimationsEnabled, setTheme, toggleSidebar, setSidebarCollapsed } = appSlice.actions
+export const {
+	toggleAnimations,
+	setAnimationsEnabled,
+	setTheme,
+	toggleTheme,
+	toggleSidebar,
+	setSidebarCollapsed,
+	toggleErrorNotifications,
+	setErrorNotificationsEnabled
+} = appSlice.actions
 
 export default appSlice.reducer

@@ -1,0 +1,809 @@
+@use 'sass:map';
+@use 'sass:list';
+@use '../variables' as *;
+@use 'breakpoints' as *;
+
+@mixin spacing-xs {
+	padding: map.get($spacing, xs);
+	margin: map.get($spacing, xs);
+
+	@include mobile {
+		padding: map.get($spacing, xs) * 0.75;
+		margin: map.get($spacing, xs) * 0.75;
+	}
+}
+
+@mixin spacing-sm {
+	padding: map.get($spacing, sm);
+	margin: map.get($spacing, sm);
+
+	@include mobile {
+		padding: map.get($spacing, sm) * 0.8;
+		margin: map.get($spacing, sm) * 0.8;
+	}
+}
+
+@mixin spacing-md {
+	padding: map.get($spacing, md);
+	margin: map.get($spacing, md);
+
+	@include mobile {
+		padding: map.get($spacing, md) * 0.75;
+		margin: map.get($spacing, md) * 0.75;
+	}
+}
+
+@mixin spacing-lg {
+	padding: map.get($spacing, lg);
+	margin: map.get($spacing, lg);
+
+	@include tablet {
+		padding: map.get($spacing, lg) * 0.9;
+		margin: map.get($spacing, lg) * 0.9;
+	}
+
+	@include mobile {
+		padding: map.get($spacing, lg) * 0.4;
+		margin: map.get($spacing, lg) * 0.4;
+	}
+}
+
+@mixin spacing-xl {
+	padding: map.get($spacing, xl);
+	margin: map.get($spacing, xl);
+
+	@include tablet {
+		padding: map.get($spacing, xl) * 0.85;
+		margin: map.get($spacing, xl) * 0.85;
+	}
+
+	@include mobile {
+		padding: map.get($spacing, xl) * 0.3;
+		margin: map.get($spacing, xl) * 0.3;
+	}
+}
+
+@mixin spacing-2xl {
+	padding: map.get($spacing, 2xl);
+	margin: map.get($spacing, 2xl);
+
+	@include tablet {
+		padding: map.get($spacing, 2xl) * 0.8;
+		margin: map.get($spacing, 2xl) * 0.8;
+	}
+
+	@include mobile {
+		padding: map.get($spacing, 2xl) * 0.25;
+		margin: map.get($spacing, 2xl) * 0.25;
+	}
+}
+
+@mixin padding-xs {
+	padding: map.get($spacing, xs);
+
+	@include mobile {
+		padding: map.get($spacing, xs) * 0.75;
+	}
+}
+
+@mixin padding-sm {
+	padding: map.get($spacing, sm);
+
+	@include mobile {
+		padding: map.get($spacing, sm) * 0.8;
+	}
+}
+
+@mixin padding-md {
+	padding: map.get($spacing, md);
+
+	@include mobile {
+		padding: map.get($spacing, md) * 0.75;
+	}
+}
+
+@mixin padding-lg {
+	padding: map.get($spacing, lg);
+
+	@include tablet {
+		padding: map.get($spacing, lg) * 0.9;
+	}
+
+	@include mobile {
+		padding: map.get($spacing, lg) * 0.4;
+	}
+}
+
+@mixin padding-xl {
+	padding: map.get($spacing, xl);
+
+	@include tablet {
+		padding: map.get($spacing, xl) * 0.85;
+	}
+
+	@include mobile {
+		padding: map.get($spacing, xl) * 0.3;
+	}
+}
+
+@mixin padding-2xl {
+	padding: map.get($spacing, 2xl);
+
+	@include tablet {
+		padding: map.get($spacing, 2xl) * 0.8;
+	}
+
+	@include mobile {
+		padding: map.get($spacing, 2xl) * 0.25;
+	}
+}
+
+@mixin margin-xs {
+	margin: map.get($spacing, xs);
+
+	@include mobile {
+		margin: map.get($spacing, xs) * 0.75;
+	}
+}
+
+@mixin margin-sm {
+	margin: map.get($spacing, sm);
+
+	@include mobile {
+		margin: map.get($spacing, sm) * 0.8;
+	}
+}
+
+@mixin margin-md {
+	margin: map.get($spacing, md);
+
+	@include mobile {
+		margin: map.get($spacing, md) * 0.75;
+	}
+}
+
+@mixin margin-lg {
+	margin: map.get($spacing, lg);
+
+	@include tablet {
+		margin: map.get($spacing, lg) * 0.9;
+	}
+
+	@include mobile {
+		margin: map.get($spacing, lg) * 0.4;
+	}
+}
+
+@mixin margin-xl {
+	margin: map.get($spacing, xl);
+
+	@include tablet {
+		margin: map.get($spacing, xl) * 0.85;
+	}
+
+	@include mobile {
+		margin: map.get($spacing, xl) * 0.3;
+	}
+}
+
+@mixin margin-2xl {
+	margin: map.get($spacing, 2xl);
+
+	@include tablet {
+		margin: map.get($spacing, 2xl) * 0.8;
+	}
+
+	@include mobile {
+		margin: map.get($spacing, 2xl) * 0.25;
+	}
+}
+
+@mixin spacing-responsive($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding: $mobile;
+	margin: $mobile;
+
+	@include tablet {
+		padding: $tablet;
+		margin: $tablet;
+	}
+
+	@include desktop {
+		padding: $desktop;
+		margin: $desktop;
+	}
+}
+
+@mixin padding-responsive($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding: $mobile;
+
+	@include tablet {
+		padding: $tablet;
+	}
+
+	@include desktop {
+		padding: $desktop;
+	}
+}
+
+@mixin margin-responsive($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin: $mobile;
+
+	@include tablet {
+		margin: $tablet;
+	}
+
+	@include desktop {
+		margin: $desktop;
+	}
+}
+
+@mixin padding-x($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-left: $mobile;
+	padding-right: $mobile;
+
+	@include tablet {
+		padding-left: $tablet;
+		padding-right: $tablet;
+	}
+
+	@include desktop {
+		padding-left: $desktop;
+		padding-right: $desktop;
+	}
+}
+
+@mixin padding-y($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-top: $mobile;
+	padding-bottom: $mobile;
+
+	@include tablet {
+		padding-top: $tablet;
+		padding-bottom: $tablet;
+	}
+
+	@include desktop {
+		padding-top: $desktop;
+		padding-bottom: $desktop;
+	}
+}
+
+@mixin margin-x($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-left: $mobile;
+	margin-right: $mobile;
+
+	@include tablet {
+		margin-left: $tablet;
+		margin-right: $tablet;
+	}
+
+	@include desktop {
+		margin-left: $desktop;
+		margin-right: $desktop;
+	}
+}
+
+@mixin margin-y($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-top: $mobile;
+	margin-bottom: $mobile;
+
+	@include tablet {
+		margin-top: $tablet;
+		margin-bottom: $tablet;
+	}
+
+	@include desktop {
+		margin-top: $desktop;
+		margin-bottom: $desktop;
+	}
+}
+
+// Направленные миксины для margin
+@mixin margin-top($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-top: $mobile;
+
+	@include tablet {
+		margin-top: $tablet;
+	}
+
+	@include desktop {
+		margin-top: $desktop;
+	}
+}
+
+@mixin margin-right($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-right: $mobile;
+
+	@include tablet {
+		margin-right: $tablet;
+	}
+
+	@include desktop {
+		margin-right: $desktop;
+	}
+}
+
+@mixin margin-bottom($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-bottom: $mobile;
+
+	@include tablet {
+		margin-bottom: $tablet;
+	}
+
+	@include desktop {
+		margin-bottom: $desktop;
+	}
+}
+
+@mixin margin-left($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-left: $mobile;
+
+	@include tablet {
+		margin-left: $tablet;
+	}
+
+	@include desktop {
+		margin-left: $desktop;
+	}
+}
+
+// Направленные миксины для padding
+@mixin padding-top($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-top: $mobile;
+
+	@include tablet {
+		padding-top: $tablet;
+	}
+
+	@include desktop {
+		padding-top: $desktop;
+	}
+}
+
+@mixin padding-right($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-right: $mobile;
+
+	@include tablet {
+		padding-right: $tablet;
+	}
+
+	@include desktop {
+		padding-right: $desktop;
+	}
+}
+
+@mixin padding-bottom($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-bottom: $mobile;
+
+	@include tablet {
+		padding-bottom: $tablet;
+	}
+
+	@include desktop {
+		padding-bottom: $desktop;
+	}
+}
+
+@mixin padding-left($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-left: $mobile;
+
+	@include tablet {
+		padding-left: $tablet;
+	}
+
+	@include desktop {
+		padding-left: $desktop;
+	}
+}
+
+// Комбинированные миксины
+@mixin margin-tb($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-top: $mobile;
+	margin-bottom: $mobile;
+
+	@include tablet {
+		margin-top: $tablet;
+		margin-bottom: $tablet;
+	}
+
+	@include desktop {
+		margin-top: $desktop;
+		margin-bottom: $desktop;
+	}
+}
+
+@mixin margin-lr($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	margin-left: $mobile;
+	margin-right: $mobile;
+
+	@include tablet {
+		margin-left: $tablet;
+		margin-right: $tablet;
+	}
+
+	@include desktop {
+		margin-left: $desktop;
+		margin-right: $desktop;
+	}
+}
+
+@mixin padding-tb($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-top: $mobile;
+	padding-bottom: $mobile;
+
+	@include tablet {
+		padding-top: $tablet;
+		padding-bottom: $tablet;
+	}
+
+	@include desktop {
+		padding-top: $desktop;
+		padding-bottom: $desktop;
+	}
+}
+
+@mixin padding-lr($mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	padding-left: $mobile;
+	padding-right: $mobile;
+
+	@include tablet {
+		padding-left: $tablet;
+		padding-right: $tablet;
+	}
+
+	@include desktop {
+		padding-left: $desktop;
+		padding-right: $desktop;
+	}
+}
+
+// Универсальный миксин для любых сторон
+@mixin margin-sides($sides: (), $mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	@each $side in $sides {
+		margin-#{$side}: $mobile;
+	}
+
+	@include tablet {
+		@each $side in $sides {
+			margin-#{$side}: $tablet;
+		}
+	}
+
+	@include desktop {
+		@each $side in $sides {
+			margin-#{$side}: $desktop;
+		}
+	}
+}
+
+@mixin padding-sides($sides: (), $mobile: 1rem, $tablet: 1.5rem, $desktop: 2rem) {
+	@each $side in $sides {
+		padding-#{$side}: $mobile;
+	}
+
+	@include tablet {
+		@each $side in $sides {
+			padding-#{$side}: $tablet;
+		}
+	}
+
+	@include desktop {
+		@each $side in $sides {
+			padding-#{$side}: $desktop;
+		}
+	}
+}
+
+// Предустановленные миксины с размерами из переменных
+@mixin margin-top-xs {
+	@include margin-top(map.get($spacing, xs), map.get($spacing, xs), map.get($spacing, xs));
+}
+
+@mixin margin-top-sm {
+	@include margin-top(map.get($spacing, sm), map.get($spacing, sm), map.get($spacing, sm));
+}
+
+@mixin margin-top-md {
+	@include margin-top(map.get($spacing, md), map.get($spacing, md), map.get($spacing, md));
+}
+
+@mixin margin-top-lg {
+	@include margin-top(map.get($spacing, lg), map.get($spacing, lg), map.get($spacing, lg));
+}
+
+@mixin margin-top-xl {
+	@include margin-top(map.get($spacing, xl), map.get($spacing, xl), map.get($spacing, xl));
+}
+
+@mixin margin-top-2xl {
+	@include margin-top(map.get($spacing, 2xl), map.get($spacing, 2xl), map.get($spacing, 2xl));
+}
+
+@mixin margin-bottom-xs {
+	@include margin-bottom(map.get($spacing, xs), map.get($spacing, xs), map.get($spacing, xs));
+}
+
+@mixin margin-bottom-sm {
+	@include margin-bottom(map.get($spacing, sm), map.get($spacing, sm), map.get($spacing, sm));
+}
+
+@mixin margin-bottom-md {
+	@include margin-bottom(map.get($spacing, md), map.get($spacing, md), map.get($spacing, md));
+}
+
+@mixin margin-bottom-lg {
+	@include margin-bottom(map.get($spacing, lg), map.get($spacing, lg), map.get($spacing, lg));
+}
+
+@mixin margin-bottom-xl {
+	@include margin-bottom(map.get($spacing, xl), map.get($spacing, xl), map.get($spacing, xl));
+}
+
+@mixin margin-bottom-2xl {
+	@include margin-bottom(map.get($spacing, 2xl), map.get($spacing, 2xl), map.get($spacing, 2xl));
+}
+
+@mixin padding-top-xs {
+	@include padding-top(map.get($spacing, xs), map.get($spacing, xs), map.get($spacing, xs));
+}
+
+@mixin padding-top-sm {
+	@include padding-top(map.get($spacing, sm), map.get($spacing, sm), map.get($spacing, sm));
+}
+
+@mixin padding-top-md {
+	@include padding-top(map.get($spacing, md), map.get($spacing, md), map.get($spacing, md));
+}
+
+@mixin padding-top-lg {
+	@include padding-top(map.get($spacing, lg), map.get($spacing, lg), map.get($spacing, lg));
+}
+
+@mixin padding-top-xl {
+	@include padding-top(map.get($spacing, xl), map.get($spacing, xl), map.get($spacing, xl));
+}
+
+@mixin padding-top-2xl {
+	@include padding-top(map.get($spacing, 2xl), map.get($spacing, 2xl), map.get($spacing, 2xl));
+}
+
+@mixin padding-bottom-xs {
+	@include padding-bottom(map.get($spacing, xs), map.get($spacing, xs), map.get($spacing, xs));
+}
+
+@mixin padding-bottom-sm {
+	@include padding-bottom(map.get($spacing, sm), map.get($spacing, sm), map.get($spacing, sm));
+}
+
+@mixin padding-bottom-md {
+	@include padding-bottom(map.get($spacing, md), map.get($spacing, md), map.get($spacing, md));
+}
+
+@mixin padding-bottom-lg {
+	@include padding-bottom(map.get($spacing, lg), map.get($spacing, lg), map.get($spacing, lg));
+}
+
+@mixin padding-bottom-xl {
+	@include padding-bottom(map.get($spacing, xl), map.get($spacing, xl), map.get($spacing, xl));
+}
+
+@mixin padding-bottom-2xl {
+	@include padding-bottom(map.get($spacing, 2xl), map.get($spacing, 2xl), map.get($spacing, 2xl));
+}
+
+// Удобные миксины для padding и margin как CSS свойства
+@mixin padding($values...) {
+	@if list.length($values) == 1 {
+		// padding: value (все стороны)
+		padding: $values;
+
+		@include tablet {
+			padding: $values * 0.9;
+		}
+
+		@include mobile {
+			padding: $values * 0.6;
+		}
+	} @else if list.length($values) == 2 {
+		// padding: top-bottom left-right
+		padding: list.nth($values, 1) list.nth($values, 2);
+
+		@include tablet {
+			padding: list.nth($values, 1) * 0.9 list.nth($values, 2) * 0.9;
+		}
+
+		@include mobile {
+			padding: list.nth($values, 1) * 0.6 list.nth($values, 2) * 0.6;
+		}
+	} @else if list.length($values) == 3 {
+		// padding: top left-right bottom
+		padding: list.nth($values, 1) list.nth($values, 2) list.nth($values, 3);
+
+		@include tablet {
+			padding: list.nth($values, 1) * 0.9 list.nth($values, 2) * 0.9 list.nth($values, 3) * 0.9;
+		}
+
+		@include mobile {
+			padding: list.nth($values, 1) * 0.6 list.nth($values, 2) * 0.6 list.nth($values, 3) * 0.6;
+		}
+	} @else if list.length($values) == 4 {
+		// padding: top right bottom left
+		padding: list.nth($values, 1) list.nth($values, 2) list.nth($values, 3) list.nth($values, 4);
+
+		@include tablet {
+			padding: list.nth($values, 1) * 0.9 list.nth($values, 2) * 0.9 list.nth($values, 3) * 0.9
+				list.nth($values, 4) * 0.9;
+		}
+
+		@include mobile {
+			padding: list.nth($values, 1) * 0.6 list.nth($values, 2) * 0.6 list.nth($values, 3) * 0.6
+				list.nth($values, 4) * 0.6;
+		}
+	}
+}
+
+@mixin margin($values...) {
+	@if list.length($values) == 1 {
+		// margin: value (все стороны)
+		margin: $values;
+
+		@include tablet {
+			margin: $values * 0.9;
+		}
+
+		@include mobile {
+			margin: $values * 0.6;
+		}
+	} @else if list.length($values) == 2 {
+		// margin: top-bottom left-right
+		margin: list.nth($values, 1) list.nth($values, 2);
+
+		@include tablet {
+			margin: list.nth($values, 1) * 0.9 list.nth($values, 2) * 0.9;
+		}
+
+		@include mobile {
+			margin: list.nth($values, 1) * 0.6 list.nth($values, 2) * 0.6;
+		}
+	} @else if list.length($values) == 3 {
+		// margin: top left-right bottom
+		margin: list.nth($values, 1) list.nth($values, 2) list.nth($values, 3);
+
+		@include tablet {
+			margin: list.nth($values, 1) * 0.9 list.nth($values, 2) * 0.9 list.nth($values, 3) * 0.9;
+		}
+
+		@include mobile {
+			margin: list.nth($values, 1) * 0.6 list.nth($values, 2) * 0.6 list.nth($values, 3) * 0.6;
+		}
+	} @else if list.length($values) == 4 {
+		// margin: top right bottom left
+		margin: list.nth($values, 1) list.nth($values, 2) list.nth($values, 3) list.nth($values, 4);
+
+		@include tablet {
+			margin: list.nth($values, 1) * 0.9 list.nth($values, 2) * 0.9 list.nth($values, 3) * 0.9
+				list.nth($values, 4) * 0.9;
+		}
+
+		@include mobile {
+			margin: list.nth($values, 1) * 0.6 list.nth($values, 2) * 0.6 list.nth($values, 3) * 0.6
+				list.nth($values, 4) * 0.6;
+		}
+	}
+}
+
+// Миксины для значений из переменных с сокращенным синтаксисом
+@mixin padding-vars($values...) {
+	@if list.length($values) == 1 {
+		// padding: value (все стороны)
+		$value: map.get($spacing, list.nth($values, 1));
+		padding: $value;
+
+		@include tablet {
+			padding: $value * 0.9;
+		}
+
+		@include mobile {
+			padding: $value * 0.6;
+		}
+	} @else if list.length($values) == 2 {
+		// padding: top-bottom left-right
+		$top-bottom: map.get($spacing, list.nth($values, 1));
+		$left-right: map.get($spacing, list.nth($values, 2));
+		padding: $top-bottom $left-right;
+
+		@include tablet {
+			padding: $top-bottom * 0.9 $left-right * 0.9;
+		}
+
+		@include mobile {
+			padding: $top-bottom * 0.6 $left-right * 0.6;
+		}
+	} @else if list.length($values) == 3 {
+		// padding: top left-right bottom
+		$top: map.get($spacing, list.nth($values, 1));
+		$left-right: map.get($spacing, list.nth($values, 2));
+		$bottom: map.get($spacing, list.nth($values, 3));
+		padding: $top $left-right $bottom;
+
+		@include tablet {
+			padding: $top * 0.9 $left-right * 0.9 $bottom * 0.9;
+		}
+
+		@include mobile {
+			padding: $top * 0.6 $left-right * 0.6 $bottom * 0.6;
+		}
+	} @else if list.length($values) == 4 {
+		// padding: top right bottom left
+		$top: map.get($spacing, list.nth($values, 1));
+		$right: map.get($spacing, list.nth($values, 2));
+		$bottom: map.get($spacing, list.nth($values, 3));
+		$left: map.get($spacing, list.nth($values, 4));
+		padding: $top $right $bottom $left;
+
+		@include tablet {
+			padding: $top * 0.9 $right * 0.9 $bottom * 0.9 $left * 0.9;
+		}
+
+		@include mobile {
+			padding: $top * 0.6 $right * 0.6 $bottom * 0.6 $left * 0.6;
+		}
+	}
+}
+
+@mixin margin-vars($values...) {
+	@if list.length($values) == 1 {
+		// margin: value (все стороны)
+		$value: map.get($spacing, list.nth($values, 1));
+		margin: $value;
+
+		@include tablet {
+			margin: $value * 0.9;
+		}
+
+		@include mobile {
+			margin: $value * 0.6;
+		}
+	} @else if list.length($values) == 2 {
+		// margin: top-bottom left-right
+		$top-bottom: map.get($spacing, list.nth($values, 1));
+		$left-right: map.get($spacing, list.nth($values, 2));
+		margin: $top-bottom $left-right;
+
+		@include tablet {
+			margin: $top-bottom * 0.9 $left-right * 0.9;
+		}
+
+		@include mobile {
+			margin: $top-bottom * 0.6 $left-right * 0.6;
+		}
+	} @else if list.length($values) == 3 {
+		// margin: top left-right bottom
+		$top: map.get($spacing, list.nth($values, 1));
+		$left-right: map.get($spacing, list.nth($values, 2));
+		$bottom: map.get($spacing, list.nth($values, 3));
+		margin: $top $left-right $bottom;
+
+		@include tablet {
+			margin: $top * 0.9 $left-right * 0.9 $bottom * 0.9;
+		}
+
+		@include mobile {
+			margin: $top * 0.6 $left-right * 0.6 $bottom * 0.6;
+		}
+	} @else if list.length($values) == 4 {
+		// margin: top right bottom left
+		$top: map.get($spacing, list.nth($values, 1));
+		$right: map.get($spacing, list.nth($values, 2));
+		$bottom: map.get($spacing, list.nth($values, 3));
+		$left: map.get($spacing, list.nth($values, 4));
+		margin: $top $right $bottom $left;
+
+		@include tablet {
+			margin: $top * 0.9 $right * 0.9 $bottom * 0.9 $left * 0.9;
+		}
+
+		@include mobile {
+			margin: $top * 0.6 $right * 0.6 $bottom * 0.6 $left * 0.6;
+		}
+	}
+}

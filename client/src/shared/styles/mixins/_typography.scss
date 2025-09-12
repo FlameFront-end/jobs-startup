@@ -1,0 +1,158 @@
+@use 'breakpoints' as *;
+
+@mixin font-display {
+	font-size: 3.5rem;
+	font-weight: 900;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+
+	@include tablet {
+		font-size: 3rem;
+	}
+
+	@include mobile {
+		font-size: 2.5rem;
+	}
+}
+
+@mixin font-heading-1 {
+	font-size: 2.5rem;
+	font-weight: 800;
+	line-height: 1.2;
+	letter-spacing: -0.01em;
+
+	@include tablet {
+		font-size: 2.25rem;
+	}
+
+	@include mobile {
+		font-size: 2rem;
+	}
+}
+
+@mixin font-heading-2 {
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1.3;
+	letter-spacing: -0.005em;
+
+	@include tablet {
+		font-size: 1.75rem;
+	}
+
+	@include mobile {
+		font-size: 1.5rem;
+	}
+}
+
+@mixin font-heading-3 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	line-height: 1.4;
+
+	@include tablet {
+		font-size: 1.375rem;
+	}
+
+	@include mobile {
+		font-size: 1.25rem;
+	}
+}
+
+@mixin font-body-large {
+	font-size: 1.25rem;
+	font-weight: 400;
+	line-height: 1.6;
+
+	@include tablet {
+		font-size: 1.125rem;
+	}
+
+	@include mobile {
+		font-size: 1rem;
+	}
+}
+
+@mixin font-body {
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.6;
+
+	@include tablet {
+		font-size: 0.95rem;
+	}
+
+	@include mobile {
+		font-size: 0.9rem;
+	}
+}
+
+@mixin font-body-small {
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 1.5;
+
+	@include tablet {
+		font-size: 0.8rem;
+	}
+
+	@include mobile {
+		font-size: 0.75rem;
+	}
+}
+
+@mixin font-caption {
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.4;
+	letter-spacing: 0.01em;
+
+	@include tablet {
+		font-size: 0.7rem;
+	}
+
+	@include mobile {
+		font-size: 0.65rem;
+	}
+}
+
+@mixin font-button {
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.4;
+	letter-spacing: 0.005em;
+
+	@include tablet {
+		font-size: 0.9rem;
+	}
+
+	@include mobile {
+		font-size: 0.95rem;
+	}
+}
+
+@mixin font-label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.4;
+
+	@include tablet {
+		font-size: 0.8rem;
+	}
+
+	@include mobile {
+		font-size: 0.75rem;
+	}
+}
+
+@mixin text-responsive($mobile-size, $tablet-size: $mobile-size, $desktop-size: $tablet-size) {
+	font-size: $mobile-size;
+
+	@include tablet {
+		font-size: $tablet-size;
+	}
+
+	@include desktop {
+		font-size: $desktop-size;
+	}
+}
