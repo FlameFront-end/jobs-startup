@@ -1,25 +1,19 @@
-@import "@/shared/styles/mixins";
+@import "@/shared/styles/mixins.scss";
 
-.homePage {
+.wrapper {
 	@include p(lg);
+	@include flex-column;
+	@include g(xl);
 }
 
 .header {
 	@include flex-between;
-	width: 100%;
 	flex-wrap: wrap;
 	@include g(md);
-	@include m(lg, bottom);
-
-	@include mobile {
-		flex-direction: column;
-		align-items: flex-start;
-	}
 }
 
 .titleSection {
-	display: flex;
-	flex-direction: column;
+	@include flex-column;
 	@include g(sm);
 }
 
@@ -42,19 +36,6 @@
 
 .settings {
 	@include flex-between;
-	flex-wrap: wrap;
-	@include g(md);
-	width: 100%;
-	@include m(lg, bottom);
-	@include p(md);
-	background: var(--background-card);
-	border: 1px solid var(--border-color);
-	border-radius: 0.5rem;
-
-	@include mobile {
-		flex-direction: column;
-		align-items: flex-start;
-	}
 }
 
 .settingText {
@@ -71,25 +52,19 @@
 	color: var(--error-color);
 }
 
-.sections {
+
+.cardExamples {
 	display: flex;
-	flex-direction: column;
-	@include g(xl);
-	align-items: stretch;
+	flex-wrap: wrap;
+	@include g(md);
+	align-items: flex-start;
 }
 
-.section {
-	background: var(--background-card);
-	border: 1px solid var(--border-color);
-	border-radius: 0.5rem;
-	@include p(lg);
-}
-
-.sectionTitle {
-	@include font-body-large;
-	font-weight: 600;
-	color: var(--text-color);
-	margin: 0;
+.buttonExamples {
+	display: flex;
+	flex-wrap: wrap;
+	@include g(sm);
+	align-items: center;
 	@include m(md, bottom);
 }
 
@@ -97,100 +72,6 @@
 	display: flex;
 	@include g(sm);
 	flex-wrap: wrap;
-}
-
-.button {
-	@include p(sm, x);
-	@include p(sm, y);
-	border-radius: 0.375rem;
-	border: 1px solid var(--border-color);
-	background: var(--background-card);
-	color: var(--text-color);
-	@include font-button;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	min-width: fit-content;
-
-	&:hover {
-		background: var(--background-light);
-		border-color: var(--primary-color);
-	}
-
-	&:active {
-		transform: translateY(1px);
-	}
-
-	&.success {
-		border-color: var(--success-color);
-		color: var(--success-color);
-
-		&:hover {
-			background: var(--success-color);
-			color: white;
-		}
-	}
-
-	&.error {
-		border-color: var(--error-color);
-		color: var(--error-color);
-
-		&:hover {
-			background: var(--error-color);
-			color: white;
-		}
-	}
-
-	&.warning {
-		border-color: var(--warning-color);
-		color: var(--warning-color);
-
-		&:hover {
-			background: var(--warning-color);
-			color: white;
-		}
-	}
-
-	&.info {
-		border-color: var(--primary-color);
-		color: var(--primary-color);
-
-		&:hover {
-			background: var(--primary-color);
-			color: white;
-		}
-	}
-
-	&.loading {
-		border-color: var(--primary-light);
-		color: var(--primary-light);
-
-		&:hover {
-			background: var(--primary-light);
-			color: white;
-		}
-	}
-
-	&.enabled {
-		background: var(--success-color);
-		color: white;
-		border-color: var(--success-color);
-
-		&:hover {
-			background: var(--error-color);
-			border-color: var(--error-color);
-		}
-	}
-
-	&.disabled {
-		background: var(--error-color);
-		color: white;
-		border-color: var(--error-color);
-
-		&:hover {
-			background: var(--success-color);
-			border-color: var(--success-color);
-		}
-	}
 }
 
 .navLinks {

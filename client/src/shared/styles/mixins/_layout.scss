@@ -46,3 +46,8 @@
 		grid-template-columns: repeat(#{$desktop}, 1fr);
 	}
 }
+
+@mixin flex-column {
+	display: flex;
+	flex-direction: column;
+}

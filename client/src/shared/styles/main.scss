@@ -21,34 +21,34 @@ h1 {
 	@include font-heading-1;
 
 	margin: 0;
-	color: $text-color !important;
+	color: $text-color;
 }
 
 h2 {
 	@include font-heading-2;
 
 	margin: 0;
-	color: $text-color !important;
+	color: $text-color;
 }
 
 h3 {
 	@include font-heading-3;
 
 	margin: 0;
-	color: $text-color !important;
+	color: $text-color;
 }
 
 h4,
 h5,
 h6 {
 	margin: 0;
-	color: $text-color !important;
+	color: $text-color;
 }
 
 p {
 	@include font-body;
 
-	color: $text-light !important;
+	color: $text-light;
 
 	@include m(md, all);
 
@@ -57,7 +57,7 @@ p {
 
 div,
 span {
-	color: $text-color !important;
+	color: $text-color;
 }
 
 a {

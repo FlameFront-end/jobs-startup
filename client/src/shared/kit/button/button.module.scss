@@ -1,0 +1,189 @@
+@import "@/shared/styles/mixins";
+
+.button {
+	@include p(sm, x);
+	@include p(sm, y);
+	border-radius: 0.375rem;
+	@include font-button;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: fit-content;
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+	border: none;
+	background: none;
+	color: inherit;
+
+	&:active {
+		transform: translateY(1px);
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}
+
+.button {
+	&.default {
+		border: 1px solid var(--border-color);
+		color: var(--text-color);
+		background: var(--background-card);
+
+		&:hover {
+			background: var(--background-light);
+			border-color: var(--primary-color);
+		}
+	}
+
+	&.success {
+		border: 1px solid var(--success-color);
+		color: var(--success-color);
+		background: var(--background-card);
+
+		&:hover {
+			background: var(--success-color);
+			color: white;
+		}
+	}
+
+	&.error {
+		border: 1px solid var(--error-color);
+		color: var(--error-color);
+		background: var(--background-card);
+
+		&:hover {
+			background: var(--error-color);
+			color: white;
+		}
+	}
+
+	&.warning {
+		border: 1px solid var(--warning-color);
+		color: var(--warning-color);
+		background: var(--background-card);
+
+		&:hover {
+			background: var(--warning-color);
+			color: white;
+		}
+	}
+
+	&.info {
+		border: 1px solid var(--primary-color);
+		color: var(--primary-color);
+		background: var(--background-card);
+
+		&:hover {
+			background: var(--primary-color);
+			color: white;
+		}
+	}
+
+	&.loading {
+		border: 1px solid var(--primary-light);
+		color: var(--primary-light);
+		background: var(--background-card);
+
+		&:hover {
+			background: var(--primary-light);
+			color: white;
+		}
+	}
+
+	&.enabled {
+		background: var(--success-color);
+		color: white;
+		border: 1px solid var(--success-color);
+
+		&:hover {
+			background: var(--error-color);
+			border-color: var(--error-color);
+		}
+	}
+
+	&.disabled {
+		background: var(--error-color);
+		color: white;
+		border: 1px solid var(--error-color);
+
+		&:hover {
+			background: var(--success-color);
+			border-color: var(--success-color);
+		}
+	}
+
+	&.text {
+		background: transparent;
+		border: none;
+		color: var(--primary-color);
+		padding: 0;
+		text-decoration: underline;
+
+		&:hover {
+			background: transparent;
+			color: var(--primary-light);
+			text-decoration: none;
+		}
+
+		&:active {
+			transform: none;
+		}
+	}
+
+	&.link {
+		background: transparent;
+		border: 1px solid var(--primary-color);
+		color: var(--primary-color);
+		text-decoration: none;
+
+		&:hover {
+			background: var(--primary-color);
+			color: white;
+			text-decoration: none;
+		}
+
+		&:active {
+			transform: translateY(1px);
+		}
+	}
+
+	&.sm {
+		@include p(xs, x);
+		@include p(xs, y);
+		border-radius: 0.25rem;
+		@include font-caption;
+	}
+
+	&.md {
+		@include p(sm, x);
+		@include p(sm, y);
+		border-radius: 0.375rem;
+		@include font-button;
+	}
+
+	&.lg {
+		@include p(md, x);
+		@include p(md, y);
+		border-radius: 0.5rem;
+		@include font-body-large;
+	}
+
+	&.widthAuto {
+		width: auto;
+	}
+
+	&.widthFit {
+		width: fit-content;
+	}
+
+	&.widthFull {
+		width: 100%;
+	}
+
+	&.widthHalf {
+		width: 50%;
+	}
+}

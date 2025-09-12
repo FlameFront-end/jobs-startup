@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 
 import { testErrorLogging } from '@/shared/api/instance'
-import { PageLoader } from '@/shared/kit'
+import { Button, Card, PageLoader } from '@/shared/kit'
 import { useTheme } from '@/shared/lib/hooks/useTheme'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { toggleErrorNotifications } from '@/shared/lib/store/slices/appSlice'
@@ -64,8 +64,8 @@ const HomePage = () => {
 	}
 
 	return (
-		<PageWrapper className={styles.homePage}>
-			<div className={styles.header}>
+		<PageWrapper className={styles.wrapper}>
+			<Card contentClassName={styles.header} variant='plain'>
 				<div className={styles.titleSection}>
 					<h1 className={styles.title}>Главная страница</h1>
 					<p className={styles.subtitle}>
@@ -73,87 +73,193 @@ const HomePage = () => {
 					</p>
 				</div>
 				<ThemeToggle />
-			</div>
+			</Card>
 
-			<div className={styles.settings}>
-				<p className={styles.settingText}>
+			<Card contentClassName={styles.settings}>
+				<div className={styles.settingText}>
 					Уведомления об ошибках:{' '}
 					<span className={clsx(styles.bold, styles[errorNotificationsEnabled ? 'enabled' : 'disabled'])}>
 						{errorNotificationsEnabled ? 'Включены' : 'Выключены'}
 					</span>
-				</p>
-				<button
-					className={clsx(styles.button, styles[errorNotificationsEnabled ? 'enabled' : 'disabled'])}
+				</div>
+				<Button
+					variant={errorNotificationsEnabled ? 'enabled' : 'disabled'}
 					onClick={handleToggleErrorNotifications}
 				>
 					{errorNotificationsEnabled ? 'Выключить' : 'Включить'}
-				</button>
-			</div>
+				</Button>
+			</Card>
 
-			<div className={styles.sections}>
-				<div className={styles.section}>
-					<h2 className={styles.sectionTitle}>Тест toast уведомлений:</h2>
-					<div className={styles.buttonGroup}>
-						{(['success', 'error', 'warning', 'info', 'loading'] as const).map(type => (
-							<button
-								key={type}
-								className={clsx(styles.button, styles[type])}
-								onClick={() => testToast(type)}
-							>
-								{type}
-							</button>
-						))}
-					</div>
+			<Card title='Навигация:'>
+				<div className={styles.navLinks}>
+					<Link to={ROUTES.LOGIN} className={styles.navLink}>
+						Вход
+					</Link>
+					<Link to={ROUTES.REGISTER} className={styles.navLink}>
+						Регистрация
+					</Link>
+					<Link to={ROUTES.SETTINGS} className={styles.navLink}>
+						Настройки
+					</Link>
+					<Link to={ROUTES.JOBS} className={styles.navLink}>
+						Вакансии
+					</Link>
+					<Link to={ROUTES.TEST_ERROR} className={styles.navLink}>
+						Тест ошибки
+					</Link>
+					<Link to={ROUTES.SELECTION_DEMO} className={styles.navLink}>
+						Демо выделения
+					</Link>
+				</div>
+			</Card>
+
+			<Card title='Тест toast уведомлений:'>
+				<div className={styles.buttonGroup}>
+					{(['success', 'error', 'warning', 'info', 'loading'] as const).map(type => (
+						<Button key={type} variant={type} onClick={() => testToast(type)}>
+							{type}
+						</Button>
+					))}
+				</div>
+			</Card>
+
+			<Card title='Тест loader:'>
+				<div className={styles.buttonGroup}>
+					<Button variant='info' onClick={testLoader}>
+						Показать PageLoader
+					</Button>
+				</div>
+			</Card>
+
+			<Card title='Тест логирования ошибок:'>
+				<div className={styles.buttonGroup}>
+					<Button variant='error' onClick={testErrorLogging}>
+						Тест API ошибок
+					</Button>
+					<Button variant='warning' onClick={testReactError}>
+						Тест React ошибки
+					</Button>
+					<Button variant='info' onClick={testPromiseRejection}>
+						Тест Promise rejection
+					</Button>
+				</div>
+			</Card>
+
+			<Card title='Примеры кнопок'>
+				<div className={styles.buttonExamples}>
+					<Button variant='default'>Стандартная</Button>
+					<Button variant='success'>Успех</Button>
+					<Button variant='error'>Ошибка</Button>
+					<Button variant='warning'>Предупреждение</Button>
+					<Button variant='info'>Информация</Button>
+					<Button variant='loading'>Загрузка</Button>
+					<Button variant='enabled'>Включено</Button>
+					<Button variant='disabled'>Отключено</Button>
 				</div>
 
-				<div className={styles.section}>
-					<h2 className={styles.sectionTitle}>Тест loader:</h2>
-					<div className={styles.buttonGroup}>
-						<button className={clsx(styles.button, styles.info)} onClick={testLoader}>
-							Показать PageLoader
-						</button>
-					</div>
+				<div className={styles.buttonExamples}>
+					<Button size='sm'>Маленькая</Button>
+					<Button size='md'>Средняя</Button>
+					<Button size='lg'>Большая</Button>
 				</div>
 
-				<div className={styles.section}>
-					<h2 className={styles.sectionTitle}>Тест логирования ошибок:</h2>
-					<div className={styles.buttonGroup}>
-						<button className={clsx(styles.button, styles.error)} onClick={testErrorLogging}>
-							Тест API ошибок
-						</button>
-						<button className={clsx(styles.button, styles.warning)} onClick={testReactError}>
-							Тест React ошибки
-						</button>
-						<button className={clsx(styles.button, styles.info)} onClick={testPromiseRejection}>
-							Тест Promise rejection
-						</button>
-					</div>
+				<div className={styles.buttonExamples}>
+					<Button variant='text'>Текстовая кнопка</Button>
+					<Button variant='link' href='/login'>
+						Ссылка-кнопка
+					</Button>
+					<Button variant='link' href='/register'>
+						Регистрация
+					</Button>
 				</div>
 
-				<div className={styles.section}>
-					<h2 className={styles.sectionTitle}>Навигация:</h2>
-					<div className={styles.navLinks}>
-						<Link to={ROUTES.LOGIN} className={styles.navLink}>
-							Вход
-						</Link>
-						<Link to={ROUTES.REGISTER} className={styles.navLink}>
-							Регистрация
-						</Link>
-						<Link to={ROUTES.SETTINGS} className={styles.navLink}>
-							Настройки
-						</Link>
-						<Link to={ROUTES.JOBS} className={styles.navLink}>
-							Вакансии
-						</Link>
-						<Link to={ROUTES.TEST_ERROR} className={styles.navLink}>
-							Тест ошибки
-						</Link>
-						<Link to={ROUTES.SELECTION_DEMO} className={styles.navLink}>
-							Демо выделения
-						</Link>
-					</div>
+				<div className={styles.buttonExamples}>
+					<Button width='fit'>Подходящая</Button>
+					<Button width='half'>Половина</Button>
+					<Button width='full' variant='info'>
+						Полная ширина
+					</Button>
 				</div>
-			</div>
+			</Card>
+
+			<Card title='Примеры карточек'>
+				<div className={styles.cardExamples}>
+					<Card title='Стандартная' variant='default' size='sm' width='half'>
+						<p>Обычная карточка с фоном и границей</p>
+					</Card>
+
+					<Card title='Только граница' variant='outlined' size='sm' width='half'>
+						<p>Карточка с фоном и толстой границей</p>
+					</Card>
+
+					<Card title='Заливка' variant='filled' size='sm' width='half' background='light'>
+						<p>Карточка с контрастным фоном</p>
+					</Card>
+
+					<Card title='С тенью' variant='elevated' size='sm' width='half'>
+						<p>Карточка с заметной тенью</p>
+					</Card>
+
+					<Card
+						title='Кликабельная'
+						variant='default'
+						size='sm'
+						width='half'
+						onClick={() => toast.success('Карточка нажата!', 'Успех')}
+					>
+						<p>Нажми на меня!</p>
+					</Card>
+
+					<Card title='Отключенная' variant='default' size='sm' width='half' disabled>
+						<p>Эта карточка отключена</p>
+					</Card>
+
+					<Card title='Подходящая по размеру' variant='elevated' size='sm' width='fit'>
+						<p>fit-content</p>
+					</Card>
+
+					<Card title='Треть ширины' variant='outlined' size='sm' width='third'>
+						<p>33.333% ширины</p>
+					</Card>
+
+					<Card title='Четверть ширины' variant='outlined' size='sm' width='quarter'>
+						<p>25% ширины</p>
+					</Card>
+
+					<Card title='Цветной фон' variant='filled' size='sm' width='half' background='primary'>
+						<p>Карточка с цветным фоном</p>
+					</Card>
+
+					<Card title='Успех' variant='filled' size='sm' width='half' background='success'>
+						<p>Зеленый фон</p>
+					</Card>
+
+					<Card title='Предупреждение' variant='filled' size='sm' width='half' background='warning'>
+						<p>Желтый фон</p>
+					</Card>
+
+					<Card title='Ошибка' variant='filled' size='sm' width='half' background='error'>
+						<p>Красный фон</p>
+					</Card>
+
+					<Card title='Полная ширина' variant='outlined' size='md' width='full'>
+						<p>Эта карточка растягивается на всю доступную ширину контейнера</p>
+						<div className={styles.buttonGroup}>
+							<Button variant='info'>Кнопка 1</Button>
+							<Button variant='warning'>Кнопка 2</Button>
+							<Button variant='success'>Кнопка 3</Button>
+						</div>
+					</Card>
+
+					<Card title='Большая карточка' variant='elevated' size='lg' width='full'>
+						<p>Карточка с большими отступами и радиусом</p>
+						<div className={styles.buttonGroup}>
+							<Button variant='info'>Кнопка 1</Button>
+							<Button variant='success'>Кнопка 2</Button>
+						</div>
+					</Card>
+				</div>
+			</Card>
 		</PageWrapper>
 	)
 }
