@@ -1,6 +1,6 @@
-import { clsx } from 'clsx'
-
 import styles from './loader.module.scss'
+
+import { clsx } from 'clsx'
 
 interface LoaderProps {
 	size?: 'small' | 'medium' | 'large'
