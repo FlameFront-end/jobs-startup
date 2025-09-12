@@ -7,9 +7,9 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	min-height: 100vh;
+	height: 100vh;
     background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
-	overflow: hidden auto;
+	overflow-y: scroll;
 
 	@include p(md, all);
 
