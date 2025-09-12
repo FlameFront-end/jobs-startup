@@ -21,8 +21,8 @@
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: $text_light;
 	border-radius: 3px;
+	background-color: $text_light;
 	transition: background-color 0.2s ease;
 }
 
@@ -35,19 +35,19 @@
 }
 
 [data-theme="dark"] * {
-	scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+	scrollbar-color: rgb(255 255 255 / 30%) transparent;
 }
 
 [data-theme="dark"] *::-webkit-scrollbar-thumb {
-	background-color: rgba(255, 255, 255, 0.3);
+	background-color: rgb(255 255 255 / 30%);
 }
 
 [data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgb(255 255 255 / 50%);
 }
 
 [data-theme="dark"] *::-webkit-scrollbar-thumb:active {
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: rgb(255 255 255 / 70%);
 }
 
 @media (width <= 768px) {

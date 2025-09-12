@@ -9,6 +9,7 @@
 	height: 100vh;
 	background-color: $background_color;
 	color: $text_color;
+
 	@include scroll-styles;
 }
 

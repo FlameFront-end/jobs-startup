@@ -19,6 +19,7 @@
 	}
 }
 
+
 @mixin mobile-up {
 	@media (min-width: #{map.get($breakpoints, sm)}) {
 		@content;
@@ -56,31 +57,31 @@
 }
 
 @mixin breakpoint($size) {
-	@if $size == "xs" {
-		@media (max-width: #{map.get($breakpoints, sm) - 1px}) {
-			@content;
-		}
-	} @else if $size == "sm" {
-		@media (min-width: #{map.get($breakpoints, sm)}) and (max-width: #{map.get($breakpoints, md) - 1px}) {
-			@content;
-		}
-	} @else if $size == "md" {
-		@media (min-width: #{map.get($breakpoints, md)}) and (max-width: #{map.get($breakpoints, lg) - 1px}) {
-			@content;
-		}
-	} @else if $size == "lg" {
-		@media (min-width: #{map.get($breakpoints, lg)}) and (max-width: #{map.get($breakpoints, xl) - 1px}) {
-			@content;
-		}
-	} @else if $size == "xl" {
-		@media (min-width: #{map.get($breakpoints, xl)}) and (max-width: #{map.get($breakpoints, 2xl) - 1px}) {
-			@content;
-		}
-	} @else if $size == "2xl" {
-		@media (min-width: #{map.get($breakpoints, 2xl)}) {
-			@content;
-		}
-	}
+  @if $size == "xs" {
+    @media (max-width: #{map.get($breakpoints, sm) - 1px}) {
+      @content;
+    }
+  } @else if $size == "sm" {
+    @media (min-width: #{map.get($breakpoints, sm)}) and (max-width: #{map.get($breakpoints, md) - 1px}) {
+      @content;
+    }
+  } @else if $size == "md" {
+    @media (min-width: #{map.get($breakpoints, md)}) and (max-width: #{map.get($breakpoints, lg) - 1px}) {
+      @content;
+    }
+  } @else if $size == "lg" {
+    @media (min-width: #{map.get($breakpoints, lg)}) and (max-width: #{map.get($breakpoints, xl) - 1px}) {
+      @content;
+    }
+  } @else if $size == "xl" {
+    @media (min-width: #{map.get($breakpoints, xl)}) and (max-width: #{map.get($breakpoints, 2xl) - 1px}) {
+      @content;
+    }
+  } @else if $size == "2xl" {
+    @media (min-width: #{map.get($breakpoints, 2xl)}) {
+      @content;
+    }
+  }
 }
 
 @mixin breakpoint-up($size) {
