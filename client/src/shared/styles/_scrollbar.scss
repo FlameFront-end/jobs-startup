@@ -1,0 +1,68 @@
+@use "variables" as *;
+
+@mixin scroll-styles {
+	overflow: hidden auto;
+	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+*::-webkit-scrollbar-button {
+	display: none;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: $text_light;
+	border-radius: 3px;
+	transition: background-color 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background-color: $primary_color;
+}
+
+*::-webkit-scrollbar-thumb:active {
+	background-color: $accent_color;
+}
+
+[data-theme="dark"] * {
+	scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb {
+	background-color: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] *::-webkit-scrollbar-thumb:active {
+	background-color: rgba(255, 255, 255, 0.7);
+}
+
+@media (width <= 768px) {
+	*::-webkit-scrollbar {
+		width: 4px;
+		height: 4px;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		border-radius: 2px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*::-webkit-scrollbar-thumb {
+		transition: none;
+	}
+}
