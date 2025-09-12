@@ -1,11 +1,16 @@
-import { Box, Button, Flex, For, Heading, HStack, Text, VStack } from '@chakra-ui/react'
+import styles from './home.module.scss'
+
+import { useState } from 'react'
+
+import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 
 import { testErrorLogging } from '@/shared/api/instance'
+import { PageLoader } from '@/shared/kit'
 import { useTheme } from '@/shared/lib/hooks/useTheme'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { toggleErrorNotifications } from '@/shared/lib/store/slices/appSlice'
-import { toaster } from '@/shared/lib/toast'
+import { useToast } from '@/shared/lib/toast'
 import { ROUTES } from '@/shared/model/routes'
 import { PageWrapper } from '@/shared/ui/page-wrapper'
 import { ThemeToggle } from '@/shared/ui/theme-toggle'
@@ -14,6 +19,8 @@ const HomePage = () => {
 	const { theme, isDark } = useTheme()
 	const dispatch = useAppDispatch()
 	const errorNotificationsEnabled = useAppSelector(state => state.app.errorNotificationsEnabled)
+	const toast = useToast()
+	const [showLoader, setShowLoader] = useState(false)
 
 	const testReactError = () => {
 		throw new Error('Тестовая React ошибка для логирования')
@@ -27,118 +34,126 @@ const HomePage = () => {
 		dispatch(toggleErrorNotifications())
 	}
 
+	const testToast = (type: 'success' | 'error' | 'warning' | 'info' | 'loading') => {
+		const messages = {
+			success: 'Операция выполнена успешно!',
+			error: 'Произошла ошибка при выполнении операции',
+			warning: 'Внимание! Проверьте введенные данные',
+			info: 'Полезная информация для пользователя',
+			loading: 'Выполняется загрузка данных...'
+		}
+
+		const titles = {
+			success: 'Успех',
+			error: 'Ошибка',
+			warning: 'Предупреждение',
+			info: 'Информация',
+			loading: 'Загрузка'
+		}
+
+		toast[type](messages[type], titles[type])
+	}
+
+	const testLoader = () => {
+		setShowLoader(true)
+		setTimeout(() => setShowLoader(false), 2000)
+	}
+
+	if (showLoader) {
+		return <PageLoader message='Тестируем loader...' />
+	}
+
 	return (
-		<PageWrapper className='home-page'>
-			<Box p={8} maxW='1200px' mx='auto' mt={8}>
-				<VStack align='start' gap={4} mb={8}>
-					<Flex justify='space-between' align='center' width='100%' wrap='wrap' gap={4}>
-						<VStack align='start' gap={2}>
-							<Heading size='xl' color='var(--text-color)'>
-								Главная страница
-							</Heading>
-							<Text color='var(--text-light)'>
-								Текущая тема:{' '}
-								<Text as='span' fontWeight='bold'>
-									{isDark ? 'Тёмная' : 'Светлая'}
-								</Text>{' '}
-								({theme})
-							</Text>
-						</VStack>
-						<ThemeToggle />
-					</Flex>
+		<PageWrapper className={styles.homePage}>
+			<div className={styles.header}>
+				<div className={styles.titleSection}>
+					<h1 className={styles.title}>Главная страница</h1>
+					<p className={styles.subtitle}>
+						Текущая тема: <span className={styles.bold}>{isDark ? 'Тёмная' : 'Светлая'}</span> ({theme})
+					</p>
+				</div>
+				<ThemeToggle />
+			</div>
 
-					<Box width='100%'>
-						<Flex justify='space-between' align='center' wrap='wrap' gap={3}>
-							<Text color='var(--text-light)'>
-								Уведомления об ошибках:{' '}
-								<Text
-									as='span'
-									fontWeight='bold'
-									color={errorNotificationsEnabled ? 'green.500' : 'red.500'}
-								>
-									{errorNotificationsEnabled ? 'Включены' : 'Выключены'}
-								</Text>
-							</Text>
-							<Button
-								size='sm'
-								variant={errorNotificationsEnabled ? 'solid' : 'outline'}
-								colorScheme={errorNotificationsEnabled ? 'green' : 'red'}
-								onClick={handleToggleErrorNotifications}
-								minW='fit-content'
+			<div className={styles.settings}>
+				<p className={styles.settingText}>
+					Уведомления об ошибках:{' '}
+					<span className={clsx(styles.bold, styles[errorNotificationsEnabled ? 'enabled' : 'disabled'])}>
+						{errorNotificationsEnabled ? 'Включены' : 'Выключены'}
+					</span>
+				</p>
+				<button
+					className={clsx(styles.button, styles[errorNotificationsEnabled ? 'enabled' : 'disabled'])}
+					onClick={handleToggleErrorNotifications}
+				>
+					{errorNotificationsEnabled ? 'Выключить' : 'Включить'}
+				</button>
+			</div>
+
+			<div className={styles.sections}>
+				<div className={styles.section}>
+					<h2 className={styles.sectionTitle}>Тест toast уведомлений:</h2>
+					<div className={styles.buttonGroup}>
+						{(['success', 'error', 'warning', 'info', 'loading'] as const).map(type => (
+							<button
+								key={type}
+								className={clsx(styles.button, styles[type])}
+								onClick={() => testToast(type)}
 							>
-								{errorNotificationsEnabled ? 'Выключить' : 'Включить'}
-							</Button>
-						</Flex>
-					</Box>
-				</VStack>
+								{type}
+							</button>
+						))}
+					</div>
+				</div>
 
-				<VStack gap={8} align='stretch'>
-					<Box>
-						<Heading size='md' mb={4} color='var(--text-color)'>
-							Тест toaster:
-						</Heading>
-						<HStack gap={2} wrap='wrap'>
-							<For each={['success', 'error', 'warning', 'info']}>
-								{type => (
-									<Button
-										size='sm'
-										variant='outline'
-										key={type}
-										onClick={() =>
-											toaster.create({
-												title: `Toast status is ${type}`,
-												type: type
-											})
-										}
-									>
-										{type}
-									</Button>
-								)}
-							</For>
-						</HStack>
-					</Box>
+				<div className={styles.section}>
+					<h2 className={styles.sectionTitle}>Тест loader:</h2>
+					<div className={styles.buttonGroup}>
+						<button className={clsx(styles.button, styles.info)} onClick={testLoader}>
+							Показать PageLoader
+						</button>
+					</div>
+				</div>
 
-					<Box>
-						<Heading size='md' mb={4} color='var(--text-color)'>
-							Тест логирования ошибок:
-						</Heading>
-						<HStack gap={2} wrap='wrap' mb={4}>
-							<Button size='sm' variant='outline' colorScheme='red' onClick={testErrorLogging}>
-								Тест API ошибок
-							</Button>
-							<Button size='sm' variant='outline' colorScheme='orange' onClick={testReactError}>
-								Тест React ошибки
-							</Button>
-							<Button size='sm' variant='outline' colorScheme='purple' onClick={testPromiseRejection}>
-								Тест Promise rejection
-							</Button>
-						</HStack>
-					</Box>
+				<div className={styles.section}>
+					<h2 className={styles.sectionTitle}>Тест логирования ошибок:</h2>
+					<div className={styles.buttonGroup}>
+						<button className={clsx(styles.button, styles.error)} onClick={testErrorLogging}>
+							Тест API ошибок
+						</button>
+						<button className={clsx(styles.button, styles.warning)} onClick={testReactError}>
+							Тест React ошибки
+						</button>
+						<button className={clsx(styles.button, styles.info)} onClick={testPromiseRejection}>
+							Тест Promise rejection
+						</button>
+					</div>
+				</div>
 
-					<Box>
-						<Heading size='md' mb={4} color='var(--text-color)'>
-							Навигация:
-						</Heading>
-						<HStack gap={3} wrap='wrap'>
-							<Link to={ROUTES.LOGIN} className='nav-link'>
-								Вход
-							</Link>
-							<Link to={ROUTES.REGISTER} className='nav-link'>
-								Регистрация
-							</Link>
-							<Link to={ROUTES.SETTINGS} className='nav-link'>
-								Настройки
-							</Link>
-							<Link to={ROUTES.JOBS} className='nav-link'>
-								Вакансии
-							</Link>
-							<Link to={ROUTES.TEST_ERROR} className='nav-link'>
-								Тест ошибки
-							</Link>
-						</HStack>
-					</Box>
-				</VStack>
-			</Box>
+				<div className={styles.section}>
+					<h2 className={styles.sectionTitle}>Навигация:</h2>
+					<div className={styles.navLinks}>
+						<Link to={ROUTES.LOGIN} className={styles.navLink}>
+							Вход
+						</Link>
+						<Link to={ROUTES.REGISTER} className={styles.navLink}>
+							Регистрация
+						</Link>
+						<Link to={ROUTES.SETTINGS} className={styles.navLink}>
+							Настройки
+						</Link>
+						<Link to={ROUTES.JOBS} className={styles.navLink}>
+							Вакансии
+						</Link>
+						<Link to={ROUTES.TEST_ERROR} className={styles.navLink}>
+							Тест ошибки
+						</Link>
+						<Link to={ROUTES.SELECTION_DEMO} className={styles.navLink}>
+							Демо выделения
+						</Link>
+					</div>
+				</div>
+			</div>
 		</PageWrapper>
 	)
 }

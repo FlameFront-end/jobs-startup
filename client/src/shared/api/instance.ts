@@ -4,7 +4,7 @@ import { env } from '@/shared/config/env'
 import { ErrorHandler } from '@/shared/lib/error-handler'
 import { logger } from '@/shared/lib/logger'
 import { store } from '@/shared/lib/store'
-import { toaster } from '@/shared/lib/toast'
+import { globalToast } from '@/shared/lib/toast'
 import type { ApiResponse } from '@/shared/types/api'
 import type { ApiErrorResponse } from '@/shared/types/global'
 
@@ -96,12 +96,7 @@ api.interceptors.response.use(
 					}
 				}
 
-				toaster.create({
-					title,
-					description: errorMessage,
-					type: 'error',
-					closable: true
-				})
+				globalToast.error(errorMessage, title)
 			}
 		}
 

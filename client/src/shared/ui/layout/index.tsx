@@ -6,7 +6,6 @@ import { Outlet, useLocation } from 'react-router-dom'
 
 import { useAppSelector } from '@/shared/lib/store'
 
-
 export function Layout() {
 	const location = useLocation()
 	const animationsEnabled = useAppSelector(state => state.app.animationsEnabled)

@@ -1,19 +1,17 @@
-@use 'sass:map';
-@use '@/shared/styles/variables.scss' as *;
-@use '@/shared/styles/mixins.scss' as *;
+@use "sass:map";
+@use "@/shared/styles/variables.scss" as *;
+@use "@/shared/styles/mixins.scss" as *;
 
 .errorBoundaryPage {
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
-
-	@include padding-md;
-
 	position: relative;
-	overflow-y: auto;
-	overflow-x: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+	overflow: hidden auto;
+
+	@include p(md, all);
 
 	@include mobile {
 		align-items: flex-start;
@@ -21,17 +19,17 @@
 	}
 
 	&::before {
-		content: '';
 		position: absolute;
-		inset: 0;
 		background:
 			radial-gradient(circle at 20% 80%, rgb(239 68 68 / 10%) 0%, transparent 50%),
 			radial-gradient(circle at 80% 20%, rgb(239 68 68 / 10%) 0%, transparent 50%);
+		content: "";
+		inset: 0;
 		pointer-events: none;
 	}
 }
 
-[data-theme='dark'] .errorBoundaryPage {
+[data-theme="dark"] .errorBoundaryPage {
 	background: linear-gradient(135deg, #1f1f1f 0%, #2d1b1b 50%, #3d1a1a 100%);
 
 	&::before {
@@ -42,22 +40,24 @@
 }
 
 .errorContainer {
-	text-align: center;
-	max-width: 900px;
+	position: relative;
+	z-index: 1;
+
 	width: 100%;
-	background: $background-card;
+	max-width: 900px;
+	border: 1px solid $border-color;
 	border-radius: map.get($border-radius, xl);
-
-	@include padding-2xl;
-
+	box-sizing: border-box;
 	box-shadow:
 		0 25px 50px -12px rgb(0 0 0 / 15%),
 		0 0 0 1px rgb(255 255 255 / 5%);
-	border: 1px solid $border-color;
-	position: relative;
+
+	background: $background-card;
 	backdrop-filter: blur(10px);
-	z-index: 1;
-	box-sizing: border-box;
+
+	text-align: center;
+
+	@include p(2xl, all);
 
 	@include mobile {
 		max-width: 100%;
@@ -66,107 +66,94 @@
 	}
 
 	&::before {
-		content: '';
 		position: absolute;
-		inset: 0;
-		background: linear-gradient(135deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 5%) 100%);
 		border-radius: map.get($border-radius, xl);
+		background: linear-gradient(135deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 5%) 100%);
+		content: "";
+		inset: 0;
 		pointer-events: none;
 	}
 }
 
-[data-theme='dark'] .errorContainer {
+[data-theme="dark"] .errorContainer {
 	&::before {
 		background: linear-gradient(135deg, rgb(255 255 255 / 5%) 0%, rgb(255 255 255 / 2%) 100%);
 	}
 }
 
 .errorIcon {
-	font-size: 5rem;
-
-	@include margin-lg;
-
-	margin-top: 0;
-	animation: shake 0.6s ease-in-out;
-	filter: drop-shadow(0 4px 8px rgb(239 68 68 / 30%));
 	position: relative;
 	z-index: 2;
+	margin-top: 0;
+	@include text-responsive(3.5rem, 4rem, 5rem);
+	animation: shake 0.6s ease-in-out;
+	filter: drop-shadow(0 4px 8px rgb(239 68 68 / 30%));
 
-	@include tablet-down {
-		font-size: 4rem;
-	}
-
-	@include mobile {
-		font-size: 3.5rem;
-	}
+	@include m(lg, all);
 }
 
 .errorTitle {
 	@include font-display;
 
-	color: $error-color;
-
-	@include margin-md;
-
-	margin-top: 0;
-	text-shadow: 0 2px 4px rgb(239 68 68 / 20%);
 	position: relative;
 	z-index: 2;
+	margin-top: 0;
+	color: $error-color;
+	text-shadow: 0 2px 4px rgb(239 68 68 / 20%);
+
+	@include m(md, all);
 }
 
 .errorDescription {
 	@include font-body-large;
 
-	color: $text-light;
-
-	@include margin-2xl;
-
-	margin-top: 0;
-	max-width: 600px;
-	margin-left: auto;
-	margin-right: auto;
 	position: relative;
 	z-index: 2;
+	max-width: 600px;
+	margin-top: 0;
+	margin-right: auto;
+	margin-left: auto;
+	color: $text-light;
+
+	@include m(2xl, all);
 }
 
 .errorDetails {
-	background: $background-light;
-	border-radius: map.get($border-radius, lg);
-
-	@include padding-xl;
-	@include margin-2xl;
-
-	margin-top: 0;
-	text-align: left;
-	border: 1px solid $border-color;
 	position: relative;
 	z-index: 2;
-	backdrop-filter: blur(5px);
-	box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+	margin-top: 0;
+	border: 1px solid $border-color;
+	border-radius: map.get($border-radius, lg);
 	box-sizing: border-box;
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+	background: $background-light;
 	overflow: hidden;
+	backdrop-filter: blur(5px);
+	text-align: left;
+
+	@include p(xl, all);
+	@include m(2xl, all);
 }
 
 .errorMessage {
 	@include font-body-small;
 
-	font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
-	background: $background-color;
-
-	@include padding-lg;
-	@include margin-lg;
-
 	margin-top: 0;
-	border-radius: map.get($border-radius, md);
 	border-left: 4px solid $error-color;
-	word-break: break-word;
-	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+	border-radius: map.get($border-radius, md);
 	box-sizing: border-box;
-	overflow-wrap: break-word;
+	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+	background: $background-color;
+	font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
+	word-break: break-all;
+	overflow-wrap: break-all;
+
+	@include p(lg, all);
+	@include m(lg, all);
 }
 
 .errorStack {
-	@include margin-md;
+	@include m(md, all);
 
 	margin-bottom: 0;
 
@@ -174,15 +161,14 @@
 		summary {
 			@include font-label;
 
-			cursor: pointer;
-			color: $text-color;
-
-			@include padding-sm;
-
-			background: $background-color;
-			border-radius: map.get($border-radius, md);
 			border: 1px solid $border-color;
+			border-radius: map.get($border-radius, md);
+			background: $background-color;
+			color: $text-color;
 			transition: all 0.2s ease;
+			cursor: pointer;
+
+			@include p(sm, all);
 
 			&:hover {
 				background: $background-light;
@@ -192,22 +178,20 @@
 		pre {
 			@include font-caption;
 
-			font-family: Monaco, Menlo, 'Ubuntu Mono', monospace;
-			background: $background-color;
-
-			@include padding-lg;
-
-			
-			border-radius: map.get($border-radius, md);
-			overflow: auto;
-			border: 1px solid $border-color;
 			max-height: 400px;
-			box-shadow: inset 0 2px 4px rgb(0 0 0 / 10%);
-			white-space: pre-wrap;
-			overflow-wrap: break-word;
+			border: 1px solid $border-color;
+			border-radius: map.get($border-radius, md);
 			box-sizing: border-box;
-			scrollbar-width: thin;
+			box-shadow: inset 0 2px 4px rgb(0 0 0 / 10%);
+			background: $background-color;
+			overflow: auto;
+			font-family: Monaco, Menlo, "Ubuntu Mono", monospace;
+			white-space: pre-wrap;
+			overflow-wrap: break-all;
 			scrollbar-color: $primary-color transparent;
+			scrollbar-width: thin;
+
+			@include p(lg, all);
 
 			&::-webkit-scrollbar {
 				width: 8px;
@@ -215,18 +199,18 @@
 			}
 
 			&::-webkit-scrollbar-track {
-				background: transparent;
 				border-radius: 4px;
+				background: transparent;
 			}
 
 			&::-webkit-scrollbar-thumb {
-				background: linear-gradient(
-					135deg,
-					$primary-color 0%,
-					color-mix(in srgb, $primary-color 80%, $accent-color) 100%
-				);
 				border-radius: 4px;
+				background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
 				transition: all 0.3s ease;
+			}
+
+			&::-webkit-scrollbar-corner {
+				background: transparent;
 			}
 
 			&::-webkit-scrollbar-thumb:hover {
@@ -237,34 +221,24 @@
 				);
 			}
 
-			&::-webkit-scrollbar-corner {
-				background: transparent;
+			[data-theme="dark"] & {
+				scrollbar-color: $primary-color transparent;
+
+				&::-webkit-scrollbar-thumb {
+					background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
+				}
+
+				&::-webkit-scrollbar-thumb:hover {
+					background: linear-gradient(
+						135deg,
+						color-mix(in srgb, $primary-color 90%, white) 0%,
+						color-mix(in srgb, $accent-color 90%, white) 100%
+					);
+				}
 			}
 
 			@include mobile {
 				max-height: 300px;
-			}
-		}
-	}
-
-	[data-theme='dark'] & {
-		pre {
-			scrollbar-color: $primary-color transparent;
-
-			&::-webkit-scrollbar-thumb {
-				background: linear-gradient(
-					135deg,
-					$primary-color 0%,
-					color-mix(in srgb, $primary-color 80%, $accent-color) 100%
-				);
-			}
-
-			&::-webkit-scrollbar-thumb:hover {
-				background: linear-gradient(
-					135deg,
-					color-mix(in srgb, $primary-color 90%, white) 0%,
-					color-mix(in srgb, $accent-color 90%, white) 100%
-				);
 			}
 		}
 	}
@@ -273,37 +247,31 @@
 .btnOpenEditor {
 	@include font-button;
 
+	margin-bottom: 0;
+	border: none;
+	border-radius: map.get($border-radius, lg);
+	box-sizing: border-box;
+	box-shadow: 0 4px 12px rgb(237 137 54 / 30%);
 	background: $accent-color;
 	color: white;
-	border: none;
-
-	@include padding-responsive(
-		map.get($spacing, sm) map.get($spacing, md),
-		map.get($spacing, md) map.get($spacing, lg),
-		map.get($spacing, md) map.get($spacing, lg)
-	);
-
-	border-radius: map.get($border-radius, lg);
-	cursor: pointer;
 	transition: all 0.3s ease;
+	cursor: pointer;
 
-	@include margin-lg;
-
-	margin-bottom: 0;
-	box-shadow: 0 4px 12px rgb(237 137 54 / 30%);
-	box-sizing: border-box;
-
-	&:hover:not(:disabled) {
-		background: color-mix(in srgb, $accent-color 90%, black);
-		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgb(237 137 54 / 40%);
-	}
+	@include p(sm, y);
+	@include p(md, x);
+	@include m(lg, all);
 
 	&:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
 		transform: none;
 		box-shadow: 0 2px 4px rgb(237 137 54 / 20%);
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	&:hover:not(:disabled) {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgb(237 137 54 / 40%);
+		background: color-mix(in srgb, $accent-color 90%, black);
 	}
 
 	@include mobile {
@@ -313,53 +281,50 @@
 
 .errorActions {
 	display: flex;
-	gap: map.get($spacing, md);
-	justify-content: center;
 	flex-wrap: wrap;
+	justify-content: center;
+	gap: map.get($spacing, md);
 
 	@include mobile {
 		flex-direction: column;
-		width: 100%;
 		gap: map.get($spacing, sm);
+		width: 100%;
 	}
 }
 
 .btnPrimary,
 .btnSecondary {
 	@include font-button;
-	@include padding-responsive(
-		map.get($spacing, md) map.get($spacing, lg),
-		map.get($spacing, lg) map.get($spacing, 2xl),
-		map.get($spacing, lg) map.get($spacing, 2xl)
-	);
+	@include p(md, y);
+	@include p(lg, x);
 
-	border-radius: map.get($border-radius, lg);
-	text-decoration: none;
-	display: inline-block;
-	transition: all 0.3s ease;
-	cursor: pointer;
-	border: 2px solid transparent;
-	min-width: 180px;
 	position: relative;
 	z-index: 2;
+	display: inline-block;
+	min-width: 180px;
+	border: 2px solid transparent;
+	border-radius: map.get($border-radius, lg);
 	box-sizing: border-box;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	cursor: pointer;
 
 	@include mobile {
 		width: 100%;
-		max-width: 100%;
 		min-width: auto;
+		max-width: 100%;
 	}
 }
 
 .btnPrimary {
+	box-shadow: 0 4px 12px rgb(229 62 62 / 30%);
 	background: $error-color;
 	color: white;
-	box-shadow: 0 4px 12px rgb(229 62 62 / 30%);
 
 	&:hover {
-		background: color-mix(in srgb, $error-color 90%, black);
 		transform: translateY(-3px);
 		box-shadow: 0 8px 25px rgb(229 62 62 / 40%);
+		background: color-mix(in srgb, $error-color 90%, black);
 	}
 
 	@include mobile {
@@ -368,16 +333,16 @@
 }
 
 .btnSecondary {
-	background: transparent;
-	color: $text-color;
 	border-color: $border-color;
 	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+	background: transparent;
+	color: $text-color;
 
 	&:hover {
-		background: $background-light;
-		border-color: $error-color;
 		transform: translateY(-3px);
+		border-color: $error-color;
 		box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
+		background: $background-light;
 	}
 
 	@include mobile {

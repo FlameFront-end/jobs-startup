@@ -1,52 +1,61 @@
-@use 'sass:map';
-@use '@/shared/styles/variables.scss' as *;
-@use '@/shared/styles/mixins.scss' as *;
+@use "sass:map";
+@use "@/shared/styles/variables.scss" as *;
+@use "@/shared/styles/mixins.scss" as *;
 
 .testErrorPage {
-	min-height: 100vh;
 	display: flex;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
 	background: $background-light;
-	@include padding-vars(lg);
+
+	@include p(lg, all);
 }
 
 .testContainer {
-	text-align: center;
-	max-width: 500px;
 	width: 100%;
-	background: $background-card;
-	border-radius: map.get($border-radius, xl);
-	@include padding-vars(2xl);
-	box-shadow: 0 10px 25px -5px rgb(0 0 0 / 10%);
+	max-width: 500px;
 	border: 1px solid $border-color;
+	border-radius: map.get($border-radius, xl);
+	box-shadow: 0 10px 25px -5px rgb(0 0 0 / 10%);
+	background: $background-card;
+	text-align: center;
+
+	@include p(2xl, all);
 }
 
 h1 {
 	@include font-heading-1;
+
 	color: $text-color;
-	@include margin-vars(lg);
+
+	@include m(lg, all);
 }
 
 p {
 	@include font-body;
+
 	color: $text-light;
-	@include margin-vars(xl);
+
+	@include m(xl, all);
 }
 
 .btnDanger {
 	@include font-button;
+
+	border: none;
+	border-radius: map.get($border-radius, lg);
 	background: $error-color;
 	color: white;
-	border: none;
-	@include padding-vars(md, xl);
-	border-radius: map.get($border-radius, lg);
-	cursor: pointer;
 	transition: all 0.3s ease;
+	cursor: pointer;
+
+	@include p(md, y);
+	@include p(xl, x);
 
 	&:hover {
-		background: color-mix(in srgb, $error-color 90%, black);
 		transform: translateY(-2px);
 		box-shadow: 0 8px 25px rgb(229 62 62 / 30%);
+		background: color-mix(in srgb, $error-color 90%, black);
 	}
 }

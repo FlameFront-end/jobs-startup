@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react'
 
-import { ChakraProvider, createSystem, defaultConfig } from '@chakra-ui/react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Provider } from 'react-redux'
 
@@ -10,12 +9,6 @@ import { ToastProvider } from '@/shared/lib/toast'
 
 import { ErrorBoundaryProvider } from './error-boundary'
 
-const system = createSystem(defaultConfig)
-
-function ThemeInitializer() {
-	return null
-}
-
 interface ProvidersProps {
 	children: ReactNode
 }
@@ -24,12 +17,9 @@ export function Providers({ children }: ProvidersProps) {
 	return (
 		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
-				<ChakraProvider value={system}>
-					<ThemeInitializer />
-					<ToastProvider>
-						<ErrorBoundaryProvider>{children}</ErrorBoundaryProvider>
-					</ToastProvider>
-				</ChakraProvider>
+				<ToastProvider>
+					<ErrorBoundaryProvider>{children}</ErrorBoundaryProvider>
+				</ToastProvider>
 			</QueryClientProvider>
 		</Provider>
 	)

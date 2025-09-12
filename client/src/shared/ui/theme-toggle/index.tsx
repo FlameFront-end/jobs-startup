@@ -1,13 +1,13 @@
-import { Button } from '@chakra-ui/react'
-
 import { useTheme } from '@/shared/lib/hooks/useTheme'
+
+import styles from './theme-toggle.module.scss'
 
 export function ThemeToggle() {
 	const { toggleTheme, isDark } = useTheme()
 
 	return (
-		<Button onClick={toggleTheme} variant='outline' size='sm'>
+		<button className={styles.button} onClick={toggleTheme}>
 			{isDark ? '☀️' : '🌙'}
-		</Button>
+		</button>
 	)
 }

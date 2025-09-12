@@ -1,27 +1,32 @@
-@use 'sass:map';
-@use '@/shared/styles/variables.scss' as *;
-@use '@/shared/styles/mixins.scss' as *;
+@use "sass:map";
+@use "@/shared/styles/variables.scss" as *;
+@use "@/shared/styles/mixins.scss" as *;
 
 .container {
-	@include padding-vars(xl);
+	@include p(xl, all);
+
 	max-width: 600px;
 	margin: 0 auto;
 
 	h1 {
 		@include font-heading-1;
+
 		color: $text-color;
-		@include margin-vars(xl);
+
+		@include m(xl, all);
 	}
 
 	h2 {
 		@include font-heading-2;
+
 		color: $text-color;
-		@include margin-vars(lg);
+
+		@include m(lg, all);
 	}
 }
 
 .section {
-	@include margin-vars(2xl);
+	@include m(2xl, all);
 }
 
 .checkboxGroup {
@@ -37,27 +42,30 @@
 
 	span {
 		@include font-body;
+
 		color: $text-color;
 	}
 }
 
 .button {
 	@include font-button;
-	@include padding-vars(md, xl);
-	color: white;
+	@include p(md, y);
+	@include p(xl, x);
+
 	border: none;
 	border-radius: map.get($border-radius, md);
-	cursor: pointer;
+	color: white;
 	transition: all 0.3s ease;
+	cursor: pointer;
 }
 
 .buttonDanger {
 	background: $error-color;
 
 	&:hover {
-		background: color-mix(in srgb, $error-color 90%, black);
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgb(220 53 69 / 30%);
+		background: color-mix(in srgb, $error-color 90%, black);
 	}
 }
 
@@ -65,21 +73,27 @@
 	background: $primary-color;
 
 	&:hover {
-		background: color-mix(in srgb, $primary-color 90%, black);
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgb(0 123 255 / 30%);
+		background: color-mix(in srgb, $primary-color 90%, black);
 	}
 }
 
 .backLink {
 	@include font-body;
+
+	display: inline-block;
 	color: $primary-color;
 	text-decoration: none;
-	@include margin-vars(xl);
-	display: inline-block;
 	transition: color 0.3s ease;
+
+	@include m(xl, all);
 
 	&:hover {
 		color: $accent-color;
 	}
+}
+
+.settingsPage {
+	@include p(lg);
 }

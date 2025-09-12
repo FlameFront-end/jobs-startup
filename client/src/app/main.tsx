@@ -1,12 +1,10 @@
 import '@/shared/styles/main.scss'
 
 import { createRoot } from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
 
 import { logger } from '@/shared/lib/logger'
 
-import { Providers } from './model/providers'
-import { router } from './model/router'
+import { App } from './app'
 
 document.documentElement.setAttribute('data-theme', 'dark')
 
@@ -27,8 +25,4 @@ window.addEventListener('unhandledrejection', event => {
 	})
 })
 
-createRoot(document.getElementById('root')!).render(
-	<Providers>
-		<RouterProvider router={router} />
-	</Providers>
-)
+createRoot(document.getElementById('root')!).render(<App />)

@@ -1,7 +1,234 @@
-@use 'sass:map';
-@use '@/shared/styles/variables.scss' as *;
-@use '@/shared/styles/mixins.scss' as *;
+@import "@/shared/styles/mixins";
 
 .homePage {
-	// Стили для главной страницы
+	@include p(lg);
+}
+
+.header {
+	@include flex-between;
+	width: 100%;
+	flex-wrap: wrap;
+	@include g(md);
+	@include m(lg, bottom);
+
+	@include mobile {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.titleSection {
+	display: flex;
+	flex-direction: column;
+	@include g(sm);
+}
+
+.title {
+	@include font-heading-2;
+	font-weight: 700;
+	color: var(--text-color);
+	margin: 0;
+}
+
+.subtitle {
+	color: var(--text-light);
+	margin: 0;
+	@include font-body;
+}
+
+.bold {
+	font-weight: 600;
+}
+
+.settings {
+	@include flex-between;
+	flex-wrap: wrap;
+	@include g(md);
+	width: 100%;
+	@include m(lg, bottom);
+	@include p(md);
+	background: var(--background-card);
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+
+	@include mobile {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.settingText {
+	color: var(--text-light);
+	margin: 0;
+	@include font-body;
+}
+
+.enabled {
+	color: var(--success-color);
+}
+
+.disabled {
+	color: var(--error-color);
+}
+
+.sections {
+	display: flex;
+	flex-direction: column;
+	@include g(xl);
+	align-items: stretch;
+}
+
+.section {
+	background: var(--background-card);
+	border: 1px solid var(--border-color);
+	border-radius: 0.5rem;
+	@include p(lg);
+}
+
+.sectionTitle {
+	@include font-body-large;
+	font-weight: 600;
+	color: var(--text-color);
+	margin: 0;
+	@include m(md, bottom);
+}
+
+.buttonGroup {
+	display: flex;
+	@include g(sm);
+	flex-wrap: wrap;
+}
+
+.button {
+	@include p(sm, x);
+	@include p(sm, y);
+	border-radius: 0.375rem;
+	border: 1px solid var(--border-color);
+	background: var(--background-card);
+	color: var(--text-color);
+	@include font-button;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: fit-content;
+
+	&:hover {
+		background: var(--background-light);
+		border-color: var(--primary-color);
+	}
+
+	&:active {
+		transform: translateY(1px);
+	}
+
+	&.success {
+		border-color: var(--success-color);
+		color: var(--success-color);
+
+		&:hover {
+			background: var(--success-color);
+			color: white;
+		}
+	}
+
+	&.error {
+		border-color: var(--error-color);
+		color: var(--error-color);
+
+		&:hover {
+			background: var(--error-color);
+			color: white;
+		}
+	}
+
+	&.warning {
+		border-color: var(--warning-color);
+		color: var(--warning-color);
+
+		&:hover {
+			background: var(--warning-color);
+			color: white;
+		}
+	}
+
+	&.info {
+		border-color: var(--primary-color);
+		color: var(--primary-color);
+
+		&:hover {
+			background: var(--primary-color);
+			color: white;
+		}
+	}
+
+	&.loading {
+		border-color: var(--primary-light);
+		color: var(--primary-light);
+
+		&:hover {
+			background: var(--primary-light);
+			color: white;
+		}
+	}
+
+	&.enabled {
+		background: var(--success-color);
+		color: white;
+		border-color: var(--success-color);
+
+		&:hover {
+			background: var(--error-color);
+			border-color: var(--error-color);
+		}
+	}
+
+	&.disabled {
+		background: var(--error-color);
+		color: white;
+		border-color: var(--error-color);
+
+		&:hover {
+			background: var(--success-color);
+			border-color: var(--success-color);
+		}
+	}
+}
+
+.navLinks {
+	display: flex;
+	@include g(md);
+	flex-wrap: wrap;
+}
+
+.nav-link {
+	color: var(--primary-color);
+	text-decoration: none;
+	@include p(sm, x);
+	@include p(sm, y);
+	border-radius: 0.375rem;
+	border: 1px solid var(--border-color);
+	background: var(--background-card);
+	transition: all 0.2s ease;
+	@include font-button;
+
+	&:hover {
+		background: var(--background-light);
+		border-color: var(--primary-color);
+	}
+}
+
+.navLink {
+	color: var(--text-color);
+	text-decoration: none;
+	@include p(sm, x);
+	@include p(sm, y);
+	border-radius: 0.375rem;
+	border: 1px solid var(--border-color);
+	background: var(--background-card);
+	transition: all 0.2s ease;
+	@include font-button;
+
+	&:hover {
+		background: var(--background-light);
+		border-color: var(--primary-color);
+	}
 }

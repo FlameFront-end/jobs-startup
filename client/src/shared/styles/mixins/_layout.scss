@@ -1,4 +1,4 @@
-@use 'breakpoints' as *;
+@use "breakpoints" as *;
 
 @mixin container {
 	max-width: 1200px;
@@ -6,11 +6,11 @@
 	padding: 0 1rem;
 
 	@include mobile {
-		padding: 0 0.5rem;
+		padding: 0 1rem;
 	}
 
 	@include tablet {
-		padding: 0 1rem;
+		padding: 0 1.5rem;
 	}
 
 	@include desktop {
@@ -20,14 +20,14 @@
 
 @mixin flex-center {
 	display: flex;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
 }
 
 @mixin flex-between {
 	display: flex;
-	align-items: center;
 	justify-content: space-between;
+	align-items: center;
 }
 
 @mixin grid-responsive($mobile: 1, $tablet: 2, $desktop: 3) {

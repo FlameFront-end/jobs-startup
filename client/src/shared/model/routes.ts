@@ -7,5 +7,6 @@ export const ROUTES = {
 	JOB_DETAILS: '/jobs/:id',
 	PROFILE: '/profile',
 	SETTINGS: '/settings',
-	TEST_ERROR: '/test-error'
+	TEST_ERROR: '/test-error',
+	SELECTION_DEMO: '/selection-demo'
 } as const

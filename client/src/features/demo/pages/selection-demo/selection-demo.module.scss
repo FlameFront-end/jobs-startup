@@ -1,0 +1,170 @@
+@use "sass:map";
+@use "@/shared/styles/variables.scss" as *;
+@use "@/shared/styles/mixins.scss" as *;
+
+.container {
+	@include p(2xl, all);
+
+	max-width: 1200px;
+	min-height: 100vh;
+	margin: 0 auto;
+	background-color: $background-color;
+	color: $text-color;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 3rem;
+	padding-bottom: 1rem;
+	border-bottom: 2px solid $border-color;
+
+	@include mobile {
+		flex-direction: column;
+		gap: 1rem;
+		text-align: center;
+	}
+}
+
+.section {
+	margin-bottom: 3rem;
+	padding: 2rem;
+	border: 1px solid $border-color;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+	background-color: $background-card;
+
+	@include mobile {
+		margin-bottom: 2rem;
+		padding: 1.5rem;
+	}
+
+	h2 {
+		margin-bottom: 1.5rem;
+		color: $primary-color;
+		@include font-heading-3;
+		font-weight: 600;
+	}
+
+	p {
+		margin-bottom: 1rem;
+		line-height: 1.7;
+	}
+
+	button {
+		margin-right: 1rem;
+		margin-bottom: 1rem;
+		padding: 0.5rem 1rem;
+		border: 1px solid $border-color;
+		border-radius: 0.375rem;
+		background: $background-card;
+		color: $text-color;
+		@include font-button;
+		cursor: pointer;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background: $background-light;
+			border-color: $primary-color;
+		}
+
+		&:active {
+			transform: translateY(1px);
+		}
+	}
+
+	.button {
+		@extend button;
+	}
+
+	pre {
+		margin: 1rem 0;
+		padding: 1.5rem;
+		border: 1px solid $border-color;
+		border-radius: 8px;
+		background-color: $background-light;
+		overflow-x: auto;
+		@include font-caption;
+		line-height: 1.6;
+	}
+
+	code {
+		padding: 0.25rem 0.5rem;
+		border: 1px solid $border-color;
+		border-radius: 4px;
+		background-color: $background-light;
+		@include font-caption;
+	}
+
+	mark {
+		padding: 0.125rem 0.25rem;
+		border-radius: 4px;
+		font-weight: 500;
+	}
+
+	.highlight-text {
+		position: relative;
+		display: inline-block;
+		transition: all 0.2s ease;
+		cursor: pointer;
+
+		&:hover {
+			transform: translateY(-1px);
+		}
+	}
+
+	.selection-glow {
+		position: relative;
+		display: inline-block;
+		transition: all 0.2s ease;
+		cursor: pointer;
+
+		&:hover {
+			transform: translateY(-1px);
+		}
+	}
+}
+
+[data-theme="dark"] .section {
+	box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+}
+
+.highlightText {
+	background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	transition: all 0.3s ease;
+
+	&:hover {
+		transform: scale(1.05);
+		filter: brightness(1.2);
+	}
+}
+
+.selectionGlow {
+	position: relative;
+	transition: all 0.3s ease;
+
+	&::selection {
+		background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+		color: white;
+		text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+	}
+}
+
+.textSelectable {
+	user-select: text;
+	cursor: text;
+	padding: 1rem;
+	border: 2px dashed var(--border-color);
+	border-radius: 0.5rem;
+	background: var(--background-light);
+	transition: all 0.3s ease;
+
+	&:hover {
+		border-color: var(--primary-color);
+		background: var(--background-card);
+	}
+}

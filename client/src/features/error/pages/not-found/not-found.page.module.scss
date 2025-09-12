@@ -1,18 +1,17 @@
-@use 'sass:map';
-@use '@/shared/styles/variables.scss' as *;
-@use '@/shared/styles/mixins.scss' as *;
+@use "sass:map";
+@use "@/shared/styles/variables.scss" as *;
+@use "@/shared/styles/mixins.scss" as *;
 
 .notFoundPage {
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: linear-gradient(135deg, $background-light 0%, $background-color 50%, $background-light 100%);
-
-	@include padding-md;
-
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: linear-gradient(135deg, $background-light 0%, $background-color 50%, $background-light 100%);
 	overflow: hidden;
+
+	@include p(md, all);
 
 	@include mobile {
 		align-items: flex-start;
@@ -20,17 +19,17 @@
 	}
 
 	&::before {
-		content: '';
 		position: absolute;
-		inset: 0;
 		background:
 			radial-gradient(circle at 30% 70%, rgb(49 130 206 / 10%) 0%, transparent 50%),
 			radial-gradient(circle at 70% 30%, rgb(49 130 206 / 10%) 0%, transparent 50%);
+		content: "";
+		inset: 0;
 		pointer-events: none;
 	}
 }
 
-[data-theme='dark'] .notFoundPage {
+[data-theme="dark"] .notFoundPage {
 	&::before {
 		background:
 			radial-gradient(circle at 30% 70%, rgb(96 165 250 / 15%) 0%, transparent 50%),
@@ -39,12 +38,12 @@
 }
 
 .notFoundContainer {
-	text-align: center;
-	max-width: 700px;
-	width: 100%;
 	position: relative;
 	z-index: 2;
+	width: 100%;
+	max-width: 700px;
 	box-sizing: border-box;
+	text-align: center;
 
 	@include mobile {
 		max-width: 100%;
@@ -55,128 +54,110 @@
 .errorCode {
 	@include font-display;
 
-	font-size: 10rem;
-	color: $primary-color;
-	line-height: 1;
-
-	@include margin-lg;
-
 	margin-top: 0;
+	color: $primary-color;
+	@include text-responsive(5rem, 8rem, 10rem);
+	line-height: 1;
 	text-shadow: 0 6px 12px rgb(49 130 206 / 30%);
 	animation: pulse 2s ease-in-out infinite;
 	filter: drop-shadow(0 4px 8px rgb(49 130 206 / 20%));
 
-	@include tablet-down {
-		font-size: 8rem;
-	}
-
-	@include mobile-down {
-		font-size: 6rem;
-	}
-
-	@include mobile {
-		font-size: 5rem;
-	}
+	@include m(lg, all);
 }
 
 .errorTitle {
 	@include font-heading-1;
 
-	color: $text-color;
-
-	@include margin-md;
-
 	margin-top: 0;
+	color: $text-color;
 	text-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+
+	@include m(md, all);
 }
 
 .errorDescription {
 	@include font-body-large;
 
+	max-width: 500px;
+	margin-top: 0;
+	margin-right: auto;
+	margin-left: auto;
 	color: $text-light;
 
-	@include margin-2xl;
-
-	margin-top: 0;
-	max-width: 500px;
-	margin-left: auto;
-	margin-right: auto;
+	@include m(2xl, all);
 }
 
 .errorActions {
 	display: flex;
-	gap: map.get($spacing, md);
-	justify-content: center;
 	flex-wrap: wrap;
+	justify-content: center;
+	gap: map.get($spacing, md);
 
 	@include mobile {
 		flex-direction: column;
-		width: 100%;
 		gap: map.get($spacing, sm);
+		width: 100%;
 	}
 }
 
 .btnPrimary,
 .btnSecondary {
 	@include font-button;
-	@include padding-responsive(
-		map.get($spacing, md) map.get($spacing, lg),
-		map.get($spacing, lg) map.get($spacing, 2xl),
-		map.get($spacing, lg) map.get($spacing, 2xl)
-	);
+	@include p(md, y);
+	@include p(lg, x);
 
-	border-radius: map.get($border-radius, lg);
-	text-decoration: none;
 	display: inline-block;
+	min-width: 180px;
+	border: 2px solid transparent;
+	border-radius: map.get($border-radius, lg);
+	box-sizing: border-box;
+	box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+	text-decoration: none;
 	transition: all 0.3s ease;
 	cursor: pointer;
-	border: 2px solid transparent;
-	min-width: 180px;
-	box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
-	box-sizing: border-box;
 
 	@include mobile {
 		width: 100%;
-		max-width: 100%;
 		min-width: auto;
+		max-width: 100%;
 	}
 }
 
 .btnPrimary {
+	box-shadow: 0 4px 12px rgb(49 130 206 / 30%);
 	background: $primary-color;
 	color: white;
-	box-shadow: 0 4px 12px rgb(49 130 206 / 30%);
 
 	&:hover {
-		background: color-mix(in srgb, $primary-color 90%, black);
 		transform: translateY(-3px);
 		box-shadow: 0 8px 25px rgb(49 130 206 / 40%);
+		background: color-mix(in srgb, $primary-color 90%, black);
 	}
 }
 
 .btnSecondary {
-	background: transparent;
-	color: $text-color;
 	border-color: $border-color;
 	box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+	background: transparent;
+	color: $text-color;
 
 	&:hover {
-		background: $background-light;
-		border-color: $primary-color;
 		transform: translateY(-3px);
+		border-color: $primary-color;
 		box-shadow: 0 6px 20px rgb(0 0 0 / 15%);
+		background: $background-light;
 	}
 }
 
 @keyframes pulse {
 	0%,
 	100% {
-		opacity: 1;
 		transform: scale(1);
+		opacity: 1;
 	}
 
 	50% {
-		opacity: 0.8;
 		transform: scale(1.05);
+		opacity: 0.8;
 	}
 }

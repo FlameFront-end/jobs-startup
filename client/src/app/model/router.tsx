@@ -4,9 +4,12 @@ import { NotFoundPage } from '@/features/error/pages/not-found/not-found.page'
 import { ROUTES } from '@/shared/model/routes'
 import { Layout } from '@/shared/ui/layout'
 
+import { ErrorElement } from './error-element'
+
 export const router = createBrowserRouter([
 	{
 		element: <Layout />,
+		errorElement: <ErrorElement />,
 		children: [
 			{
 				path: ROUTES.HOME,
@@ -43,6 +46,10 @@ export const router = createBrowserRouter([
 			{
 				path: ROUTES.TEST_ERROR,
 				lazy: () => import('../../features/error/pages/test-error/test-error.page')
+			},
+			{
+				path: ROUTES.SELECTION_DEMO,
+				lazy: () => import('../../features/demo/pages/selection-demo/selection-demo.page')
 			},
 			{
 				path: '*',

@@ -8,5 +8,9 @@ interface PageWrapperProps {
 }
 
 export function PageWrapper({ children, className }: PageWrapperProps) {
-	return <div className={clsx(styles.pageWrapper, className)}>{children}</div>
+	return (
+		<div className={clsx(styles.pageWrapper, className)}>
+			<div className={styles.container}>{children}</div>
+		</div>
+	)
 }

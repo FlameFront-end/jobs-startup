@@ -30,7 +30,7 @@ const SettingsPage = () => {
 	}
 
 	return (
-		<PageWrapper className='settings-page'>
+		<PageWrapper className={styles.settingsPage}>
 			<div className={styles.container}>
 				<h1>Настройки</h1>
 

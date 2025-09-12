@@ -1,15 +1,14 @@
-@use 'sass:map';
-@use 'variables' as *;
-@use 'mixins' as *;
+@use "sass:map";
+@use "variables" as *;
+@use "mixins" as *;
 
 html {
-	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
 }
 
 body {
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow: hidden auto;
 	-webkit-overflow-scrolling: touch;
 }
 
@@ -18,15 +17,14 @@ body {
 	height: 100vh;
 	margin: 0;
 	padding: 0;
+	overflow: hidden auto;
 	text-align: left;
-	overflow-x: hidden;
-	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 }
 
 * {
-	scrollbar-width: thin;
 	scrollbar-color: $primary-color transparent;
+	scrollbar-width: thin;
 }
 
 *::-webkit-scrollbar {
@@ -35,25 +33,25 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-	background: transparent;
 	border-radius: 5px;
+	background: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
-	border-radius: 6px;
-	transition: all 0.3s ease;
 	border: 2px solid transparent;
+	border-radius: 6px;
+	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
 	background-clip: content-box;
+	transition: all 0.3s ease;
 }
 
 *::-webkit-scrollbar-thumb:hover {
+	transform: scale(1.1);
 	background: linear-gradient(
 		135deg,
 		color-mix(in srgb, $primary-color 90%, black) 0%,
 		color-mix(in srgb, $accent-color 90%, black) 100%
 	);
-	transform: scale(1.1);
 }
 
 *::-webkit-scrollbar-thumb:active {
@@ -68,15 +66,15 @@ body {
 	background: transparent;
 }
 
-[data-theme='dark'] * {
+[data-theme="dark"] * {
 	scrollbar-color: $primary-color transparent;
 }
 
-[data-theme='dark'] *::-webkit-scrollbar-thumb {
+[data-theme="dark"] *::-webkit-scrollbar-thumb {
 	background: linear-gradient(135deg, $primary-color 0%, color-mix(in srgb, $primary-color 80%, $accent-color) 100%);
 }
 
-[data-theme='dark'] *::-webkit-scrollbar-thumb:hover {
+[data-theme="dark"] *::-webkit-scrollbar-thumb:hover {
 	background: linear-gradient(
 		135deg,
 		color-mix(in srgb, $primary-color 90%, white) 0%,
@@ -84,7 +82,7 @@ body {
 	);
 }
 
-[data-theme='dark'] *::-webkit-scrollbar-thumb:active {
+[data-theme="dark"] *::-webkit-scrollbar-thumb:active {
 	background: linear-gradient(
 		135deg,
 		color-mix(in srgb, $primary-color 70%, white) 0%,
@@ -92,15 +90,15 @@ body {
 	);
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
 	*::-webkit-scrollbar {
 		width: 6px;
 		height: 6px;
 	}
 
 	*::-webkit-scrollbar-thumb {
-		border-radius: 3px;
 		border: 1px solid transparent;
+		border-radius: 3px;
 	}
 }
 
@@ -121,15 +119,13 @@ body {
 }
 
 .scroll-container-x {
-	overflow-x: auto;
-	overflow-y: hidden;
+	overflow: auto hidden;
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
 .scroll-container-y {
-	overflow-y: auto;
-	overflow-x: hidden;
+	overflow: hidden auto;
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
@@ -143,141 +139,86 @@ body {
 	-webkit-overflow-scrolling: touch;
 }
 
-[style*='overflow'] {
+[style*="overflow"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow-x'] {
+[style*="overflow-x"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow-y'] {
+[style*="overflow-y"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: auto'] {
+[style*="overflow: auto"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: scroll'] {
+[style*="overflow: scroll"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: hidden'] {
+[style*="overflow: hidden"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: visible'] {
+[style*="overflow: visible"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: clip'] {
+[style*="overflow: clip"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: overlay'] {
+[style*="overflow: overlay"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: inherit'] {
+[style*="overflow: inherit"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: initial'] {
+[style*="overflow: initial"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: unset'] {
+[style*="overflow: unset"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: revert'] {
+[style*="overflow: revert"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
-[style*='overflow: revert-layer'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: auto'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: scroll'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: hidden'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: visible'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: clip'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: overlay'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: inherit'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: initial'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: unset'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: revert'] {
-	-webkit-overflow-scrolling: touch;
-	scroll-behavior: smooth;
-}
-
-[style*='overflow: revert-layer'] {
+[style*="overflow: revert-layer"] {
 	-webkit-overflow-scrolling: touch;
 	scroll-behavior: smooth;
 }
 
 .page-transition {
-	will-change: transform, opacity;
 	backface-visibility: hidden;
+	will-change: transform, opacity;
 }
 
 .logo {
 	height: 6em;
 	padding: 1.5em;
-	will-change: filter;
 	transition: filter 300ms;
+	will-change: filter;
 }
 
 .logo:hover {
