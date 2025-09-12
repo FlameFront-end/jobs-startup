@@ -1,68 +1,107 @@
-Write-Host "Запуск dev окружения в одной консоли..." -ForegroundColor Green
+Write-Host "Starting dev environment in single console..." -ForegroundColor Green
 
 $ErrorActionPreference = "Stop"
 
 try {
-    Write-Host "Проверка зависимостей..." -ForegroundColor Yellow
+    Write-Host "Checking dependencies..." -ForegroundColor Yellow
     
     if (!(Test-Path "client/node_modules")) {
-        Write-Host "Установка зависимостей клиента..." -ForegroundColor Yellow
+        Write-Host "Installing client dependencies..." -ForegroundColor Yellow
         Set-Location "client"
         npm install
         Set-Location ".."
     }
     
     if (!(Test-Path "parser/node_modules")) {
-        Write-Host "Установка зависимостей парсера..." -ForegroundColor Yellow
+        Write-Host "Installing parser dependencies..." -ForegroundColor Yellow
         Set-Location "parser"
         npm install
         Set-Location ".."
     }
     
-    Write-Host "Запуск сервисов..." -ForegroundColor Green
+    Write-Host "Starting services..." -ForegroundColor Green
     Write-Host "Client: http://localhost:5173" -ForegroundColor Cyan
     Write-Host "Parser API: http://localhost:3000" -ForegroundColor Red
-    Write-Host "Нажмите Ctrl+C для остановки" -ForegroundColor Yellow
+    Write-Host "Press Ctrl+C to stop" -ForegroundColor Yellow
     Write-Host ""
     
     $parserJob = Start-Job -ScriptBlock {
         Set-Location $using:PWD/parser
-        npm run start:dev 2>&1 | ForEach-Object { "[PARSER] $_" }
+        $process = Start-Process -FilePath "npm" -ArgumentList "run", "start:dev" -RedirectStandardOutput "parser.log" -RedirectStandardError "parser-error.log" -PassThru -WindowStyle Hidden
+        $process.WaitForExit()
     }
     
     Start-Sleep -Seconds 2
     
     $clientJob = Start-Job -ScriptBlock {
         Set-Location $using:PWD/client
-        npm run dev 2>&1 | ForEach-Object { "[CLIENT] $_" }
+        $process = Start-Process -FilePath "npm" -ArgumentList "run", "dev" -RedirectStandardOutput "client.log" -RedirectStandardError "client-error.log" -PassThru -WindowStyle Hidden
+        $process.WaitForExit()
     }
+    
+    $parserLogPath = "parser/parser.log"
+    $parserErrorPath = "parser/parser-error.log"
+    $clientLogPath = "client/client.log"
+    $clientErrorPath = "client/client-error.log"
+    
+    $lastParserSize = 0
+    $lastClientSize = 0
     
     try {
         while ($true) {
-            $parserOutput = Receive-Job -Job $parserJob -ErrorAction SilentlyContinue
-            $clientOutput = Receive-Job -Job $clientJob -ErrorAction SilentlyContinue
-            
-            if ($parserOutput) {
-                $parserOutput | ForEach-Object {
-                    Write-Host $_ -ForegroundColor Red
+            if (Test-Path $parserLogPath) {
+                $currentSize = (Get-Item $parserLogPath).Length
+                if ($currentSize -gt $lastParserSize) {
+                    $newContent = Get-Content $parserLogPath -Skip $lastParserSize -ErrorAction SilentlyContinue
+                    $newContent | ForEach-Object {
+                        Write-Host "[PARSER] $_" -ForegroundColor Red
+                    }
+                    $lastParserSize = $currentSize
                 }
             }
             
-            if ($clientOutput) {
-                $clientOutput | ForEach-Object {
-                    Write-Host $_ -ForegroundColor Blue
+            if (Test-Path $parserErrorPath) {
+                $currentSize = (Get-Item $parserErrorPath).Length
+                if ($currentSize -gt $lastParserSize) {
+                    $newContent = Get-Content $parserErrorPath -Skip $lastParserSize -ErrorAction SilentlyContinue
+                    $newContent | ForEach-Object {
+                        Write-Host "[PARSER ERROR] $_" -ForegroundColor DarkRed
+                    }
+                    $lastParserSize = $currentSize
                 }
             }
             
-            Start-Sleep -Milliseconds 200
+            if (Test-Path $clientLogPath) {
+                $currentSize = (Get-Item $clientLogPath).Length
+                if ($currentSize -gt $lastClientSize) {
+                    $newContent = Get-Content $clientLogPath -Skip $lastClientSize -ErrorAction SilentlyContinue
+                    $newContent | ForEach-Object {
+                        Write-Host "[CLIENT] $_" -ForegroundColor Blue
+                    }
+                    $lastClientSize = $currentSize
+                }
+            }
+            
+            if (Test-Path $clientErrorPath) {
+                $currentSize = (Get-Item $clientErrorPath).Length
+                if ($currentSize -gt $lastClientSize) {
+                    $newContent = Get-Content $clientErrorPath -Skip $lastClientSize -ErrorAction SilentlyContinue
+                    $newContent | ForEach-Object {
+                        Write-Host "[CLIENT ERROR] $_" -ForegroundColor DarkBlue
+                    }
+                    $lastClientSize = $currentSize
+                }
+            }
+            
+            Start-Sleep -Milliseconds 500
         }
     }
     catch [System.Management.Automation.PipelineStoppedException] {
-        Write-Host "Остановка сервисов..." -ForegroundColor Yellow
+        Write-Host "Stopping services..." -ForegroundColor Yellow
     }
 }
 catch {
-    Write-Host "Ошибка: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 finally {
@@ -74,5 +113,12 @@ finally {
         Stop-Job -Job $clientJob
         Remove-Job -Job $clientJob
     }
-    Write-Host "Все сервисы остановлены" -ForegroundColor Green
+    
+    # Clean up log files
+    if (Test-Path "parser/parser.log") { Remove-Item "parser/parser.log" -Force }
+    if (Test-Path "parser/parser-error.log") { Remove-Item "parser/parser-error.log" -Force }
+    if (Test-Path "client/client.log") { Remove-Item "client/client.log" -Force }
+    if (Test-Path "client/client-error.log") { Remove-Item "client/client-error.log" -Force }
+    
+    Write-Host "All services stopped" -ForegroundColor Green
 }

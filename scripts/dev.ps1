@@ -1,4 +1,4 @@
-Write-Host "Запуск dev окружения..." -ForegroundColor Green
+Write-Host "Starting dev environment..." -ForegroundColor Green
 
 $ErrorActionPreference = "Stop"
 
@@ -10,30 +10,30 @@ function Start-Service {
         [string]$Color = "Cyan"
     )
     
-    Write-Host "Запуск $Name..." -ForegroundColor $Color
+    Write-Host "Starting $Name..." -ForegroundColor $Color
     
     $process = Start-Process -FilePath "powershell" -ArgumentList "-NoExit", "-Command", "cd '$Path'; $Command" -PassThru
     return $process
 }
 
 try {
-    Write-Host "Проверка зависимостей..." -ForegroundColor Yellow
+    Write-Host "Checking dependencies..." -ForegroundColor Yellow
     
     if (!(Test-Path "client/node_modules")) {
-        Write-Host "Установка зависимостей клиента..." -ForegroundColor Yellow
+        Write-Host "Installing client dependencies..." -ForegroundColor Yellow
         Set-Location "client"
         npm install
         Set-Location ".."
     }
     
     if (!(Test-Path "parser/node_modules")) {
-        Write-Host "Установка зависимостей парсера..." -ForegroundColor Yellow
+        Write-Host "Installing parser dependencies..." -ForegroundColor Yellow
         Set-Location "parser"
         npm install
         Set-Location ".."
     }
     
-    Write-Host "Запуск сервисов..." -ForegroundColor Green
+    Write-Host "Starting services..." -ForegroundColor Green
     
     $parserProcess = Start-Service -Name "Parser API" -Path "$PWD/parser" -Command "npm run start:dev" -Color "Red"
     Start-Sleep -Seconds 2
@@ -41,11 +41,11 @@ try {
     $clientProcess = Start-Service -Name "Client" -Path "$PWD/client" -Command "npm run dev" -Color "Blue"
     
     Write-Host ""
-    Write-Host "Dev окружение запущено!" -ForegroundColor Green
+    Write-Host "Dev environment started!" -ForegroundColor Green
     Write-Host "Client: http://localhost:5173" -ForegroundColor Cyan
     Write-Host "Parser API: http://localhost:3000" -ForegroundColor Red
     Write-Host ""
-    Write-Host "Нажмите Ctrl+C для остановки всех сервисов" -ForegroundColor Yellow
+    Write-Host "Press Ctrl+C to stop all services" -ForegroundColor Yellow
     
     try {
         while ($true) {
@@ -53,21 +53,21 @@ try {
         }
     }
     catch [System.Management.Automation.PipelineStoppedException] {
-        Write-Host "Остановка сервисов..." -ForegroundColor Yellow
+        Write-Host "Stopping services..." -ForegroundColor Yellow
     }
 }
 catch {
-    Write-Host "Ошибка: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 finally {
     if ($parserProcess -and !$parserProcess.HasExited) {
-        Write-Host "Остановка Parser API..." -ForegroundColor Yellow
+        Write-Host "Stopping Parser API..." -ForegroundColor Yellow
         $parserProcess.Kill()
     }
     if ($clientProcess -and !$clientProcess.HasExited) {
-        Write-Host "Остановка Client..." -ForegroundColor Yellow
+        Write-Host "Stopping Client..." -ForegroundColor Yellow
         $clientProcess.Kill()
     }
-    Write-Host "Все сервисы остановлены" -ForegroundColor Green
+    Write-Host "All services stopped" -ForegroundColor Green
 }
