@@ -95,29 +95,26 @@ export function Toast({ id, title, description, type, duration = 5000, closable 
 
 	return (
 		<div className={toastClass} onMouseEnter={handleMouseEnter}>
-			<div className={styles.content}>
-				<div className={styles.mainContent}>
+			<div className={styles.mainContent}>
 					<div className={clsx(styles.indicator, styles[type])} />
 					<div className={clsx(styles.icon, styles[type])}>{getIcon()}</div>
 					<div className={styles.textContent}>
 						{title && <div className={styles.title}>{title}</div>}
 						{description && <div className={styles.description}>{description}</div>}
 					</div>
+					<div className={styles.actions}>
+						{action && (
+							<button className={styles.actionButton} onClick={handleActionClick}>
+								{action.label}
+							</button>
+						)}
+						{closable && (
+							<button className={styles.closeButton} onClick={handleClose}>
+								<Icon name='close' />
+							</button>
+						)}
+					</div>
 				</div>
-
-				<div className={styles.actions}>
-					{action && (
-						<button className={styles.actionButton} onClick={handleActionClick}>
-							{action.label}
-						</button>
-					)}
-					{closable && (
-						<button className={styles.closeButton} onClick={handleClose}>
-							x
-						</button>
-					)}
-				</div>
-			</div>
 
 			{type !== 'loading' && duration > 0 && (
 				<div className={styles.progressBar} style={{ width: `${progressWidth}%` }} />
