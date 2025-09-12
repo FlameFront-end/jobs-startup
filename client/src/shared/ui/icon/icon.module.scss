@@ -1,10 +1,10 @@
-@import "@/shared/styles/mixins";
+@use "@/shared/styles/mixins" as *;
 
 .icon {
+	display: block;
 	width: 100%;
 	height: 100%;
-	background-color: currentColor;
-	display: block;
+	background-color: currentcolor;
 }
 
 .success {
@@ -28,5 +28,5 @@
 }
 
 .close {
-	color: currentColor;
+	color: currentcolor;
 }

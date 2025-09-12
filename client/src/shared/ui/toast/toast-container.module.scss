@@ -1,4 +1,4 @@
-@import "@/shared/styles/mixins";
+@use "@/shared/styles/mixins" as *;
 
 .container {
 	position: fixed;
@@ -8,8 +8,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	max-width: 420px;
 	width: 100%;
+	max-width: 420px;
 	pointer-events: none;
 
 	@include mobile {

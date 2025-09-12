@@ -56,7 +56,9 @@
 
 	margin-top: 0;
 	color: $primary-color;
+
 	@include text-responsive(5rem, 8rem, 10rem);
+
 	line-height: 1;
 	text-shadow: 0 6px 12px rgb(49 130 206 / 30%);
 	animation: pulse 2s ease-in-out infinite;

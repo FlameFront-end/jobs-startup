@@ -1,9 +1,9 @@
-@import "../../styles/mixins";
+@use "../../styles/mixins" as *;
 
 .loader {
 	display: flex;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
 
 	&__spinner {
 		position: relative;
@@ -18,13 +18,13 @@
 		animation: spin 1.5s linear infinite;
 
 		&::before {
-			content: "";
 			position: absolute;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			background: var(--background-color);
 			border-radius: 50%;
+			background: var(--background-color);
+			content: "";
 		}
 	}
 
@@ -65,11 +65,4 @@
 	}
 }
 
-@keyframes spin {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
-}
+@include animation-spin;

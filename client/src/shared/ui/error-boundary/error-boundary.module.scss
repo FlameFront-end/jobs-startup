@@ -42,7 +42,6 @@
 .errorContainer {
 	position: relative;
 	z-index: 1;
-
 	width: 100%;
 	max-width: 900px;
 	border: 1px solid $border-color;
@@ -51,10 +50,8 @@
 	box-shadow:
 		0 25px 50px -12px rgb(0 0 0 / 15%),
 		0 0 0 1px rgb(255 255 255 / 5%);
-
 	background: $background-card;
 	backdrop-filter: blur(10px);
-
 	text-align: center;
 
 	@include p(2xl, all);
@@ -85,7 +82,9 @@
 	position: relative;
 	z-index: 2;
 	margin-top: 0;
+
 	@include text-responsive(3.5rem, 4rem, 5rem);
+
 	animation: shake 0.6s ease-in-out;
 	filter: drop-shadow(0 4px 8px rgb(239 68 68 / 30%));
 

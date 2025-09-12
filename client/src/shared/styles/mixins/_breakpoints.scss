@@ -69,15 +69,15 @@
 			@content;
 		}
 	} @else if $size == "lg" {
-		@media (min-width: #{map.get($breakpoints, lg)}) and (max-width: #{map.get($breakpoints, 1200px) - 1px}) {
+		@media (min-width: #{map.get($breakpoints, lg)}) and (max-width: #{map.get($breakpoints, xl) - 1px}) {
 			@content;
 		}
-	} @else if $size == "1200px" {
-		@media (min-width: #{map.get($breakpoints, 1200px)}) and (max-width: #{map.get($breakpoints, 21200px) - 1px}) {
+	} @else if $size == "xl" {
+		@media (min-width: #{map.get($breakpoints, xl)}) and (max-width: #{map.get($breakpoints, 2xl) - 1px}) {
 			@content;
 		}
-	} @else if $size == "21200px" {
-		@media (min-width: #{map.get($breakpoints, 21200px)}) {
+	} @else if $size == "2xl" {
+		@media (min-width: #{map.get($breakpoints, 2xl)}) {
 			@content;
 		}
 	}
@@ -100,12 +100,12 @@
 		@media (min-width: #{map.get($breakpoints, lg)}) {
 			@content;
 		}
-	} @else if $size == "1200px" {
-		@media (min-width: #{map.get($breakpoints, 1200px)}) {
+	} @else if $size == "xl" {
+		@media (min-width: #{map.get($breakpoints, xl)}) {
 			@content;
 		}
-	} @else if $size == "21200px" {
-		@media (min-width: #{map.get($breakpoints, 21200px)}) {
+	} @else if $size == "2xl" {
+		@media (min-width: #{map.get($breakpoints, 2xl)}) {
 			@content;
 		}
 	}
@@ -125,15 +125,15 @@
 			@content;
 		}
 	} @else if $size == "lg" {
-		@media (max-width: #{map.get($breakpoints, 1200px) - 1px}) {
+		@media (max-width: #{map.get($breakpoints, xl) - 1px}) {
 			@content;
 		}
-	} @else if $size == "1200px" {
-		@media (max-width: #{map.get($breakpoints, 21200px) - 1px}) {
+	} @else if $size == "xl" {
+		@media (max-width: #{map.get($breakpoints, 2xl) - 1px}) {
 			@content;
 		}
-	} @else if $size == "21200px" {
-		@media (min-width: #{map.get($breakpoints, 21200px)}) {
+	} @else if $size == "2xl" {
+		@media (max-width: #{map.get($breakpoints, 2xl) - 1px}) {
 			@content;
 		}
 	}

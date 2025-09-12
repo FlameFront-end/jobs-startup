@@ -15,6 +15,12 @@
 		"scss/at-mixin-pattern": null,
 		"scss/at-function-pattern": null,
 		"scss/percent-placeholder-pattern": null,
+		"unit-no-unknown": [
+			true,
+			{
+				"ignoreUnits": ["xl", "2xl"]
+			}
+		],
 		"order/properties-alphabetical-order": null,
 		"order/properties-order": [
 			[
