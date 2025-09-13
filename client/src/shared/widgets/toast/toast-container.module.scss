@@ -2,14 +2,14 @@
 
 .container {
 	position: fixed;
-	top: 20px;
-	right: 20px;
+	top: $toast_position;
+	right: $toast_position;
 	z-index: 9999;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	width: 100%;
-	max-width: 420px;
+	max-width: $toast_max_width;
 	pointer-events: none;
 
 	@include mobile {

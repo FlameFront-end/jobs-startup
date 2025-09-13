@@ -3,12 +3,12 @@
 
 .toast {
 	position: fixed;
-	top: 20px;
-	right: 20px;
+	top: $toast_position;
+	right: $toast_position;
 	z-index: 9999;
 	transform: translateX(100%);
 	width: 100%;
-	max-width: 420px;
+	max-width: $toast_max_width;
 	border: 1px solid $border_color;
 	border-radius: 12px;
 	box-shadow: 0 25px 50px -12px rgb(0 0 0 / 50%);

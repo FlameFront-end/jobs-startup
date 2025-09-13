@@ -93,39 +93,3 @@
 
 	flex-wrap: wrap;
 }
-
-.nav-link {
-	border: 1px solid $border_color;
-	border-radius: 0.375rem;
-	background: $background_card;
-	color: $primary_color;
-	text-decoration: none;
-	transition: all 0.2s ease;
-
-	@include p(sm, x);
-	@include p(sm, y);
-	@include font-button;
-
-	&:hover {
-		border-color: $primary_color;
-		background: $background_light;
-	}
-}
-
-.navLink {
-	border: 1px solid $border_color;
-	border-radius: 0.375rem;
-	background: $background_card;
-	color: $text_color;
-	text-decoration: none;
-	transition: all 0.2s ease;
-
-	@include p(sm, x);
-	@include p(sm, y);
-	@include font-button;
-
-	&:hover {
-		border-color: $primary_color;
-		background: $background_light;
-	}
-}

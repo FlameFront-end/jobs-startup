@@ -54,6 +54,7 @@
 
 .errorCode {
 	@include font-display;
+	@include animation-pulse;
 
 	margin-top: 0;
 	color: $primary_color;
@@ -62,7 +63,6 @@
 
 	line-height: 1;
 	text-shadow: 0 6px 12px rgb(49 130 206 / 30%);
-	animation: pulse 2s ease-in-out infinite;
 	filter: drop-shadow(0 4px 8px rgb(49 130 206 / 20%));
 
 	@include m(lg, all);

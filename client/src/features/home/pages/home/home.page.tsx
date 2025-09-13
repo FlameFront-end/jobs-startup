@@ -3,7 +3,6 @@ import styles from './home.module.scss'
 import { useState } from 'react'
 
 import clsx from 'clsx'
-import { Link } from 'react-router-dom'
 
 import { testErrorLogging } from '@/shared/api/instance'
 import { Button, Card, FullScreenLoader } from '@/shared/kit'
@@ -92,27 +91,27 @@ const HomePage = () => {
 
 			<Card title='Навигация:'>
 				<div className={styles.navLinks}>
-					<Link to={ROUTES.LOGIN} className={styles.navLink}>
+					<Button href={ROUTES.LOGIN} variant='link' size='sm'>
 						Вход
-					</Link>
-					<Link to={ROUTES.REGISTER} className={styles.navLink}>
+					</Button>
+					<Button href={ROUTES.REGISTER} variant='link' size='sm'>
 						Регистрация
-					</Link>
-					<Link to={ROUTES.SETTINGS} className={styles.navLink}>
+					</Button>
+					<Button href={ROUTES.SETTINGS} variant='link' size='sm'>
 						Настройки
-					</Link>
-					<Link to={ROUTES.JOBS} className={styles.navLink}>
+					</Button>
+					<Button href={ROUTES.JOBS} variant='link' size='sm'>
 						Вакансии
-					</Link>
-					<Link to={ROUTES.TEST_ERROR} className={styles.navLink}>
+					</Button>
+					<Button href={ROUTES.TEST_ERROR} variant='link' size='sm'>
 						Тест ошибки
-					</Link>
-					<Link to={ROUTES.SELECTION_DEMO} className={styles.navLink}>
+					</Button>
+					<Button href={ROUTES.SELECTION_DEMO} variant='link' size='sm'>
 						Демо выделения
-					</Link>
-					<Link to={ROUTES.POSTS} className={styles.navLink}>
+					</Button>
+					<Button href={ROUTES.POSTS} variant='link' size='sm'>
 						Посты (Infinite Scroll)
-					</Link>
+					</Button>
 				</div>
 			</Card>
 

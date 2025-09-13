@@ -1,0 +1,67 @@
+@use "sass:map";
+@use "../variables" as *;
+
+@mixin animation-spin {
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+}
+
+@mixin animation-loading {
+	@keyframes loading {
+		0% {
+			background: linear-gradient(90deg, $primary_color 0%, $accent_color 100%);
+		}
+
+		50% {
+			background: linear-gradient(90deg, $accent_color 0%, $primary_color 100%);
+		}
+
+		100% {
+			background: linear-gradient(90deg, $primary_color 0%, $accent_color 100%);
+		}
+	}
+}
+
+@mixin animation-pulse {
+	animation: pulse 2s ease-in-out infinite;
+}
+
+@mixin animation-hover-lift {
+	transition: all 0.3s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+	}
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.05);
+		opacity: 0.8;
+	}
+}
+
+@keyframes shake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	25% {
+		transform: translateX(-5px);
+	}
+	75% {
+		transform: translateX(5px);
+	}
+}
