@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios'
 
 import { logger } from '@/shared/lib/logger'
-import type { ApiErrorResponse, ApiValidationError } from '@/shared/types/global'
+import type { ApiErrorResponse, ApiValidationError } from '@/shared/types/api'
 
 export class ErrorHandler {
 	handleApiError(error: AxiosError): ApiErrorResponse {

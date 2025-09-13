@@ -6,8 +6,7 @@ import { logger } from '@/shared/lib/logger'
 import { store } from '@/shared/lib/store'
 import { toastService } from '@/shared/lib/toast'
 import { env } from '@/shared/model/config'
-import type { ApiResponse } from '@/shared/types/api'
-import type { ApiErrorResponse } from '@/shared/types/global'
+import type { ApiErrorResponse, ApiResponse } from '@/shared/types/api'
 
 export const api = axios.create({
 	baseURL: env.API_URL,

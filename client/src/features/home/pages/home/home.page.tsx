@@ -263,6 +263,18 @@ const HomePage = () => {
 					</Card>
 				</div>
 			</Card>
+
+			<Card title='Тест аналитики:'>
+				<div className={styles.buttonGroup}>
+					<Button
+						variant='success'
+						analyticsCategory='analytics_test'
+						analyticsLabel='analytics_test_button'
+					>
+						Тест аналитики (проверь Network)
+					</Button>
+				</div>
+			</Card>
 		</PageWrapper>
 	)
 }
