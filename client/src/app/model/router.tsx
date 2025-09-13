@@ -1,15 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import { ErrorPage } from '@/features/error/pages/error-page'
 import { NotFoundPage } from '@/features/error/pages/not-found/not-found.page'
 import { ROUTES } from '@/shared/model/routes'
-import { Layout } from '@/shared/widgets/layout'
-
-import { ErrorElement } from './error-element'
+import { Layout } from '@/shared/widgets'
 
 export const router = createBrowserRouter([
 	{
 		element: <Layout />,
-		errorElement: <ErrorElement />,
+		errorElement: <ErrorPage />,
 		children: [
 			{
 				path: ROUTES.HOME,

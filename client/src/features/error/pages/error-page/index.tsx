@@ -1,12 +1,37 @@
-import styles from './error-boundary.module.scss'
+import styles from './error-page.module.scss'
 
-interface ErrorBoundaryContentProps {
-	error: Error | null
-	onReload: () => void
-	onGoHome: () => void
+import { useNavigate, useRouteError } from 'react-router-dom'
+
+import { ROUTES } from '@/shared/model/routes'
+
+interface ErrorPageProps {
+	error?: Error | null
+	onReload?: () => void
+	onGoHome?: () => void
 }
 
-export function ErrorBoundaryContent({ error, onReload, onGoHome }: ErrorBoundaryContentProps) {
+export function ErrorPage({ error: propError, onReload, onGoHome }: ErrorPageProps) {
+	const routeError = useRouteError() as Error | undefined
+	const navigate = useNavigate()
+
+	const error = propError || routeError
+
+	const handleReload = () => {
+		if (onReload) {
+			onReload()
+		} else {
+			window.location.reload()
+		}
+	}
+
+	const handleGoHome = () => {
+		if (onGoHome) {
+			onGoHome()
+		} else {
+			navigate(ROUTES.HOME)
+		}
+	}
+
 	return (
 		<div className={styles.errorBoundaryPage}>
 			<div className={styles.errorContainer}>
@@ -32,10 +57,10 @@ export function ErrorBoundaryContent({ error, onReload, onGoHome }: ErrorBoundar
 				)}
 
 				<div className={styles.errorActions}>
-					<button className={styles.btnPrimary} onClick={onReload}>
+					<button className={styles.btnPrimary} onClick={handleReload}>
 						Перезагрузить страницу
 					</button>
-					<button className={styles.btnSecondary} onClick={onGoHome}>
+					<button className={styles.btnSecondary} onClick={handleGoHome}>
 						На главную
 					</button>
 				</div>
@@ -43,5 +68,3 @@ export function ErrorBoundaryContent({ error, onReload, onGoHome }: ErrorBoundar
 		</div>
 	)
 }
-
-export { ErrorBoundaryContent as ErrorBoundary }
