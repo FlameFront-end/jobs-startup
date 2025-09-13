@@ -25,7 +25,16 @@ const persistMiddleware: Middleware = store => next => action => {
 		const appState = state.app
 
 		themeUtils.setTheme(appState.theme)
-		localStorage.setItem('app-errorNotificationsEnabled', JSON.stringify(appState.errorNotificationsEnabled))
+		if (typeof window !== 'undefined') {
+			try {
+				localStorage.setItem(
+					'app-errorNotificationsEnabled',
+					JSON.stringify(appState.errorNotificationsEnabled)
+				)
+			} catch (error) {
+				console.warn('Failed to save errorNotificationsEnabled to localStorage:', error)
+			}
+		}
 	}
 
 	return result

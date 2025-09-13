@@ -4,7 +4,7 @@ import { themeUtils } from '@/shared/lib/theme/theme-utils'
 import type { AppState, Theme } from '@/shared/types/global'
 
 const getInitialErrorNotifications = (): boolean => {
-	const saved = localStorage.getItem('app-errorNotificationsEnabled')
+	const saved = typeof window !== 'undefined' ? localStorage.getItem('app-errorNotificationsEnabled') : null
 	return saved ? JSON.parse(saved) : true
 }
 

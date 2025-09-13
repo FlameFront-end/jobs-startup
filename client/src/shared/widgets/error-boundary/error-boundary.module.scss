@@ -3,12 +3,13 @@
 @use "@/shared/styles/mixins.scss" as *;
 
 .errorBoundaryPage {
-    position: relative;
+	position: relative;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+	height: 100dvh;
+	background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
 	overflow-y: scroll;
 
 	@include p(md, all);
@@ -52,6 +53,7 @@
 		0 0 0 1px rgb(255 255 255 / 5%);
 	background: $background_card;
 	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
 	text-align: center;
 
 	@include p(2xl, all);
@@ -128,6 +130,7 @@
 	background: $background_light;
 	overflow: hidden;
 	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px);
 	text-align: left;
 
 	@include p(xl, all);

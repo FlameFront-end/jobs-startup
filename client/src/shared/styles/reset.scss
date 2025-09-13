@@ -14,8 +14,15 @@ html {
 body {
 	min-width: 320px;
 	min-height: 100vh;
+	min-height: 100dvh;
 	margin: 0;
 	line-height: 1.6;
+}
+
+@supports not (height: 100dvh) {
+	body {
+		min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+	}
 }
 
 h1,
@@ -74,7 +81,8 @@ button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
-	appearance: auto;
+	appearance: none;
+	-webkit-appearance: none;
 	cursor: pointer;
 }
 
