@@ -1,7 +1,7 @@
 import styles from './selection-demo.module.scss'
 
-import { PageWrapper } from '@/shared/ui/page-wrapper'
-import { ThemeToggle } from '@/shared/ui/theme-toggle'
+import { PageWrapper } from '@/shared/widgets/page-wrapper'
+import { ThemeToggle } from '@/shared/widgets/theme-toggle'
 
 const SelectionDemoPage = () => {
 	return (

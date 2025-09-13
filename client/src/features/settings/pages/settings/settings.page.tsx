@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { useToast } from '@/shared/lib/toast'
 import { ROUTES } from '@/shared/model/routes'
-import { PageWrapper } from '@/shared/ui/page-wrapper'
+import { PageWrapper } from '@/shared/widgets/page-wrapper'
 
 const SettingsPage = () => {
 	const toast = useToast()

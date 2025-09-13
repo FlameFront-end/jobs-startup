@@ -7,8 +7,6 @@ import { queryClient } from '@/shared/api/query-client'
 import { store } from '@/shared/lib/store'
 import { ToastProvider } from '@/shared/lib/toast'
 
-import { ErrorBoundaryProvider } from './error-boundary'
-
 interface ProvidersProps {
 	children: ReactNode
 }
@@ -17,9 +15,7 @@ export function Providers({ children }: ProvidersProps) {
 	return (
 		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
-				<ToastProvider>
-					<ErrorBoundaryProvider>{children}</ErrorBoundaryProvider>
-				</ToastProvider>
+				<ToastProvider>{children}</ToastProvider>
 			</QueryClientProvider>
 		</Provider>
 	)

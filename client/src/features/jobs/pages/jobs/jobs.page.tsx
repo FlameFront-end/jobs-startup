@@ -1,4 +1,4 @@
-import { PageWrapper } from '@/shared/ui/page-wrapper'
+import { PageWrapper } from '@/shared/widgets/page-wrapper'
 
 const JobsPage = () => {
 	return <PageWrapper>JobsPage</PageWrapper>

@@ -1,9 +1,10 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
-import type { ToastProps } from '@/shared/ui/toast'
-import { ToastContainer } from '@/shared/ui/toast/toast-container'
+import { idGenerator } from '@/shared/lib/utils/id-generator'
+import type { ToastProps } from '@/shared/widgets/toast'
+import { ToastContainer } from '@/shared/widgets/toast/toast-container'
 
-import { setToastInstance } from './global-toast'
+import { setToastInstance } from './toast-service'
 
 interface ToastContextType {
 	success: (message: string, title?: string) => void
@@ -22,18 +23,8 @@ interface ToastProviderProps {
 export function ToastProvider({ children }: ToastProviderProps) {
 	const [toasts, setToasts] = useState<ToastProps[]>([])
 
-	useEffect(() => {
-		setToastInstance({
-			success,
-			error,
-			warning,
-			info,
-			loading
-		})
-	}, [])
-
 	const addToast = useCallback((toast: Omit<ToastProps, 'id' | 'onClose'>) => {
-		const id = Math.random().toString(36).substr(2, 9)
+		const id = idGenerator.generateShort('toast')
 		const newToast: ToastProps = {
 			...toast,
 			id,
@@ -44,55 +35,80 @@ export function ToastProvider({ children }: ToastProviderProps) {
 		setToasts(prev => [...prev, newToast])
 	}, [])
 
-	const success = (message: string, title = 'Успех') => {
-		addToast({
-			title,
-			description: message,
-			type: 'success',
-			closable: true,
-			duration: 5000
-		})
-	}
+	const success = useCallback(
+		(message: string, title = 'Успех') => {
+			addToast({
+				title,
+				description: message,
+				type: 'success',
+				closable: true,
+				duration: 5000
+			})
+		},
+		[addToast]
+	)
 
-	const error = (message: string, title = 'Ошибка') => {
-		addToast({
-			title,
-			description: message,
-			type: 'error',
-			closable: true,
-			duration: 7000
-		})
-	}
+	const error = useCallback(
+		(message: string, title = 'Ошибка') => {
+			addToast({
+				title,
+				description: message,
+				type: 'error',
+				closable: true,
+				duration: 7000
+			})
+		},
+		[addToast]
+	)
 
-	const warning = (message: string, title = 'Предупреждение') => {
-		addToast({
-			title,
-			description: message,
-			type: 'warning',
-			closable: true,
-			duration: 6000
-		})
-	}
+	const warning = useCallback(
+		(message: string, title = 'Предупреждение') => {
+			addToast({
+				title,
+				description: message,
+				type: 'warning',
+				closable: true,
+				duration: 6000
+			})
+		},
+		[addToast]
+	)
 
-	const info = (message: string, title = 'Информация') => {
-		addToast({
-			title,
-			description: message,
-			type: 'info',
-			closable: true,
-			duration: 5000
-		})
-	}
+	const info = useCallback(
+		(message: string, title = 'Информация') => {
+			addToast({
+				title,
+				description: message,
+				type: 'info',
+				closable: true,
+				duration: 5000
+			})
+		},
+		[addToast]
+	)
 
-	const loading = (message: string, title = 'Загрузка') => {
-		addToast({
-			title,
-			description: message,
-			type: 'loading',
-			closable: true,
-			duration: 0
+	const loading = useCallback(
+		(message: string, title = 'Загрузка') => {
+			addToast({
+				title,
+				description: message,
+				type: 'loading',
+				closable: true,
+				duration: 0
+			})
+		},
+		[addToast]
+	)
+
+	useEffect(() => {
+		setToastInstance({
+			success,
+			error,
+			warning,
+			info,
+			loading
 		})
-	}
+	}, [success, error, warning, info, loading])
 
 	const handleClose = useCallback((id: string) => {
 		setToasts(prev => prev.filter(toast => toast.id !== id))

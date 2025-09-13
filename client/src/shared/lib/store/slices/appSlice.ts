@@ -1,11 +1,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
+import { themeUtils } from '@/shared/lib/theme/theme-utils'
 import type { AppState, Theme } from '@/shared/types/global'
-
-const getInitialTheme = (): Theme => {
-	const savedTheme = localStorage.getItem('app-theme')
-	return savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark'
-}
 
 const getInitialErrorNotifications = (): boolean => {
 	const saved = localStorage.getItem('app-errorNotificationsEnabled')
@@ -14,7 +10,7 @@ const getInitialErrorNotifications = (): boolean => {
 
 const initialState: AppState = {
 	animationsEnabled: false,
-	theme: getInitialTheme(),
+	theme: themeUtils.getInitialTheme(),
 	sidebarCollapsed: false,
 	errorNotificationsEnabled: getInitialErrorNotifications()
 }

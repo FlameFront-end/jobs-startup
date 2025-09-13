@@ -4,9 +4,10 @@ interface ErrorBoundaryContentProps {
 	error: Error | null
 	onReload: () => void
 	onGoHome: () => void
+	onOpenEditor?: () => void
 }
 
-export function ErrorBoundaryContent({ error, onReload, onGoHome }: ErrorBoundaryContentProps) {
+export function ErrorBoundaryContent({ error, onReload, onGoHome, onOpenEditor }: ErrorBoundaryContentProps) {
 	return (
 		<div className={styles.errorBoundaryPage}>
 			<div className={styles.errorContainer}>
@@ -38,8 +39,15 @@ export function ErrorBoundaryContent({ error, onReload, onGoHome }: ErrorBoundar
 					<button className={styles.btnSecondary} onClick={onGoHome}>
 						На главную
 					</button>
+					{onOpenEditor && (
+						<button className={styles.btnSecondary} onClick={onOpenEditor}>
+							Открыть в редакторе
+						</button>
+					)}
 				</div>
 			</div>
 		</div>
 	)
 }
+
+export { ErrorBoundaryContent as ErrorBoundary }

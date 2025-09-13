@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,20 +15,26 @@ export const useTheme = () => {
 		document.documentElement.setAttribute('data-theme', theme)
 	}, [theme])
 
-	const toggle = () => {
+	const toggle = useCallback(() => {
 		dispatch(toggleTheme())
-	}
+	}, [dispatch])
 
-	const set = (newTheme: Theme) => {
-		dispatch(setTheme(newTheme))
-	}
+	const set = useCallback(
+		(newTheme: Theme) => {
+			dispatch(setTheme(newTheme))
+		},
+		[dispatch]
+	)
+
+	const isDark = useMemo(() => theme === 'dark', [theme])
+	const isLight = useMemo(() => theme === 'light', [theme])
 
 	return {
 		theme,
 		toggle,
 		toggleTheme: toggle,
 		set,
-		isDark: theme === 'dark',
-		isLight: theme === 'light'
+		isDark,
+		isLight
 	}
 }

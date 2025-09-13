@@ -4,7 +4,7 @@ import { logger } from '@/shared/lib/logger'
 import type { ApiErrorResponse, ApiValidationError } from '@/shared/types/global'
 
 export class ErrorHandler {
-	static handleApiError(error: AxiosError): ApiErrorResponse {
+	handleApiError(error: AxiosError): ApiErrorResponse {
 		const response = error.response?.data as ApiErrorResponse | undefined
 
 		logger.error('API Error Handler', {
@@ -41,7 +41,7 @@ export class ErrorHandler {
 		}
 	}
 
-	static handleValidationError(error: AxiosError): ApiValidationError | null {
+	handleValidationError(error: AxiosError): ApiValidationError | null {
 		const response = error.response?.data as ApiValidationError | undefined
 
 		if (response?.validationErrors) {
@@ -51,21 +51,32 @@ export class ErrorHandler {
 		return null
 	}
 
-	static isNetworkError(error: AxiosError): boolean {
+	isNetworkError(error: AxiosError): boolean {
 		return !error.response || error.code === 'NETWORK_ERROR'
 	}
 
-	static isAuthError(error: AxiosError): boolean {
+	isAuthError(error: AxiosError): boolean {
 		return error.response?.status === 401
 	}
 
-	static isServerError(error: AxiosError): boolean {
+	isServerError(error: AxiosError): boolean {
 		const status = error.response?.status
 		return status ? status >= 500 : false
 	}
 
-	static isClientError(error: AxiosError): boolean {
+	isClientError(error: AxiosError): boolean {
 		const status = error.response?.status
 		return status ? status >= 400 && status < 500 : false
 	}
+}
+
+export const errorHandler = new ErrorHandler()
+
+export const ErrorHandlerStatic = {
+	handleApiError: (error: AxiosError) => errorHandler.handleApiError(error),
+	handleValidationError: (error: AxiosError) => errorHandler.handleValidationError(error),
+	isNetworkError: (error: AxiosError) => errorHandler.isNetworkError(error),
+	isAuthError: (error: AxiosError) => errorHandler.isAuthError(error),
+	isServerError: (error: AxiosError) => errorHandler.isServerError(error),
+	isClientError: (error: AxiosError) => errorHandler.isClientError(error)
 }

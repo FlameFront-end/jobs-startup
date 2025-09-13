@@ -10,7 +10,7 @@ export const setToastInstance = (instance: typeof toastInstance) => {
 	toastInstance = instance
 }
 
-export const globalToast = {
+export const toastService = {
 	success: (message: string, title?: string) => {
 		toastInstance?.success(message, title)
 	},

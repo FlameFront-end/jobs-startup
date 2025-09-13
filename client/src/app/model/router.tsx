@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import { NotFoundPage } from '@/features/error/pages/not-found/not-found.page'
 import { ROUTES } from '@/shared/model/routes'
-import { Layout } from '@/shared/ui/layout'
+import { Layout } from '@/shared/widgets/layout'
 
 import { ErrorElement } from './error-element'
 

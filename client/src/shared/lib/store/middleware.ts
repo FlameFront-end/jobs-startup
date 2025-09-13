@@ -2,6 +2,7 @@ import type { Middleware } from '@reduxjs/toolkit'
 import { createLogger } from 'redux-logger'
 
 import { env } from '@/shared/config/env'
+import { themeUtils } from '@/shared/lib/theme/theme-utils'
 
 import type { RootState } from './index'
 
@@ -23,7 +24,7 @@ const persistMiddleware: Middleware = store => next => action => {
 		const state = store.getState() as RootState
 		const appState = state.app
 
-		localStorage.setItem('app-theme', appState.theme)
+		themeUtils.setTheme(appState.theme)
 		localStorage.setItem('app-errorNotificationsEnabled', JSON.stringify(appState.errorNotificationsEnabled))
 	}
 

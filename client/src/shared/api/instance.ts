@@ -1,10 +1,11 @@
 import axios, { type AxiosError, type AxiosResponse } from 'axios'
 
 import { env } from '@/shared/config/env'
-import { ErrorHandler } from '@/shared/lib/error-handler'
+import { tokenStorage } from '@/shared/lib/auth/token-storage'
+import { ErrorHandlerStatic } from '@/shared/lib/error-handler'
 import { logger } from '@/shared/lib/logger'
 import { store } from '@/shared/lib/store'
-import { globalToast } from '@/shared/lib/toast'
+import { toastService } from '@/shared/lib/toast'
 import type { ApiResponse } from '@/shared/types/api'
 import type { ApiErrorResponse } from '@/shared/types/global'
 
@@ -25,7 +26,7 @@ api.interceptors.request.use(
 		})
 
 		if (typeof window !== 'undefined') {
-			const token = localStorage.getItem('token')
+			const token = tokenStorage.get()
 			if (token) {
 				config.headers.Authorization = `Bearer ${token}`
 			}
@@ -62,15 +63,15 @@ api.interceptors.response.use(
 			stack: error.stack
 		})
 
-		const apiError = ErrorHandler.handleApiError(error)
+		const apiError = ErrorHandlerStatic.handleApiError(error)
 
-		if (ErrorHandler.isAuthError(error)) {
+		if (ErrorHandlerStatic.isAuthError(error)) {
 			logger.warn('Authentication Error - Redirecting to login', {
 				status: error.response?.status,
 				url: error.config?.url
 			})
 			if (typeof window !== 'undefined') {
-				localStorage.removeItem('token')
+				tokenStorage.remove()
 				window.location.href = '/login'
 			}
 		}
@@ -96,7 +97,7 @@ api.interceptors.response.use(
 					}
 				}
 
-				globalToast.error(errorMessage, title)
+				toastService.error(errorMessage, title)
 			}
 		}
 
