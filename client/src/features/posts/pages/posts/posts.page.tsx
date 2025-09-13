@@ -1,7 +1,6 @@
 import styles from './posts.module.scss'
 
-import { Card } from '@/shared/kit'
-import { InfiniteScroll } from '@/shared/kit/infinite-scroll'
+import { Card, InfiniteScroll } from '@/shared/kit'
 import { PageWrapper } from '@/shared/widgets'
 
 import { type Post } from '../../model/posts.api'
