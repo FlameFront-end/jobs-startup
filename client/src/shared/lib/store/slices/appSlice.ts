@@ -1,7 +1,14 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 import { themeUtils } from '@/shared/lib/theme/theme-utils'
-import type { AppState, Theme } from '@/shared/types/global'
+import type { Theme } from '@/shared/types/global'
+
+export interface AppState {
+	animationsEnabled: boolean
+	theme: Theme
+	sidebarCollapsed: boolean
+	errorNotificationsEnabled: boolean
+}
 
 const getInitialErrorNotifications = (): boolean => {
 	const saved = typeof window !== 'undefined' ? localStorage.getItem('app-errorNotificationsEnabled') : null
