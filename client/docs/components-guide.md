@@ -271,7 +271,32 @@ import { Layout } from '@/shared/ui/layout'
 
 - Автоматические анимации переходов между страницами
 - Поддержка отключения анимаций через Redux store
-- Использует Framer Motion для плавных переходов
+- Использует React Spring для плавных переходов
+
+### PageTransition
+
+Компонент для плавных переходов между страницами с использованием React Spring.
+
+```tsx
+import { PageTransition } from '@/shared/widgets/page-transition'
+
+// В Layout компоненте
+export function Layout() {
+	return (
+		<div className={styles.layoutContainer}>
+			<PageTransition />
+		</div>
+	)
+}
+```
+
+**Особенности:**
+
+- Использует `useTransition` из React Spring
+- Плавное появление/исчезновение страниц (opacity)
+- Настраиваемая длительность анимации (120ms)
+- Поддержка отключения анимаций через Redux store
+- Пружинная анимация для естественного движения
 
 ### PageWrapper
 

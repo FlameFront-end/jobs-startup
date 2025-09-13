@@ -9,7 +9,7 @@ const getInitialErrorNotifications = (): boolean => {
 }
 
 const initialState: AppState = {
-	animationsEnabled: false,
+	animationsEnabled: true,
 	theme: themeUtils.getInitialTheme(),
 	sidebarCollapsed: false,
 	errorNotificationsEnabled: getInitialErrorNotifications()
