@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 
 import { testErrorLogging } from '@/shared/api/instance'
-import { Button, Card, PageLoader } from '@/shared/kit'
+import { Button, Card, FullScreenLoader } from '@/shared/kit'
 import { useTheme } from '@/shared/lib/hooks/useTheme'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { toggleErrorNotifications } from '@/shared/lib/store/slices/appSlice'
@@ -60,7 +60,7 @@ const HomePage = () => {
 	}
 
 	if (showLoader) {
-		return <PageLoader message='Тестируем loader...' />
+		return <FullScreenLoader message='Тестируем loader...' />
 	}
 
 	return (
@@ -129,7 +129,7 @@ const HomePage = () => {
 			<Card title='Тест loader:'>
 				<div className={styles.buttonGroup}>
 					<Button variant='info' onClick={testLoader}>
-						Показать PageLoader
+						Показать FullScreenLoader
 					</Button>
 				</div>
 			</Card>
@@ -266,11 +266,7 @@ const HomePage = () => {
 
 			<Card title='Тест аналитики:'>
 				<div className={styles.buttonGroup}>
-					<Button
-						variant='success'
-						analyticsCategory='analytics_test'
-						analyticsLabel='analytics_test_button'
-					>
+					<Button variant='success' analyticsCategory='analytics_test' analyticsLabel='analytics_test_button'>
 						Тест аналитики (проверь Network)
 					</Button>
 				</div>

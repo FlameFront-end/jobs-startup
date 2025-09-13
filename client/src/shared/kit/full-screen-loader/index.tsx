@@ -1,13 +1,13 @@
-import styles from './page-loader.module.scss'
+import styles from './full-screen-loader.module.scss'
 
 import { clsx } from 'clsx'
 
-interface PageLoaderProps {
+interface FullScreenLoaderProps {
 	message?: string
 	className?: string
 }
 
-export const PageLoader = ({ message, className }: PageLoaderProps) => {
+export const FullScreenLoader = ({ message, className }: FullScreenLoaderProps) => {
 	return (
 		<div className={clsx(styles.pageLoader, className)}>
 			<div className={styles.pageLoader__animation}>

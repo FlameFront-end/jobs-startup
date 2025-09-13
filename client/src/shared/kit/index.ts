@@ -1,6 +1,6 @@
 export { Button } from './button'
 export { Card } from './card'
 export { Icon } from './icon'
-export { Loader } from './loader'
-export { PageLoader } from './page-loader'
 export { InfiniteScroll } from './infinite-scroll'
+export { Loader } from './loader'
+export { FullScreenLoader } from './full-screen-loader'

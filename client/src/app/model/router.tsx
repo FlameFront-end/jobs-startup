@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import { ErrorPage } from '@/features/error/pages/error-page'
 import { NotFoundPage } from '@/features/error/pages/not-found/not-found.page'
+import { FullScreenLoader } from '@/shared/kit'
 import { ROUTES } from '@/shared/model/routes'
 import { Layout } from '@/shared/widgets'
 
@@ -9,6 +10,7 @@ export const router = createBrowserRouter([
 	{
 		element: <Layout />,
 		errorElement: <ErrorPage />,
+		hydrateFallbackElement: <FullScreenLoader />,
 		children: [
 			{
 				path: ROUTES.HOME,

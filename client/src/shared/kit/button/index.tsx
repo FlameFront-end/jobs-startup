@@ -32,19 +32,23 @@ interface ButtonAsLinkProps extends BaseButtonProps, Omit<AnchorHTMLAttributes<H
 
 type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps
 
-export const Button = ({
-	children,
-	variant = ButtonVariant.DEFAULT,
-	size = 'md',
-	width = 'auto',
-	className,
-	href,
-	analyticsCategory,
-	analyticsLabel,
-	analyticsElementType = 'button',
-	onClick,
-	...props
-}: ButtonProps) => {
+const isButtonProps = (props: ButtonProps): props is ButtonAsButtonProps => {
+	return !('href' in props)
+}
+
+export const Button = (props: ButtonProps) => {
+	const {
+		children,
+		variant = ButtonVariant.DEFAULT,
+		size = 'md',
+		width = 'auto',
+		className,
+		analyticsCategory,
+		analyticsLabel,
+		analyticsElementType = 'button',
+		...restProps
+	} = props
+
 	const { trackClick } = useAnalytics()
 
 	const handleButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -53,7 +57,7 @@ export const Button = ({
 			trackClick(elementName, analyticsCategory, analyticsLabel, analyticsElementType)
 		}
 
-		if (onClick && 'onClick' in props && typeof props.onClick === 'function') {
+		if (isButtonProps(props) && props.onClick) {
 			props.onClick(event)
 		}
 	}
@@ -64,15 +68,15 @@ export const Button = ({
 			trackClick(elementName, analyticsCategory, analyticsLabel, analyticsElementType)
 		}
 
-		if (onClick && 'onClick' in props && typeof props.onClick === 'function') {
+		if (!isButtonProps(props) && props.onClick) {
 			props.onClick(event)
 		}
 	}
 
-	if (href) {
+	if (!isButtonProps(props)) {
 		return (
 			<a
-				href={href}
+				href={props.href}
 				className={clsx(
 					styles.button,
 					styles[variant],
@@ -81,7 +85,7 @@ export const Button = ({
 					className
 				)}
 				onClick={handleLinkClick}
-				{...(props as AnchorHTMLAttributes<HTMLAnchorElement>)}
+				{...(restProps as AnchorHTMLAttributes<HTMLAnchorElement>)}
 			>
 				{children}
 			</a>
@@ -98,7 +102,7 @@ export const Button = ({
 				className
 			)}
 			onClick={handleButtonClick}
-			{...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+			{...(restProps as ButtonHTMLAttributes<HTMLButtonElement>)}
 		>
 			{children}
 		</button>
