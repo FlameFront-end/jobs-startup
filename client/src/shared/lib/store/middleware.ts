@@ -1,8 +1,8 @@
 import type { Middleware } from '@reduxjs/toolkit'
 import { createLogger } from 'redux-logger'
 
-import { env } from '@/shared/config/env'
 import { themeUtils } from '@/shared/lib/theme/theme-utils'
+import { env } from '@/shared/model/config'
 
 import type { RootState } from './index'
 

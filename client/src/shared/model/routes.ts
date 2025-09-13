@@ -8,5 +8,6 @@ export const ROUTES = {
 	PROFILE: '/profile',
 	SETTINGS: '/settings',
 	TEST_ERROR: '/test-error',
-	SELECTION_DEMO: '/selection-demo'
+	SELECTION_DEMO: '/selection-demo',
+	POSTS: '/posts'
 } as const

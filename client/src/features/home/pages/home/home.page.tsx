@@ -110,6 +110,9 @@ const HomePage = () => {
 					<Link to={ROUTES.SELECTION_DEMO} className={styles.navLink}>
 						Демо выделения
 					</Link>
+					<Link to={ROUTES.POSTS} className={styles.navLink}>
+						Посты (Infinite Scroll)
+					</Link>
 				</div>
 			</Card>
 

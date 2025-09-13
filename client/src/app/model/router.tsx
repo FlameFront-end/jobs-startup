@@ -52,6 +52,10 @@ export const router = createBrowserRouter([
 				lazy: () => import('../../features/demo/pages/selection-demo/selection-demo.page')
 			},
 			{
+				path: ROUTES.POSTS,
+				lazy: () => import('../../features/posts/pages/posts/posts.page')
+			},
+			{
 				path: '*',
 				element: <NotFoundPage />
 			}

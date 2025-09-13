@@ -1,0 +1,61 @@
+.loadingTrigger {
+	height: 100px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px 0;
+}
+
+.loadingSpinner {
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--color-border);
+	border-top: 2px solid var(--color-primary);
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+.errorMessage {
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--color-error);
+	background: var(--color-error-surface);
+	border-radius: 8px;
+	margin: 20px 0;
+
+	h3 {
+		margin: 0 0 8px 0;
+		font-size: 1.25rem;
+	}
+
+	p {
+		margin: 0;
+		opacity: 0.8;
+	}
+}
+
+.emptyState {
+	text-align: center;
+	padding: 60px 20px;
+	color: var(--color-text-secondary);
+
+	h3 {
+		margin: 0 0 8px 0;
+		font-size: 1.25rem;
+	}
+
+	p {
+		margin: 0;
+		opacity: 0.8;
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

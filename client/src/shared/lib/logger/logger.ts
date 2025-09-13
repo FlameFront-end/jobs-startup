@@ -1,4 +1,4 @@
-import { env } from '@/shared/config/env'
+import { env } from '@/shared/model/config'
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
