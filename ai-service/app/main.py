@@ -25,7 +25,7 @@ app.add_middleware(
 
 # Инициализируем Ollama сервис
 ollama_host = os.getenv("OLLAMA_HOST", "localhost:11434")
-ollama_model = os.getenv("OLLAMA_MODEL", "llama3.2:8b")
+ollama_model = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
 
 ollama_service = OllamaService(
     model=ollama_model,

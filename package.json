@@ -8,12 +8,15 @@
     "dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
     "dev:no-browser": "set NO_BROWSER=true && powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
     "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/clean.ps1",
-    "build:client": "npm run build --prefix client",
-    "build:parser": "npm run build --prefix parser",
-    "build:all": "npm run build:parser && npm run build:client",
-    "start:prod": "docker-compose -f docker-compose.prod.yml up --build -d",
-    "stop:prod": "docker-compose -f docker-compose.prod.yml down",
-    "logs:prod": "docker-compose -f docker-compose.prod.yml logs -f"
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:restart": "docker-compose restart",
+    "docker:logs": "docker-compose logs -f",
+    "docker:logs:ai": "docker-compose logs -f ai-service",
+    "docker:logs:parser": "docker-compose logs -f parser",
+    "docker:logs:client": "docker-compose logs -f client",
+    "docker:build": "docker-compose build",
+    "docker:clean": "docker-compose down -v --remove-orphans && docker system prune -f"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

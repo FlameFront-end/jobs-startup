@@ -11,7 +11,7 @@ from .models import (
 from .prompts import JOB_NORMALIZATION_PROMPT
 
 class OllamaService:
-    def __init__(self, model: str = "llama3.2:8b", host: str = "localhost:11434"):
+    def __init__(self, model: str = "llama3.2:latest", host: str = "localhost:11434"):
         self.model = model
         self.host = host
         self.client = None
@@ -243,17 +243,22 @@ class OllamaService:
         try:
             # Проверяем доступность Ollama
             client = self._get_client()
-            client.list()
+            models = client.list()
+            print(f"DEBUG: Ollama models: {models}")
             ollama_available = True
-        except:
+        except Exception as e:
+            print(f"DEBUG: Ollama connection error: {e}")
             ollama_available = False
         
         try:
             # Проверяем наличие модели
             client = self._get_client()
             models = client.list()
+            print(f"DEBUG: Looking for model: {self.model}")
+            print(f"DEBUG: Available models: {[model['name'] for model in models['models']]}")
             model_loaded = any(model['name'] == self.model for model in models['models'])
-        except:
+        except Exception as e:
+            print(f"DEBUG: Model check error: {e}")
             model_loaded = False
         
         return {
