@@ -4,9 +4,10 @@
   "description": "Fullstack приложение для поиска вакансий",
   "private": true,
   "scripts": {
+    "install": "powershell -ExecutionPolicy Bypass -File ./scripts/install.ps1",
     "dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
-    "dev:single": "powershell -ExecutionPolicy Bypass -File ./scripts/dev-single.ps1",
-    "install:all": "npm install --prefix client && npm install --prefix parser",
+    "dev:no-browser": "set NO_BROWSER=true && powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
+    "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/clean.ps1",
     "build:client": "npm run build --prefix client",
     "build:parser": "npm run build --prefix parser",
     "build:all": "npm run build:parser && npm run build:client",

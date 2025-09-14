@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  # Ollama сервис
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    restart: unless-stopped
+
+  # AI Service (Python FastAPI)
+  ai-service:
+    build: ./ai-service
+    container_name: ai-service
+    ports:
+      - "8001:8001"
+    environment:
+      - OLLAMA_HOST=ollama:11434
+      - OLLAMA_MODEL=llama3.2:8b
+      - PORT=8001
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Parser (NestJS)
+  parser:
+    build: ./parser
+    container_name: parser
+    ports:
+      - "3000:3000"
+    environment:
+      - AI_SERVICE_URL=http://ai-service:8001
+      - AI_SERVICE_TIMEOUT=30000
+      - AI_SERVICE_RETRIES=3
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/jobs_db
+    depends_on:
+      - ai-service
+      - postgres
+    restart: unless-stopped
+
+  # PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=jobs_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Client (React)
+  client:
+    build: ./client
+    container_name: client
+    ports:
+      - "5173:80"
+    depends_on:
+      - parser
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+  postgres_data:

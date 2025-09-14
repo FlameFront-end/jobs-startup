@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios from 'axios'
-import { JOB_NORMALIZATION_PROMPT } from './ai-prompts'
 
 interface AIResponse {
 	company: {
@@ -45,43 +44,35 @@ interface AIResponse {
 @Injectable()
 export class AIService {
 	private readonly logger = new Logger(AIService.name)
-	private readonly yandexApiUrl = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion'
-	private readonly iamToken = process.env.YANDEX_IAM_TOKEN
-	private readonly folderId = process.env.YANDEX_FOLDER_ID
-	private gptUnavailableLogged = false
-
-	private requestCount = 0
-	private lastResetTime = Date.now()
-	private readonly MAX_REQUESTS_PER_MINUTE = 20
-	private readonly REQUEST_WINDOW = 60 * 1000
+	private readonly aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001'
+	private readonly requestTimeout = parseInt(process.env.AI_SERVICE_TIMEOUT || '30000')
+	private readonly maxRetries = parseInt(process.env.AI_SERVICE_RETRIES || '3')
 
 	constructor() {}
 
 	async normalizeJobWithAI(title: string, description: string): Promise<AIResponse | null> {
 		try {
-			if (!this.iamToken || !this.folderId) {
-				this.logger.error('YANDEX_IAM_TOKEN или YANDEX_FOLDER_ID не настроены!')
-				return null
-			}
-
-			if (!this.checkRequestLimits()) {
-				return null
-			}
-
-			const maxRetries = 3
-
-			for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
 				try {
-					return await this.makeAIRequest(title, description)
+					this.logger.debug(`Попытка ${attempt}/${this.maxRetries} для вакансии: ${title}`)
+
+					const response = await this.makeAIRequest(title, description)
+
+					if (response) {
+						this.logger.debug(`Успешно обработана вакансия: ${title}`)
+						return response
+					}
 				} catch (error) {
-					if (attempt < maxRetries) {
+					this.logger.warn(`Ошибка на попытке ${attempt} для "${title}": ${error.message}`)
+
+					if (attempt < this.maxRetries) {
 						const delay = Math.pow(2, attempt) * 1000
 						await this.sleep(delay)
 					}
 				}
 			}
 
-			this.logger.error(`ИИ не смог обработать вакансию "${title}" после ${maxRetries} попыток`)
+			this.logger.error(`ИИ не смог обработать вакансию "${title}" после ${this.maxRetries} попыток`)
 			return null
 		} catch (error) {
 			this.logger.error(`Критическая ошибка в normalizeJobWithAI для "${title}":`, error)
@@ -91,116 +82,66 @@ export class AIService {
 
 	private async makeAIRequest(title: string, description: string): Promise<AIResponse | null> {
 		try {
-			const prompt = JOB_NORMALIZATION_PROMPT.replace('{title}', title).replace('{description}', description)
-			const modelUri = `gpt://${this.folderId}/yandexgpt`
-
 			const response = await axios.post(
-				this.yandexApiUrl,
+				`${this.aiServiceUrl}/api/v1/normalize`,
 				{
-					modelUri,
-					completionOptions: {
-						stream: false,
-						temperature: 0.1,
-						maxTokens: 2000
-					},
-					messages: [
-						{
-							role: 'system',
-							text: 'Ты эксперт по анализу IT-вакансий. Отвечай только в формате JSON без дополнительных комментариев.'
-						},
-						{
-							role: 'user',
-							text: prompt
-						}
-					]
+					title,
+					description
 				},
 				{
 					headers: {
-						Authorization: `Bearer ${this.iamToken}`,
 						'Content-Type': 'application/json'
 					},
-					timeout: 120000
+					timeout: this.requestTimeout
 				}
 			)
 
-			if (
-				!response.data.result ||
-				!response.data.result.alternatives ||
-				response.data.result.alternatives.length === 0
-			) {
-				throw new Error('Неверный формат ответа от YandexGPT')
+			if (!response.data) {
+				throw new Error('Пустой ответ от AI Service')
 			}
 
-			const aiResponse = response.data.result.alternatives[0].message.text
-			const cleanedResponse = this.cleanMarkdownFromResponse(aiResponse)
-
-			try {
-				const normalizedData = JSON.parse(cleanedResponse) as AIResponse
-				return this.validateAndCleanResponse(normalizedData)
-			} catch (parseError) {
-				throw new Error(`Ошибка парсинга JSON: ${parseError.message}`)
-			}
+			// Конвертируем ответ от AI Service в формат AIService
+			return this.convertAIResponse(response.data)
 		} catch (error) {
-			if (error.response?.status === 429) {
-				throw new Error('Превышен лимит запросов к YandexGPT')
-			} else if (error.response?.status === 401) {
-				throw new Error('Неверный IAM токен для YandexGPT')
+			if (error.code === 'ECONNREFUSED') {
+				throw new Error('AI Service недоступен')
 			} else if (error.code === 'ECONNABORTED') {
-				throw new Error('Таймаут запроса к YandexGPT')
+				throw new Error('Таймаут запроса к AI Service')
+			} else if (error.response?.status === 500) {
+				throw new Error(`Ошибка AI Service: ${error.response.data?.detail || error.message}`)
 			} else {
-				throw new Error(`Ошибка YandexGPT: ${error.message}`)
+				throw new Error(`Ошибка AI Service: ${error.message}`)
 			}
 		}
 	}
 
-	private checkRequestLimits(): boolean {
-		const now = Date.now()
-
-		if (now - this.lastResetTime >= this.REQUEST_WINDOW) {
-			this.requestCount = 0
-			this.lastResetTime = now
-		}
-
-		if (this.requestCount >= this.MAX_REQUESTS_PER_MINUTE) {
-			return false
-		}
-
-		this.requestCount++
-		return true
-	}
-
-	private sleep(ms: number): Promise<void> {
-		return new Promise(resolve => setTimeout(resolve, ms))
-	}
-
-	private cleanMarkdownFromResponse(response: string): string {
-		let cleaned = response.replace(/```json\s*/g, '').replace(/```\s*/g, '')
-		cleaned = cleaned.replace(/```\s*([\s\S]*?)\s*```/g, '$1')
-		cleaned = cleaned.trim()
-
-		const jsonStart = cleaned.indexOf('{')
-		const jsonEnd = cleaned.lastIndexOf('}')
-
-		if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-			cleaned = cleaned.substring(jsonStart, jsonEnd + 1)
-		}
-
-		cleaned = cleaned.replace(/^```.*?\n/g, '').replace(/\n```.*?$/g, '')
-		return cleaned
-	}
-
-	private validateAndCleanResponse(data: AIResponse): AIResponse {
+	private convertAIResponse(data: any): AIResponse {
 		return {
 			company: {
-				name: data.company?.name || null,
+				name: data.company?.name || '',
 				description: data.company?.description,
 				website: data.company?.website,
 				size: data.company?.size
 			},
-			shortDescription: data.shortDescription || undefined,
-			fullDescription: data.fullDescription || undefined,
-			salary: data.salary || undefined,
-			location: data.location || undefined,
+			shortDescription: data.short_description,
+			fullDescription: data.full_description,
+			salary: data.salary
+				? {
+						min: data.salary.min,
+						max: data.salary.max,
+						currency: data.salary.currency,
+						period: data.salary.period,
+						type: data.salary.type
+					}
+				: undefined,
+			location: data.location
+				? {
+						city: data.location.city,
+						country: data.location.country,
+						address: data.location.address,
+						remote: data.location.remote
+					}
+				: undefined,
 			requirements: {
 				required: data.requirements?.required || [],
 				preferred: data.requirements?.preferred || [],
@@ -209,9 +150,20 @@ export class AIService {
 				frameworks: data.requirements?.frameworks || [],
 				tools: data.requirements?.tools || []
 			},
-			benefits: data.benefits || undefined,
-			workType: data.workType || 'full_time',
-			experienceLevel: data.experienceLevel || undefined
+			benefits: data.benefits
+				? {
+						social: data.benefits.social || [],
+						bonuses: data.benefits.bonuses || [],
+						conditions: data.benefits.conditions || [],
+						development: data.benefits.development || []
+					}
+				: undefined,
+			workType: data.work_type || 'full_time',
+			experienceLevel: data.experience_level
 		}
+	}
+
+	private sleep(ms: number): Promise<void> {
+		return new Promise(resolve => setTimeout(resolve, ms))
 	}
 }

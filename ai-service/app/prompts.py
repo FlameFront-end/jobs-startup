@@ -1,4 +1,4 @@
-export const JOB_NORMALIZATION_PROMPT = `
+JOB_NORMALIZATION_PROMPT = """
 Ты эксперт по анализу IT-вакансий. Твоя задача - извлечь структурированные данные из текста вакансии.
 
 ВАЖНО: 
@@ -13,45 +13,45 @@ export const JOB_NORMALIZATION_PROMPT = `
 
 Извлеки следующие данные и верни в JSON формате:
 
-{
-  "company": {
+{{
+  "company": {{
     "name": "название компании (если не найдено, то null)",
     "description": "краткое описание компании (максимум 2-3 предложения, только суть деятельности)",
     "website": "сайт компании (если есть)",
     "size": "размер компании в формате 'X-Y сотрудников' или 'X сотрудников' (если есть)"
-  },
+  }},
   "shortDescription": "краткое описание вакансии (максимум 2-3 предложения, только ключевые обязанности)",
   "fullDescription": "полное описание вакансии (грамотно построенное, без ошибок пунктуации, структурированное описание всех аспектов работы)",
-  "salary": {
+  "salary": {{
     "min": число_минимальная_зарплата_или_null_если_не_указана,
     "max": число_максимальная_зарплата_или_null_если_не_указана,
     "currency": "RUB|USD|EUR_или_null_если_не_указана",
     "period": "month|year_или_null_если_не_указана",
     "type": "до вычета налогов|после вычета налогов|null_если_не_указана"
-  },
-  "location": {
+  }},
+  "location": {{
     "city": "город",
     "country": "страна (по умолчанию 'Россия')",
     "address": "адрес (если есть)",
     "remote": true/false
-  },
-  "requirements": {
+  }},
+  "requirements": {{
     "required": ["обязательное требование 1", "обязательное требование 2"],
     "preferred": ["желательное требование 1", "желательное требование 2"],
     "technical": ["javascript", "react", "typescript", "python", "java", "c#", "php", "ruby", "go", "rust", "c++", "swift", "kotlin", "scala"],
     "languages": ["языки программирования из списка выше"],
     "frameworks": ["react", "vue", "angular", "svelte", "ember", "express", "nestjs", "fastapi", "django", "flask", "rails", "spring", "laravel", "symfony", "asp.net"],
     "tools": ["git", "docker", "kubernetes", "jenkins", "github actions", "aws", "azure", "gcp", "terraform", "ansible", "figma", "sketch", "photoshop", "illustrator"]
-  },
-  "benefits": {
+  }},
+  "benefits": {{
     "social": ["медицинская страховка", "дмс", "отпуск", "больничный", "пенсионные взносы", "материнский капитал", "детский сад"],
     "bonuses": ["премия", "бонус", "комиссия", "процент", "акции", "опционы", "13-я зарплата", "годовая премия"],
     "conditions": ["гибкий график", "удаленная работа", "офис", "коворкинг", "командировки", "переработки", "сверхурочные"],
     "development": ["обучение", "курсы", "конференции", "сертификация", "менторство", "карьерный рост", "повышение квалификации"]
-  },
+  }},
   "workType": "full_time|part_time|contract|internship|remote|hybrid",
   "experienceLevel": "no_experience|junior|middle|senior|lead"
-}
+}}
 
 ПРАВИЛА ИЗВЛЕЧЕНИЯ:
 
@@ -132,26 +132,4 @@ export const JOB_NORMALIZATION_PROMPT = `
 - НЕ ИСПОЛЬЗУЙ "по договоренности" или другие значения - только null!
 - Если нет точных цифр с валютой в специальном блоке зарплаты, ставь null для всех полей salary
 - Если информация не найдена, используй null для чисел и пустые массивы для списков
-`
-
-export const FALLBACK_PROMPT = `
-Если основная нормализация не сработала, используй упрощенный подход:
-
-Извлеки только основную информацию:
-{
-  "company": {
-    "name": "название компании или null"
-  },
-  "salary": null,
-  "location": null,
-  "requirements": {
-    "required": ["основные требования из текста"],
-    "technical": ["технологии из текста"]
-  },
-  "benefits": null,
-  "workType": "full_time",
-  "experienceLevel": null
-}
-
-ВАЖНО: НЕ ПРИДУМЫВАЙ зарплату! Если её нет в тексте, ставь null.
-`
+"""

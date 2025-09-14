@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { AIService } from '../../../common/ai-service'
 import { TextProcessorService } from '../../../common/text-processor.service'
 import { ParserConfig } from '../config/parser-config'
 import { BaseParser } from '../parsers/base-parser'
@@ -11,7 +12,8 @@ import { HtmlExtractorService } from '../services/html-extractor.service'
 export class ParserFactory {
 	constructor(
 		private textProcessor: TextProcessorService,
-		private htmlExtractor: HtmlExtractorService
+		private htmlExtractor: HtmlExtractorService,
+		private aiService: AIService
 	) {}
 
 	createParser(config: ParserConfig): BaseParser {
@@ -21,7 +23,7 @@ export class ParserFactory {
 			case 'SuperJob':
 				return new SuperJobParser(this.textProcessor)
 			case 'Habr Career':
-				return new HabrParser(this.textProcessor, this.htmlExtractor)
+				return new HabrParser(this.textProcessor, this.htmlExtractor, this.aiService)
 			default:
 				throw new Error(`Unknown parser: ${config.name}`)
 		}
