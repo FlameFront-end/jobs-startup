@@ -1,16 +1,16 @@
-name: jobs-startup
+name: jobs-startup-dev
 
 services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: postgres
+    container_name: postgres-dev
     environment:
       POSTGRES_DB: job_parser
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -26,39 +26,50 @@ services:
   # Redis
   redis:
     image: redis:7-alpine
-    container_name: redis
+    container_name: redis-dev
     volumes:
       - redis_data:/data
     networks:
       - jobs_network
     restart: unless-stopped
-    command: redis-server
 
-  # AI Service
+  # AI Service (dev with hot reload)
   ai-service:
     build: ./ai-service
-    image: ai-service:latest
-    container_name: ai-service
+    image: ai-service:dev
+    container_name: ai-service-dev
     env_file:
       - ./ai-service/.env
     ports:
       - "8001:8001"
+    volumes:
+      - ./ai-service:/app
     networks:
       - jobs_network
     restart: unless-stopped
     depends_on:
       - redis
-    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8001
+    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 
-  # Parser Service
+  # Parser Service (dev with hot reload)
   parser:
-    build: ./parser
-    image: parser:latest
-    container_name: parser
+    build:
+      context: ./parser
+      dockerfile: Dockerfile.dev
+    image: parser:dev
+    container_name: parser-dev
     env_file:
-      - ./parser/.env.production
+      - ./parser/.env.development
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - WATCHPACK_POLLING_INTERVAL=1000
     ports:
       - "3000:3000"
+    volumes:
+      - ./parser:/app
+      - /app/node_modules
     networks:
       - jobs_network
     restart: unless-stopped
@@ -67,15 +78,23 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
-    command: npm run start:prod
+    command: npm run start:dev
 
-  # Client
+  # Client (dev with hot reload)
   client:
-    build: ./client
-    image: client:latest
-    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    image: client:dev
+    container_name: client-dev
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     ports:
-      - "5173:80"
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
     networks:
       - jobs_network
     restart: unless-stopped

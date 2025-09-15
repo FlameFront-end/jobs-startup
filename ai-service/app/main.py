@@ -29,6 +29,9 @@ health_checker = HealthChecker(ollama_client)
 async def lifespan(app: FastAPI):
     """Управление жизненным циклом приложения"""
     logger.info("Starting AI Job Normalization Service")
+    logger.info(f"📚 Swagger UI: http://localhost:{settings.app_port}/docs")
+    logger.info(f"📖 ReDoc: http://localhost:{settings.app_port}/redoc")
+    logger.info(f"🔗 OpenAPI JSON: http://localhost:{settings.app_port}/openapi.json")
     yield
     logger.info("Shutting down AI Job Normalization Service")
 
@@ -37,7 +40,28 @@ app = FastAPI(
     title="AI Job Normalization Service",
     description="Сервис для нормализации вакансий с помощью Ollama",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    openapi_tags=[
+        {
+            "name": "Health",
+            "description": "Проверка состояния сервиса"
+        },
+        {
+            "name": "Job Normalization", 
+            "description": "Нормализация вакансий с помощью AI"
+        },
+        {
+            "name": "Cache",
+            "description": "Управление кэшем"
+        },
+        {
+            "name": "Info",
+            "description": "Информация о сервисе"
+        }
+    ]
 )
 
 # CORS middleware
@@ -49,7 +73,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health", response_model=HealthResponse)
+@app.get(
+    "/health", 
+    response_model=HealthResponse,
+    tags=["Health"],
+    summary="Проверка здоровья сервиса",
+    description="Проверяет доступность сервиса и Ollama модели",
+    responses={
+        200: {
+            "description": "Статус сервиса",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "healthy",
+                        "ollama_available": True,
+                        "model_loaded": True
+                    }
+                }
+            }
+        }
+    }
+)
 async def health_check():
     """Проверка здоровья сервиса"""
     try:
@@ -68,7 +112,43 @@ async def health_check():
         )
 
 
-@app.post("/api/v1/normalize", response_model=NormalizeResponse)
+@app.post(
+    "/api/v1/normalize", 
+    response_model=NormalizeResponse,
+    tags=["Job Normalization"],
+    summary="Нормализация вакансии",
+    description="Нормализует данные вакансии с помощью AI модели",
+    responses={
+        200: {
+            "description": "Успешная нормализация",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": "job_123456",
+                        "title": "Senior Python Developer",
+                        "short_description": "Разработка веб-приложений",
+                        "company": {
+                            "name": "Tech Company",
+                            "description": "IT компания",
+                            "website": "https://techcompany.com"
+                        },
+                        "work_type": "full_time",
+                        "experience_level": "senior",
+                        "quality_score": 85
+                    }
+                }
+            }
+        },
+        500: {
+            "description": "Ошибка сервера",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Внутренняя ошибка сервера"}
+                }
+            }
+        }
+    }
+)
 async def normalize_job(request: NormalizeRequest):
     """Нормализация вакансии"""
     try:
@@ -98,7 +178,12 @@ async def normalize_job(request: NormalizeRequest):
         logger.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Внутренняя ошибка сервера")
 
-@app.get("/")
+@app.get(
+    "/",
+    tags=["Info"],
+    summary="Информация о сервисе",
+    description="Возвращает основную информацию о сервисе и доступных эндпоинтах"
+)
 async def root():
     """Корневой эндпоинт"""
     return {
@@ -112,7 +197,25 @@ async def root():
     }
 
 
-@app.get("/api/v1/cache/stats")
+@app.get(
+    "/api/v1/cache/stats",
+    tags=["Cache"],
+    summary="Статистика кэша",
+    description="Возвращает информацию о состоянии кэша",
+    responses={
+        200: {
+            "description": "Статистика кэша",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "cache_size": 150,
+                        "ttl_seconds": 3600
+                    }
+                }
+            }
+        }
+    }
+)
 async def cache_stats():
     """Статистика кэша"""
     return {
@@ -121,7 +224,22 @@ async def cache_stats():
     }
 
 
-@app.post("/api/v1/cache/clear")
+@app.post(
+    "/api/v1/cache/clear",
+    tags=["Cache"],
+    summary="Очистка кэша",
+    description="Очищает весь кэш сервиса",
+    responses={
+        200: {
+            "description": "Кэш очищен",
+            "content": {
+                "application/json": {
+                    "example": {"message": "Cache cleared successfully"}
+                }
+            }
+        }
+    }
+)
 async def clear_cache():
     """Очистка кэша"""
     cache.clear()

@@ -13,7 +13,11 @@ export default defineConfig({
 		}
 	},
 	server: {
-		host: true
+		host: true,
+		port: 5173,
+		watch: {
+			usePolling: true
+		}
 	},
 	build: {
 		outDir: 'dist',

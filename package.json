@@ -4,13 +4,15 @@
   "description": "Fullstack приложение для поиска вакансий",
   "private": true,
   "scripts": {
-    "start:dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev/start.ps1",
-    "stop:dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev/stop.ps1",
+    "dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "dev:build": "docker-compose -f docker-compose.dev.yml build",
+    "dev:stop": "docker-compose -f docker-compose.dev.yml down",
+    "dev:clean": "docker-compose -f docker-compose.dev.yml down -v --rmi all",
 
-    "build": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/build.ps1",
-    "start": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/start.ps1",
-    "stop": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/stop.ps1",
-    "restart": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/restart.ps1",
-    "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/clean.ps1"
+    "build": "docker-compose build",
+    "start": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "restart": "docker-compose restart",
+    "clean": "docker-compose down -v --rmi all"
   }
 }

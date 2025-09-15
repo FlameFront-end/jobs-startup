@@ -19,7 +19,7 @@ export class WebsiteParserController {
 		enum: ParserSite,
 		example: 'hh.ru'
 	})
-	@ApiResponse({ status: 200, description: 'Парсинг веб-сайтов запущен' })
+	@ApiResponse({ status: 200, description: 'Парсинг ываыва веб-сайтов запущен' })
 	@ApiResponse({ status: 400, description: 'Некорректное название сайта' })
 	async parseWebsites(@Query('site') site?: ParserSite) {
 		// Если сайт указан, валидируем его
@@ -45,6 +45,7 @@ export class WebsiteParserController {
 	@ApiOperation({ summary: 'Получить список доступных сайтов для парсинга' })
 	@ApiResponse({ status: 200, description: 'Список сайтов успешно получен' })
 	async getAvailableSites() {
+		// Test hot reload
 		const sites = this.websiteParserService.getAvailableSites()
 		return {
 			success: true,
