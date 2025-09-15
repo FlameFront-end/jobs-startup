@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY package*.json ./
 ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 RUN npm ci
 
 COPY . .

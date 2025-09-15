@@ -65,6 +65,11 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - WATCHPACK_POLLING_INTERVAL=1000
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+      - PUPPETEER_SKIP_DOWNLOAD=true
+      - AI_SERVICE_URL=http://ai-service:8001
+      - AI_SERVICE_TIMEOUT=30000
+      - AI_SERVICE_RETRIES=3
     ports:
       - "3000:3000"
     volumes:
