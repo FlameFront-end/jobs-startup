@@ -1,50 +1,27 @@
-# Используем официальный Node.js образ
-FROM node:20-alpine
+FROM node:20-slim
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Устанавливаем системные зависимости для Puppeteer
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
     ca-certificates \
-    ttf-freefont
+    procps \
+    libxss1 \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем переменные окружения для Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Копируем package.json и package-lock.json
 COPY package*.json ./
-
-# Устанавливаем все зависимости (включая dev для сборки)
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 RUN npm ci
 
-# Копируем исходный код
 COPY . .
-
-# Собираем приложение
 RUN npm run build
-
-# Удаляем dev зависимости после сборки
 RUN npm prune --production
 
-# Создаем пользователя для безопасности
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nestjs -u 1001
-
-# Создаем директории для логов
-RUN mkdir -p logs && chown -R nestjs:nodejs logs
-
-# Переключаемся на пользователя nestjs
-USER nestjs
-
-# Открываем порт
 EXPOSE 3000
 
-# Команда запуска
-CMD ["node", "dist/main.js"]
+CMD ["npm", "run", "start:prod"]

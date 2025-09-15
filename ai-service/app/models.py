@@ -18,7 +18,7 @@ class ExperienceLevel(str, Enum):
     LEAD = "lead"
 
 class CompanyInfo(BaseModel):
-    name: str
+    name: Optional[str] = None
     description: Optional[str] = None
     website: Optional[str] = None
     size: Optional[str] = None

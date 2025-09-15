@@ -18,28 +18,19 @@ import { StatsModule } from './stats/stats.module'
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
-			envFilePath: '.env'
+			envFilePath: process.env.NODE_ENV === 'development' ? '.env.development' : '.env.production'
 		}),
 		WinstonModule.forRoot({
-			level: 'debug',
+			level: process.env.LOG_LEVEL || 'debug',
 			transports: [
 				new winston.transports.Console({
-					level: 'debug',
 					format: winston.format.combine(
 						winston.format.timestamp(),
-						winston.format.colorize(),
-						winston.format.simple()
+						winston.format.uncolorize(),
+						winston.format.printf(({ timestamp, level, message, context }) => {
+							return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}`
+						})
 					)
-				}),
-				new winston.transports.File({
-					filename: 'logs/error.log',
-					level: 'error',
-					format: winston.format.combine(winston.format.timestamp(), winston.format.json())
-				}),
-				new winston.transports.File({
-					filename: 'logs/combined.log',
-					level: 'debug',
-					format: winston.format.combine(winston.format.timestamp(), winston.format.json())
 				})
 			]
 		}),

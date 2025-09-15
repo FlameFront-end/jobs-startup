@@ -110,6 +110,9 @@ export class HabrParser extends BaseParser {
 		this.logger.log('Начинаем парсинг Хабр Карьеры')
 
 		try {
+			// Проверяем доступность AI сервиса перед началом парсинга
+			await this.checkAIServiceAvailability()
+
 			await this.waitForContent(page, HabrParser.SELECTORS.CONTAINER)
 
 			const jobElements = await this.extractJobCards(page)
@@ -314,15 +317,19 @@ export class HabrParser extends BaseParser {
 					publishedAt: fullJobData.publishedAt || job.publishedAt
 				}
 
-				// Применяем ИИ нормализацию
+				// Применяем ИИ нормализацию (теперь критично)
 				const aiNormalizedData = await this.normalizeWithAI(combinedJobData)
-				if (aiNormalizedData) {
-					metrics.aiNormalizedJobs++
-				}
-				const finalJobData = aiNormalizedData || combinedJobData
+				metrics.aiNormalizedJobs++
+				const finalJobData = aiNormalizedData
 
 				return this.processJobData(finalJobData, config)
 			} catch (error) {
+				// Если это ошибка AI сервиса - не повторяем, сразу падаем
+				if (error.message.includes('AI сервис') || error.message.includes('AI Service')) {
+					metrics.errors.push(`Критическая ошибка AI для "${job.title}": ${error.message}`)
+					throw error
+				}
+
 				if (attempt === this.maxRetries) {
 					metrics.errors.push(`Все попытки исчерпаны для "${job.title}": ${error.message}`)
 					throw error
@@ -339,12 +346,27 @@ export class HabrParser extends BaseParser {
 		return null
 	}
 
+	private async checkAIServiceAvailability(): Promise<void> {
+		try {
+			// Проверяем доступность AI сервиса через health check
+			const healthResponse = await this.aiService.checkHealth()
+			if (!healthResponse.ollama_available) {
+				throw new Error('Ollama недоступен')
+			}
+		} catch (error) {
+			this.logger.error('AI сервис недоступен:', error.message)
+			throw new Error(`AI сервис недоступен: ${error.message}`)
+		}
+	}
+
 	private async normalizeWithAI(jobData: any): Promise<any> {
 		try {
+			this.logger.log(`📋 Отправляем вакансию в AI-сервис: ${jobData.title}\n${JSON.stringify(jobData, null, 2)}`)
+
 			const aiResponse = await this.aiService.normalizeJobWithAI(jobData.title, jobData.description)
 
 			if (!aiResponse) {
-				return null
+				throw new Error('AI сервис вернул пустой ответ')
 			}
 
 			// Объединяем данные из ИИ с исходными данными
@@ -370,8 +392,8 @@ export class HabrParser extends BaseParser {
 				}
 			}
 		} catch (error) {
-			this.logger.warn(`Ошибка ИИ нормализации для "${jobData.title}": ${error.message}`)
-			return null
+			this.logger.error(`Критическая ошибка ИИ нормализации для "${jobData.title}": ${error.message}`)
+			throw error
 		}
 	}
 

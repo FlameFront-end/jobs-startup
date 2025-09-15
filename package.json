@@ -4,21 +4,13 @@
   "description": "Fullstack приложение для поиска вакансий",
   "private": true,
   "scripts": {
-    "install": "powershell -ExecutionPolicy Bypass -File ./scripts/install.ps1",
-    "dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
-    "dev:no-browser": "set NO_BROWSER=true && powershell -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
-    "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/clean.ps1",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:restart": "docker-compose restart",
-    "docker:logs": "docker-compose logs -f",
-    "docker:logs:ai": "docker-compose logs -f ai-service",
-    "docker:logs:parser": "docker-compose logs -f parser",
-    "docker:logs:client": "docker-compose logs -f client",
-    "docker:build": "docker-compose build",
-    "docker:clean": "docker-compose down -v --remove-orphans && docker system prune -f"
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
+    "start:dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev/start.ps1",
+    "stop:dev": "powershell -ExecutionPolicy Bypass -File ./scripts/dev/stop.ps1",
+
+    "build": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/build.ps1",
+    "start": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/start.ps1",
+    "stop": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/stop.ps1",
+    "restart": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/restart.ps1",
+    "clean": "powershell -ExecutionPolicy Bypass -File ./scripts/prod/clean.ps1"
   }
 }

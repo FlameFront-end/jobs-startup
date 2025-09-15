@@ -44,40 +44,47 @@ interface AIResponse {
 @Injectable()
 export class AIService {
 	private readonly logger = new Logger(AIService.name)
-	private readonly aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001'
+	private readonly aiServiceUrl = process.env.AI_SERVICE_URL || 'http://ai-service:8001'
 	private readonly requestTimeout = parseInt(process.env.AI_SERVICE_TIMEOUT || '30000')
 	private readonly maxRetries = parseInt(process.env.AI_SERVICE_RETRIES || '3')
 
 	constructor() {}
 
-	async normalizeJobWithAI(title: string, description: string): Promise<AIResponse | null> {
+	async checkHealth(): Promise<{ ollama_available: boolean; model_loaded: boolean }> {
 		try {
-			for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
-				try {
-					this.logger.debug(`Попытка ${attempt}/${this.maxRetries} для вакансии: ${title}`)
+			const response = await axios.get(`${this.aiServiceUrl}/health`, {
+				timeout: 5000
+			})
+			return response.data
+		} catch (error) {
+			this.logger.error('Ошибка проверки здоровья AI сервиса:', error.message)
+			return { ollama_available: false, model_loaded: false }
+		}
+	}
 
-					const response = await this.makeAIRequest(title, description)
+	async normalizeJobWithAI(title: string, description: string): Promise<AIResponse | null> {
+		for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+			try {
+				this.logger.debug(`Попытка ${attempt}/${this.maxRetries} для вакансии: ${title}`)
 
-					if (response) {
-						this.logger.debug(`Успешно обработана вакансия: ${title}`)
-						return response
-					}
-				} catch (error) {
-					this.logger.warn(`Ошибка на попытке ${attempt} для "${title}": ${error.message}`)
+				const response = await this.makeAIRequest(title, description)
 
-					if (attempt < this.maxRetries) {
-						const delay = Math.pow(2, attempt) * 1000
-						await this.sleep(delay)
-					}
+				if (response) {
+					this.logger.debug(`Успешно обработана вакансия: ${title}`)
+					return response
+				}
+			} catch (error) {
+				this.logger.warn(`Ошибка на попытке ${attempt} для "${title}": ${error.message}`)
+
+				if (attempt < this.maxRetries) {
+					const delay = Math.pow(2, attempt) * 1000
+					await this.sleep(delay)
 				}
 			}
-
-			this.logger.error(`ИИ не смог обработать вакансию "${title}" после ${this.maxRetries} попыток`)
-			return null
-		} catch (error) {
-			this.logger.error(`Критическая ошибка в normalizeJobWithAI для "${title}":`, error)
-			return null
 		}
+
+		this.logger.error(`ИИ не смог обработать вакансию "${title}" после ${this.maxRetries} попыток`)
+		throw new Error(`AI сервис недоступен после ${this.maxRetries} попыток`)
 	}
 
 	private async makeAIRequest(title: string, description: string): Promise<AIResponse | null> {

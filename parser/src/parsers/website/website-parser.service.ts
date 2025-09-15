@@ -114,14 +114,25 @@ export class WebsiteParserService {
 	}
 
 	private async parseDynamicWebsite(config: ParserConfig): Promise<CreateJobDto[]> {
-		const page = await this.browserService.createPage()
+		let page = null
 
 		try {
-			await page.goto(config.url, { waitUntil: 'networkidle2' })
+			page = await this.browserService.createPage()
+
+			await page.goto(config.url, {
+				waitUntil: 'networkidle2',
+				timeout: 30000
+			})
+
 			const parser = this.parserFactory.createParser(config)
 			return await parser.parse(page, config)
+		} catch (error) {
+			this.logger.error(`Error parsing ${config.name}:`, error)
+			throw error
 		} finally {
-			await page.close()
+			if (page && !page.isClosed()) {
+				await page.close()
+			}
 		}
 	}
 
